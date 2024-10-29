@@ -23,9 +23,7 @@ from .serializers import VacationRequestSerializer
 
 class VacationRequestViewSet(viewsets.ModelViewSet):
     queryset = (
-        VacationRequest.objects.all()
-        .select_related("user", "uploaded_by")
-        .order_by("-created_at")
+        VacationRequest.objects.all().select_related("user").order_by("-created_at")
     )
     serializer_class = VacationRequestSerializer
     permission_classes = [IsAuthenticated]
@@ -137,8 +135,8 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             # Check if the user is a manager
             if children and request.user.area.manager == request.user:
                 queryset = self.queryset.filter(
-                    # Check if was uploaded by the user or if the user is the owner
-                    (Q(uploaded_by=request.user) | Q(user=request.user))
+                    # Check if the user is the owner
+                    (Q(user=request.user))
                     # Check if the user is a manager of the area
                     | (Q(user__area__manager=request.user))
                     # Check if the user is a manager of a child area
@@ -150,8 +148,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 )
             else:
                 queryset = self.queryset.filter(
-                    Q(uploaded_by=request.user)
-                    | Q(user=request.user)
+                    Q(user=request.user)
                     | (Q(user__area__manager=request.user))
                     | (
                         Q(user__job_position__rank__lt=request.user.job_position.rank)
@@ -160,9 +157,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 )
         # The user is a regular employee
         else:
-            queryset = self.queryset.filter(
-                Q(uploaded_by=request.user) | Q(user=request.user)
-            )
+            queryset = self.queryset.filter(Q(user=request.user))
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
@@ -365,7 +360,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
     def generate_pdf(self, request, pk=None):
         context = {
             "vacation": self.get_object(),
-            "current_date": timezone.now().strftime("%Y-%m-%d"),
+            "current_date": timezone.now().strftime("%d de %B de %Y").capitalize(),
             "company_logo": base64.b64encode(
                 open("static/images/just_logo.png", "rb").read()
             ).decode("utf-8"),
@@ -376,7 +371,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             context,
         )
         # PDF options
-        options = { 
+        options = {
             "page-size": "Letter",
             "orientation": "portrait",
             "encoding": "UTF-8",

@@ -21,7 +21,6 @@ class VacationRequest(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     sat_is_working = models.BooleanField(default=True)
-    request_file = models.FileField(upload_to="files/vacation_requests/")
     boss_is_approved = models.BooleanField(null=True, blank=True)
     boss_approved_at = models.DateTimeField(null=True, blank=True)
     manager_is_approved = models.BooleanField(null=True, blank=True)
@@ -42,9 +41,6 @@ class VacationRequest(models.Model):
     )
     comment = models.TextField(null=True, blank=True)
     # this column is deprecated, but needs to be kept for backwards compatibility
-    uploaded_by = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="uploaded_requests"
-    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
