@@ -30,8 +30,10 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
+        print("Request", request.data)
         if response.status_code == status.HTTP_201_CREATED and response.data:
-            user_request = User.objects.get(pk=request.data["user"])
+            print("Response", response.data)
+            user_request = VacationRequest.objects.get(pk=response.data["id"]).user
             create_notification(
                 "Solicitud de vacaciones creada",
                 f"Se ha creado una solicitud de vacaciones a tu nombre del {response.data['start_date']} al {response.data['end_date']}.",
@@ -51,7 +53,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         [str(user_request.area.manager.company_email)],
                     )
             email_message = f"""
-                Hola {response.data['user']},
+                Hola {user_request.get_full_name()},
 
                 Nos complace informarte que se ha creado una solicitud de vacaciones a tu nombre para las fechas del {datetime.datetime.strptime(response.data['start_date'], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data['end_date'], "%Y-%m-%d").strftime("%d de %B del %Y")}.
 
@@ -118,7 +120,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 "Solicitud de vacaciones",
                 email_message,
                 None,
-                [str(User.objects.get(pk=request.data["user"]).email)],
+                [str(user_request.email)],
                 html_message=html_message,
             )
         return response

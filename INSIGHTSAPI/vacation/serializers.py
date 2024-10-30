@@ -43,7 +43,8 @@ class VacationRequestSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """Return the representation of the vacation request."""
         data = super().to_representation(instance)
-        data["user"] = instance.user.get_full_name()
+        data["username"] = instance.user.get_full_name()
+        data["user_id"] = instance.user.id
         data.pop("manager_approved_at")
         data.pop("hr_approved_at")
         data.pop("payroll_approved_at")
