@@ -30,9 +30,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        print("Request", request.data)
         if response.status_code == status.HTTP_201_CREATED and response.data:
-            print("Response", response.data)
             user_request = VacationRequest.objects.get(pk=response.data["id"]).user
             create_notification(
                 "Solicitud de vacaciones creada",
@@ -101,7 +99,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     </style>
                 </head>
                 <body>
-                    <h2>Hola {response.data["user"]},</h2>
+                    <h2>Hola {user_request.get_full_name()},</h2>
                     <p>Nos complace informarte que se ha creado una solicitud de vacaciones a tu nombre para las fechas del <strong>{datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}</strong> al <strong>{datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}</strong>.</p>
                     <h3>Información Adicional</h3>
                     <ul>
@@ -164,6 +162,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
+
         if isinstance(request.user, AnonymousUser):
             return Response(
                 {"detail": "Authentication credentials were not provided."},
@@ -231,7 +230,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         return response
                     create_notification(
                         "Una solicitud necesita tu aprobación",
-                        f"{request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data['user']}. Ahora necesita tu aprobación.",
+                        f"{request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {self.get_object().user}. Ahora necesita tu aprobación.",
                         hr_user,
                     )
                     hr_message = f"""

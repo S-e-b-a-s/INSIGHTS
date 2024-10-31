@@ -241,10 +241,26 @@ class VacationRequestModelTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
+    def test_vacation_boss_approve(self):
+        """Test the boss approving a vacation."""
+        self.user.job_position.rank = 2
+        self.user.job_position.save()
+        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
+        response = self.client.patch(
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
+            {"boss_is_approved": True},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertTrue(response.data["boss_is_approved"])
+        vacation_object.refresh_from_db()
+        self.assertIsNotNone(vacation_object.boss_approved_at)
+
     def test_vacation_manager_approve(self):
         """Test the manager approving a vacation."""
         self.user.job_position.rank = 5
         self.user.job_position.save()
+        self.test_user.job_position.name = "GERENTE DE GESTION HUMANA"
+        self.test_user.job_position.save()
         self.vacation_request_user["boss_is_approved"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
         response = self.client.patch(
@@ -296,7 +312,8 @@ class VacationRequestModelTestCase(BaseTestCase):
         """Test HR approving a vacation."""
         self.user.job_position.name = "GERENTE DE GESTION HUMANA"
         self.user.job_position.save()
-        # admin = self.create_demo_user_admin()
+        test_user = self.create_demo_user()
+        test_user.user_permissions.add(self.permission)
         self.vacation_request_user["manager_is_approved"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
         response = self.client.patch(

@@ -24,6 +24,8 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "created_at",
+            "boss_is_approved",
+            "boss_approved_at",
             "manager_is_approved",
             "manager_approved_at",
             "hr_is_approved",
