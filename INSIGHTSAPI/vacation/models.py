@@ -40,8 +40,13 @@ class VacationRequest(models.Model):
         default="PENDIENTE",
     )
     comment = models.TextField(null=True, blank=True)
-    # this column is deprecated, but needs to be kept for backwards compatibility
     created_at = models.DateTimeField(auto_now_add=True)
+    # this column is used to store the job position of the user at the time of the request
+    user_job_position = models.ForeignKey(
+        "hierarchy.JobPosition",
+        related_name="vacation_requests",
+        on_delete=models.PROTECT,
+    )
 
     class Meta:
         """Meta class for the vacation request model."""

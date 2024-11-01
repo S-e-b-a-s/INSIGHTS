@@ -28,6 +28,46 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
     serializer_class = VacationRequestSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        # Restrict queryset based on user permissions
+        user = self.request.user
+
+        # If the user is a manager of HR
+        if user.job_position.name == "GERENTE DE GESTION HUMANA":
+            return self.queryset
+
+        # If the user has payroll approval permissions
+        elif user.has_perm("vacation.payroll_approval"):
+            return self.queryset
+
+        # If the user has a management position with rank >= 2
+        elif user.job_position.rank >= 2:
+            children = user.area.get_children()
+
+            # Check if the user is a manager of their area
+            if children and user.area.manager == user:
+                return self.queryset.filter(
+                    Q(user=user)
+                    | Q(user__area__manager=user)
+                    | Q(user__area__in=children)
+                    | (
+                        Q(user__job_position__rank__lt=user.job_position.rank)
+                        & Q(user__area=user.area)
+                    )
+                )
+            else:
+                return self.queryset.filter(
+                    Q(user=user)
+                    | Q(user__area__manager=user)
+                    | (
+                        Q(user__job_position__rank__lt=user.job_position.rank)
+                        & Q(user__area=user.area)
+                    )
+                )
+
+        # If the user is a regular employee
+        return self.queryset.filter(user=user)
+
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
         if response.status_code == status.HTTP_201_CREATED and response.data:
@@ -123,43 +163,43 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             )
         return response
 
-    def list(self, request, *args, **kwargs):
-        if request.user.job_position.name == "GERENTE DE GESTION HUMANA":
-            queryset = self.queryset.all()
-        # Check if the user is in payroll
-        elif request.user.has_perm("vacation.payroll_approval"):
-            queryset = self.queryset.all()
-        # Check if the user has employee management permissions
-        elif request.user.job_position.rank >= 2:
-            children = self.request.user.area.get_children()
-            # Check if the user is a manager
-            if children and request.user.area.manager == request.user:
-                queryset = self.queryset.filter(
-                    # Check if the user is the owner
-                    (Q(user=request.user))
-                    # Check if the user is a manager of the area
-                    | (Q(user__area__manager=request.user))
-                    # Check if the user is a manager of a child area
-                    | (Q(user__area__in=children))
-                    | (
-                        Q(user__job_position__rank__lt=request.user.job_position.rank)
-                        & Q(user__area=request.user.area)
-                    )
-                )
-            else:
-                queryset = self.queryset.filter(
-                    Q(user=request.user)
-                    | (Q(user__area__manager=request.user))
-                    | (
-                        Q(user__job_position__rank__lt=request.user.job_position.rank)
-                        & Q(user__area=request.user.area)
-                    )
-                )
-        # The user is a regular employee
-        else:
-            queryset = self.queryset.filter(Q(user=request.user))
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
+    # def list(self, request, *args, **kwargs):
+    # if request.user.job_position.name == "GERENTE DE GESTION HUMANA":
+    #     queryset = self.queryset.all()
+    # # Check if the user is in payroll
+    # elif request.user.has_perm("vacation.payroll_approval"):
+    #     queryset = self.queryset.all()
+    # # Check if the user has employee management permissions
+    # elif request.user.job_position.rank >= 2:
+    #     children = self.request.user.area.get_children()
+    #     # Check if the user is a manager
+    #     if children and request.user.area.manager == request.user:
+    #         queryset = self.queryset.filter(
+    #             # Check if the user is the owner
+    #             (Q(user=request.user))
+    #             # Check if the user is a manager of the area
+    #             | (Q(user__area__manager=request.user))
+    #             # Check if the user is a manager of a child area
+    #             | (Q(user__area__in=children))
+    #             | (
+    #                 Q(user__job_position__rank__lt=request.user.job_position.rank)
+    #                 & Q(user__area=request.user.area)
+    #             )
+    #         )
+    #     else:
+    #         queryset = self.queryset.filter(
+    #             Q(user=request.user)
+    #             | (Q(user__area__manager=request.user))
+    #             | (
+    #                 Q(user__job_position__rank__lt=request.user.job_position.rank)
+    #                 & Q(user__area=request.user.area)
+    #             )
+    #         )
+    # # The user is a regular employee
+    # else:
+    #     queryset = self.queryset.filter(Q(user=request.user))
+    # serializer = self.serializer_class(queryset, many=True)
+    # return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
 
@@ -192,7 +232,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         return response
                     create_notification(
                         "Una solicitud necesita tu aprobación",
-                        f"{request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data['user']}. Ahora necesita tu aprobación.",
+                        f"{request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data['username']}. Ahora necesita tu aprobación.",
                         manager_user,
                     )
                 return response
@@ -236,7 +276,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     hr_message = f"""
                         Hola {hr_user.get_full_name()} 👋,
 
-                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
+                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["username"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
 
                         Ahora esta a la espera de tu aprobación. Por favor revisa la solicitud y apruébala si estas de acuerdo con las fechas solicitadas.
                     """
@@ -257,13 +297,13 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         return response
                     create_notification(
                         "Una solicitud de vacaciones ha sido aprobada por un gerente",
-                        f"La solicitud de vacaciones de {response.data['user']} ha sido aprobada por {request.user.get_full_name()}. Ahora sera revisada por la Gerencia de Recursos Humanos.",
+                        f"La solicitud de vacaciones de {response.data['username']} ha sido aprobada por {request.user.get_full_name()}. Ahora sera revisada por la Gerencia de Recursos Humanos.",
                         payroll_user,
                     )
                     payroll_message = f"""
                         Hola {payroll_user.get_full_name()} 👋,
 
-                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
+                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["username"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
 
                         Ahora esta a la espera de la aprobación de la Gerencia de Recursos Humanos.
                     """
@@ -308,13 +348,13 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         return response
                     create_notification(
                         "Una solicitud de vacaciones necesita tu aprobación",
-                        f"La Gerencia de Recursos Humanos ha aprobado la solicitud de vacaciones de {response.data['user']}. Ahora necesita tu aprobación.",
+                        f"La Gerencia de Recursos Humanos ha aprobado la solicitud de vacaciones de {response.data['username']}. Ahora necesita tu aprobación.",
                         payroll_user,
                     )
                     payroll_message = f"""
                         Hola {payroll_user.get_full_name()} 👋,
 
-                        La Gerencia de Recursos Humanos ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
+                        La Gerencia de Recursos Humanos ha aprobado la solicitud de vacaciones de {response.data["username"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
 
                         Ahora esta a la espera de tu aprobación final. Por favor revisa la solicitud y apruébala si estas de acuerdo con las fechas solicitadas.
                     """
@@ -356,9 +396,11 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             status=status.HTTP_403_FORBIDDEN,
         )
 
-    # Example link: http://localhost:8000/vacation/1/get-pdf/
-    @action(detail=True, methods=["get"], url_path="get-pdf", url_name="get-pdf")
-    def generate_pdf(self, request, pk=None):
+    # Example link: http://localhost:8000/vacation/1/get-request/
+    @action(
+        detail=True, methods=["get"], url_path="get-request", url_name="get-request"
+    )
+    def generate_request(self, request, pk=None):
         context = {
             "vacation": self.get_object(),
             "current_date": timezone.now().strftime("%d de %B de %Y").capitalize(),
@@ -385,6 +427,41 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
         response = HttpResponse(pdf, content_type="application/pdf")
         response["Content-Disposition"] = (
             'inline; filename="Solicitud de vacaciones - {}.pdf"'.format(
+                self.get_object().user.get_full_name()
+            )
+        )
+        return response
+
+    @action(
+        detail=True, methods=["get"], url_path="get-response", url_name="get-response"
+    )
+    def generate_response(self, request, pk=None):
+        context = {
+            "vacation": self.get_object(),
+            "current_date": timezone.now().strftime("%d de %B de %Y").capitalize(),
+            "company_logo": base64.b64encode(
+                open("static/images/just_logo.png", "rb").read()
+            ).decode("utf-8"),
+        }
+        # Import the html template
+        rendered_template = render_to_string(
+            "vacation_response.html",
+            context,
+        )
+        # PDF options
+        options = {
+            "page-size": "Letter",
+            "orientation": "portrait",
+            "encoding": "UTF-8",
+            "margin-top": "0mm",
+            "margin-right": "0mm",
+            "margin-bottom": "0mm",
+            "margin-left": "0mm",
+        }
+        pdf = pdfkit.from_string(rendered_template, False, options=options)
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = (
+            'inline; filename="Respuesta a solicitud de vacaciones - {}.pdf"'.format(
                 self.get_object().user.get_full_name()
             )
         )

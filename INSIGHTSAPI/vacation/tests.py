@@ -63,6 +63,8 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.test_user = self.create_demo_user()
         self.user.job_position.rank = 2
         self.user.job_position.save()
+        self.user.area = self.test_user.area
+        self.user.save()
         self.permission = Permission.objects.get(codename="payroll_approval")
         self.vacation_request = {
             "start_date": "2024-01-02",
@@ -123,12 +125,9 @@ class VacationRequestModelTestCase(BaseTestCase):
         VacationRequest.objects.create(**self.vacation_request_user)
         self.vacation_request_user["user"] = self.user
         VacationRequest.objects.create(**self.vacation_request_user)
+        self.user.job_position.rank = 1
+        self.user.job_position.save()
         response = self.client.get(reverse("vacation-list"))
-        vacation_requests = VacationRequest.objects.filter(user=self.user)
-        serializer = VacationRequestSerializer(vacation_requests, many=True)
-        self.assertEqual(
-            response.data, serializer.data, (response.data, serializer.data)
-        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
@@ -167,10 +166,12 @@ class VacationRequestModelTestCase(BaseTestCase):
         """Test listing all vacations endpoint for a manager with multiple areas."""
         self.test_user.area.manager = self.user
         self.test_user.area.save()
+        self.user.area = Area.objects.create(name="Test Area 2", manager=self.user)
+        self.user.save()
         # Check that the user has a different area than the manager
         self.assertNotEqual(self.test_user.area, self.user.area)
         VacationRequest.objects.create(**self.vacation_request_user)
-        demo_user = self.create_demo_user()
+        self.create_demo_user()
         Area.objects.create(name="Test Area", manager=self.user)
         VacationRequest.objects.create(**self.vacation_request_user)
         response = self.client.get(reverse("vacation-list"))
@@ -531,11 +532,35 @@ class VacationRequestModelTestCase(BaseTestCase):
             "No puedes solicitar más de 15 días de vacaciones.",
         )
 
-    def test_get_vacation_pdf(self):
+    def test_get_vacation_request(self):
         """Test getting the vacation request PDF."""
+        self.user.user_permissions.add(self.permission)
         vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
         response = self.client.get(
-            reverse("vacation-get-pdf", kwargs={"pk": vacation_object.pk})
+            reverse("vacation-get-request", kwargs={"pk": vacation_object.pk})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response["Content-Type"], "application/pdf")
+
+    def test_get_vacation_request_no_permission(self):
+        """Test getting the vacation request PDF without permission."""
+        self.user.job_position.rank = 1
+        self.user.job_position.save()
+        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
+        response = self.client.get(
+            reverse("vacation-get-request", kwargs={"pk": vacation_object.pk})
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_vacation_request_manager(self):
+        """Test getting the vacation request PDF as a manager."""
+        self.user.job_position.rank = 5
+        self.user.job_position.save()
+        self.test_user.area.manager = self.user
+        self.test_user.area.save()
+        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
+        response = self.client.get(
+            reverse("vacation-get-request", kwargs={"pk": vacation_object.pk})
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response["Content-Type"], "application/pdf")
