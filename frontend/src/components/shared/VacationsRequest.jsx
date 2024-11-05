@@ -1,4 +1,4 @@
-import React, {
+import {
     useEffect,
     useRef,
     forwardRef,
@@ -11,7 +11,6 @@ import 'cally';
 
 //Material UI
 import {
-    styled,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -22,19 +21,19 @@ import {
     Collapse,
     IconButton,
     TextField,
-    Autocomplete,
     MenuItem,
-    Fade,
-    LinearProgress,
 } from '@mui/material';
+
+// MUI Lab
+import { LoadingButton } from '@mui/lab';
+
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../context/ProgressbarContext';
 
 // Custom Components
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
-import SnackbarAlert from '../common/SnackBarAlert';
-
-// Icons
-import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 const useListener = (ref, event, listener) => {
     useEffect(() => {
@@ -85,6 +84,7 @@ export const CalendarRange = forwardRef(function CalendarRange(
     return (
         <calendar-range
             ref={ref}
+            locale="es"
             show-outside-days={showOutsideDays || undefined}
             first-day-of-week={0}
             min={minDate.toISOString().split('T')[0]} // Format the date to YYYY-MM-DD
@@ -139,22 +139,17 @@ const Picker = ({ value, onChange, isMondayToFriday, holidays }) => {
 };
 
 const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
+    const { showSnack } = useSnackbar();
     const [value, setValue] = useState('');
     const [textDate, setTextDate] = useState('');
     const [daysAmount, setDaysAmount] = useState('');
     const [collapseDate, setCollapseDate] = useState(true);
-    const [employeesInCharge, setEmployeesInCharge] = useState([]);
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [fileName, setFileName] = useState(
-        'SUBIR CARTA DE SOLICITUD DE VACACIONES'
-    );
-    const [openSnack, setOpenSnack] = useState(false);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState('');
-    const [valueAutocomplete, setValueAutocomplete] = useState(null); // [value, setValue
+
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
+
     const [isMondayToFriday, setIsMondayToFriday] = useState(false);
     const [openCalendar, setOpenCalendar] = useState(false);
-    const [loadingBar, setLoadingBar] = useState(false);
     const [holidays, setHolidays] = useState([]);
 
     const getTextMonth = (month) => {
@@ -163,70 +158,12 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
         ).toLocaleString('es-ES', { month: 'long' });
     };
 
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
     const handleSchedule = (event) => {
         setIsMondayToFriday(event.target.value);
         setOpenCalendar(true);
         if (value !== '') {
             checkAmountOfDays({ target: { value: value } }, event.target.value);
         }
-    };
-
-    const handleCloseSnack = () => {
-        setOpenSnack(false);
-    };
-
-    useEffect(() => {
-        getEmployeesInCharge();
-    }, []);
-
-    const getEmployeesInCharge = async () => {
-        try {
-            const response = await fetch(
-                `${getApiUrl().apiUrl}users/get-subordinates/`,
-                {
-                    method: 'GET',
-                    credentials: 'include',
-                }
-            );
-
-            await handleError(response, showSnack);
-
-            if (response.status === 200) {
-                const data = await response.json();
-                // format the data to put it in the autocomplete
-                setEmployeesInCharge(
-                    data.map((item) => ({ id: item.id, label: item.name }))
-                );
-            }
-        } catch (error) {
-            if (getApiUrl().environment === 'development') {
-                console.error(error);
-            }
-        }
-    };
-
-    const VisuallyHiddenInput = styled('input')({
-        clip: 'rect(0 0 0 0)',
-        clipPath: 'inset(50%)',
-        height: 1,
-        overflow: 'hidden',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        whiteSpace: 'nowrap',
-        width: 1,
-    });
-
-    const handleFileInputChange = (event) => {
-        const file = event.target.files[0];
-        setFileName(file.name);
-        setSelectedFile(file);
     };
 
     const getHolidays = async () => {
@@ -310,39 +247,18 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
 
     const handleCloseVacationDialog = () => {
         setOpenVacation(false);
+        setOpenCalendar(false);
         setTextDate('');
         setValue('');
-        setFileName('SUBIR CARTA DE SOLICITUD DE VACACIONES');
-        setSelectedFile(null);
     };
 
-    const validateData = (event) => {
+    const handleSubmitVacationRequest = async (event) => {
         event.preventDefault();
-        if (selectedFile === null) {
-            showSnack(
-                'error',
-                'Por favor, sube el archivo de solicitud de vacaciones.'
-            );
-            return false;
-        } else if (value === '') {
-            showSnack(
-                'error',
-                'Por favor, selecciona las fechas de inicio y fin de las vacaciones.'
-            );
-            return false;
-        } else {
-            handleSubmitVacationRequest();
-        }
-    };
-
-    const handleSubmitVacationRequest = async () => {
-        setLoadingBar(true);
+        showProgressbar();
         const formData = new FormData();
-        formData.append('request_file', selectedFile);
-        formData.append('mon_to_sat', !isMondayToFriday);
+        formData.append('sat_is_working', !isMondayToFriday);
         formData.append('start_date', value.split('/')[0]);
         formData.append('end_date', value.split('/')[1]);
-        formData.append('user', valueAutocomplete.id);
 
         try {
             const response = await fetch(`${getApiUrl().apiUrl}vacation/`, {
@@ -366,193 +282,139 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
                 console.error(error);
             }
         } finally {
-            setLoadingBar(false);
+            hideProgressbar();
         }
     };
 
     return (
-        <>
-            <Fade in={loadingBar}>
-                <LinearProgress
+        <Dialog
+            maxWidth
+            open={openVacation}
+            onClose={handleCloseVacationDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            component="form"
+            onSubmit={handleSubmitVacationRequest}
+        >
+            <DialogTitle id="alert-dialog-title">
+                {'¿Solicitud de Vacaciones?'}
+            </DialogTitle>
+            <DialogContent sx={{ paddingBottom: 0 }}>
+                <Box
                     sx={{
-                        position: 'absolute',
-                        top: 0,
-                        width: '100%',
-                        zIndex: '1301',
-                    }}
-                    color="secondary"
-                />
-            </Fade>
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
-            <Dialog
-                maxWidth={'lg'}
-                open={openVacation}
-                onClose={handleCloseVacationDialog}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                component="form"
-                onSubmit={validateData}
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {'¿Solicitud de Vacaciones?'}
-                </DialogTitle>
-                <DialogContent sx={{ paddingBottom: 0 }}>
-                    <Box
-                        sx={{
-                            p: '1rem',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '2rem',
-                        }}
-                    >
-                        <Typography
-                            id="alert-dialog-description"
-                            component="div"
-                            sx={{ width: 700 }}
-                        >
-                            Antes de crear una solicitud de vacaciones, ten en
-                            cuenta los siguientes datos:
-                            <ul>
-                                <li>
-                                    Ten en cuenta que no puedes solicitar
-                                    vacaciones para el mes actual.
-                                </li>
-                                <br />
-                                <li>
-                                    Puedes solicitar vacaciones para{' '}
-                                    <b>{getTextMonth(1)}</b> si haces tu
-                                    solicitud antes del día 20 del{' '}
-                                    <b>mes actual.</b>
-                                    <i>
-                                        {' '}
-                                        Si no lo haces en ese periodo, el
-                                        proximo mes disponible para la solicitud
-                                        sera <b>{getTextMonth(2)}</b>.
-                                    </i>
-                                </li>
-                                <br />
-                                <li>
-                                    Asegúrate de seleccionar la cantidad de días
-                                    correctos. Recuerda que son máximo{' '}
-                                    <b>15 días hábiles vigentes</b> por
-                                    solicitud, así que ten en cuenta si tu
-                                    empleado tiene un horario de{' '}
-                                    <b>lunes a viernes o de lunes a sábado</b>,
-                                    y también considera los <b>días festivos</b>
-                                    .
-                                </li>
-                                <br />
-                                <li>
-                                    Sube el archivo de solicitud de vacaciones
-                                    en formato PDF.
-                                </li>
-                                <br />
-                                <li>
-                                    Las restricciones mencionadas ya están
-                                    implementadas en el calendario al
-                                    seleccionar el rango de fechas para las
-                                    vacaciones.
-                                </li>
-                            </ul>
-                        </Typography>
-
-                        <Autocomplete
-                            disablePortal
-                            onChange={(event, newValue) => {
-                                setValueAutocomplete(newValue);
-                            }}
-                            id="combo-box-demo"
-                            options={employeesInCharge}
-                            sx={{ width: 'max-width', px: '4rem' }}
-                            renderInput={(params) => (
-                                <TextField
-                                    required
-                                    {...params}
-                                    label="Empleado"
-                                />
-                            )}
-                        />
-                        <Box sx={{ px: '4rem' }}>
-                            <TextField
-                                required
-                                onChange={handleSchedule}
-                                defaultValue={''}
-                                sx={{ width: '100%' }}
-                                select
-                                label="Tipo de horario del empleado"
-                            >
-                                <MenuItem value={1}>Lunes a Viernes</MenuItem>
-                                <MenuItem value={0}>Lunes a Sábado</MenuItem>
-                            </TextField>
-                        </Box>
-                        <Collapse sx={{ margin: 'auto' }} in={openCalendar}>
-                            <Picker
-                                value={value}
-                                onChange={onChange}
-                                showSnack={showSnack}
-                                isMondayToFriday={isMondayToFriday}
-                                holidays={holidays}
-                            />
-                        </Collapse>
-                        <Collapse sx={{ margin: 'auto' }} in={!!textDate}>
-                            <Typography sx={{ pt: '1rem' }}>
-                                Periodo de vacaciones seleccionado:{' '}
-                            </Typography>
-                            <Collapse
-                                sx={{ textAlign: 'center' }}
-                                in={collapseDate}
-                            >
-                                <Typography style={{ fontWeight: 500 }}>
-                                    {textDate}
-                                </Typography>
-                                <Typography>
-                                    Cantidad de días hábiles seleccionados:{' '}
-                                    <b> {daysAmount} </b>
-                                </Typography>
-                            </Collapse>
-                        </Collapse>
-                        <Box sx={{ textAlign: 'center' }}>
-                            <Button
-                                sx={{ width: '400px' }}
-                                component="label"
-                                variant="contained"
-                                startIcon={<UploadFileIcon />}
-                            >
-                                {fileName}
-                                <VisuallyHiddenInput
-                                    component="input"
-                                    accept=".pdf"
-                                    type="file"
-                                    onChange={handleFileInputChange}
-                                />
-                            </Button>
-                        </Box>
-                    </Box>
-                </DialogContent>
-                <DialogActions
-                    sx={{
+                        p: '1rem',
                         display: 'flex',
-                        justifyContent: 'space-between',
-                        px: '2rem',
+                        flexDirection: 'column',
+                        gap: '2rem',
                     }}
                 >
-                    <Button
-                        variant="contained"
-                        onClick={handleCloseVacationDialog}
+                    <Typography
+                        id="alert-dialog-description"
+                        component="div"
+                        sx={{ width: 700 }}
                     >
-                        Cancelar
-                    </Button>
-                    <Button type="submit" variant="contained">
-                        Solicitar
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </>
+                        Antes de crear una solicitud de vacaciones, ten en
+                        cuenta los siguientes datos:
+                        <ul>
+                            <li>
+                                Ten en cuenta que no puedes solicitar vacaciones
+                                para el mes actual.
+                            </li>
+                            <br />
+                            <li>
+                                Puedes solicitar vacaciones para{' '}
+                                <b>{getTextMonth(1)}</b> si haces tu solicitud
+                                antes del día 20 del <b>mes actual.</b>
+                                <i>
+                                    {' '}
+                                    Si no lo haces en ese periodo, el proximo
+                                    mes disponible para la solicitud sera{' '}
+                                    <b>{getTextMonth(2)}</b>.
+                                </i>
+                            </li>
+                            <br />
+                            <li>
+                                Asegúrate de seleccionar la cantidad de días
+                                correctos. Recuerda que son máximo{' '}
+                                <b>15 días hábiles vigentes</b> por solicitud,
+                                así que ten en cuenta si tu horario es de{' '}
+                                <b>lunes a viernes o de lunes a sábado</b>, y
+                                también considera los <b>días festivos</b>.
+                            </li>
+                            <br />
+                            <li>
+                                Sube el archivo de solicitud de vacaciones en
+                                formato PDF.
+                            </li>
+                            <br />
+                            <li>
+                                Las restricciones mencionadas ya están
+                                implementadas en el calendario al seleccionar el
+                                rango de fechas para las vacaciones.
+                            </li>
+                        </ul>
+                    </Typography>
+
+                    <Box sx={{ px: '4rem' }}>
+                        <TextField
+                            required
+                            onChange={handleSchedule}
+                            defaultValue={''}
+                            sx={{ width: '100%' }}
+                            select
+                            label="Selecciona tu horario"
+                        >
+                            <MenuItem value={1}>Lunes a Viernes</MenuItem>
+                            <MenuItem value={0}>Lunes a Sábado</MenuItem>
+                        </TextField>
+                    </Box>
+                    <Collapse sx={{ margin: 'auto' }} in={!!textDate}>
+                        <Typography sx={{ pt: '1rem' }}>
+                            Periodo de vacaciones seleccionado:{' '}
+                        </Typography>
+                        <Collapse
+                            sx={{ textAlign: 'center' }}
+                            in={collapseDate}
+                        >
+                            <Typography style={{ fontWeight: 500 }}>
+                                {textDate}
+                            </Typography>
+                            <Typography>
+                                Cantidad de días hábiles seleccionados:{' '}
+                                <b> {daysAmount} </b>
+                            </Typography>
+                        </Collapse>
+                    </Collapse>
+                    <Collapse sx={{ margin: 'auto' }} in={openCalendar}>
+                        <Picker
+                            value={value}
+                            onChange={onChange}
+                            showSnack={showSnack}
+                            isMondayToFriday={isMondayToFriday}
+                            holidays={holidays}
+                        />
+                    </Collapse>
+                </Box>
+            </DialogContent>
+            <DialogActions
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    px: '2rem',
+                }}
+            >
+                <Button variant="contained" onClick={handleCloseVacationDialog}>
+                    Cancelar
+                </Button>
+                <LoadingButton
+                    loading={isProgressVisible}
+                    type="submit"
+                    variant="contained"
+                >
+                    Solicitar
+                </LoadingButton>
+            </DialogActions>
+        </Dialog>
     );
 };
 
