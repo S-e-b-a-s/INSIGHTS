@@ -21,12 +21,6 @@ import managersJr9 from '../../images/managers-jr/1010178143.webp';
 
 const managersJr = [
     {
-        name: 'Rodrigo Lozano',
-        management: 'GERENTE JR INFRAESTRUCTURA Y REDES',
-        image: managersJr7,
-        description: '',
-    },
-    {
         name: 'Marcela Osorio',
         management: 'GERENTE JR. DE MESA DE SERVICIO',
         image: managersJr8,
@@ -48,12 +42,6 @@ const managersJr = [
         name: 'Katterene Castrillon',
         management: 'GERENTE DE CUENTAS',
         image: managersJr2,
-        description: '',
-    },
-    {
-        name: 'Karen Romero',
-        management: 'GERENTE DE CUENTAS JR',
-        image: managersJr3,
         description: '',
     },
     {
