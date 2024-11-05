@@ -1,82 +1,104 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+// Libraries
 import {
     Container,
     Box,
     Typography,
     TextField,
     MenuItem,
-    Button,
-    LinearProgress,
+    Alert,
 } from '@mui/material';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
+import { LoadingButton } from '@mui/lab';
+
+// Icons
 import SendIcon from '@mui/icons-material/Send';
-import SnackbarAlert from '../common/SnackBarAlert';
+
+// Custom Components/Functions
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../context/ProgressbarContext';
+
 // Media
-import Pqrs from '../../images/pqrs/pqrs.png';
+import PqrsImage from '../../images/pqrs/pqrs.png';
 
-const areas = [
-    { value: 'Gerencia General' },
-    { value: 'Gerencia de Riesgo y Control Interno' },
-    { value: 'Gerencia Gestión Humana' },
-    { value: 'Gerencia de Planeación' },
-    { value: 'Gerencia Administrativa' },
-    { value: 'Gerencia de Legal' },
-    { value: 'Gerencia de Operaciones' },
-    { value: 'Gerencia de Recursos Físicos' },
-];
-
-const motivos = [
-    { value: 'Petición' },
-    { value: 'Queja' },
-    { value: 'Reclamo' },
-    { value: 'Sugerencia' },
-    { value: 'Otro' },
+const reasons = [
+    { value: 'PETICIÓN', label: 'Petición' },
+    { value: 'QUEJA', label: 'Queja' },
+    { value: 'RECLAMO', label: 'Reclamo' },
+    { value: 'SUGERENCIA', label: 'Sugerencia' },
+    { value: 'OTRO', label: 'Otro' },
 ];
 
 const validationSchema = Yup.object().shape({
-    area: Yup.string().required('Campo requerido'),
-    motivo: Yup.string().required('Campo requerido'),
+    management: Yup.string().required('Campo requerido'),
+    reason: Yup.string().required('Campo requerido'),
     description: Yup.string().required('Campo requerido'),
 });
 
-const Suggestions = () => {
-    const [loadingBar, setLoadingBar] = useState(false);
-    const [openSnack, setOpenSnack] = useState(false);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState('');
+const Pqrs = () => {
+    const [managements, setManagements] = useState([]);
+    const { showSnack } = useSnackbar();
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
 
-    const handleCloseSnack = () => setOpenSnack(false);
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
-    const handleSubmit = async (values) => {
-        setLoadingBar(true);
-
+    const getManagement = async () => {
         try {
             const response = await fetch(
-                `${getApiUrl().apiUrl}pqrs/complaints/`,
+                `${getApiUrl().apiUrl}pqrs/management/`,
                 {
-                    method: 'POST',
+                    method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(values),
                     credentials: 'include',
                 }
             );
-            setLoadingBar(false);
+
             await handleError(response, showSnack);
+            if (response.status === 200) {
+                const data = await response.json();
+                let managements = data.map((management) => ({
+                    value: management.id,
+                    label: management.area,
+                }));
+                setManagements(managements);
+            }
         } catch (error) {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
-            setLoadingBar(false);
+        }
+    };
+
+    useEffect(() => {
+        getManagement();
+    }, []);
+
+    const handleSubmit = async (values, { resetForm }) => {
+        showProgressbar();
+
+        try {
+            const response = await fetch(`${getApiUrl().apiUrl}pqrs/pqrs/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(values),
+                credentials: 'include',
+            });
+            await handleError(response, showSnack);
+            if (response.status === 201) {
+                showSnack('success', 'Mensaje enviado correctamente');
+                resetForm();
+            }
+        } catch (error) {
+            if (getApiUrl().environment === 'development') {
+                console.error(error);
+            }
+        } finally {
+            hideProgressbar(false);
         }
     };
 
@@ -107,7 +129,7 @@ const Suggestions = () => {
                 {type === 'select' &&
                     options.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
-                            {option.value}
+                            {option.label}
                         </MenuItem>
                     ))}
             </TextField>
@@ -117,7 +139,7 @@ const Suggestions = () => {
     return (
         <Container sx={{ my: '5rem' }}>
             <img
-                src={Pqrs}
+                src={PqrsImage}
                 alt="Coexistence Committee"
                 style={{
                     width: '70%',
@@ -135,7 +157,7 @@ const Suggestions = () => {
                 </Typography>
                 <Typography variant="body1">
                     En esta sección puedes enviar un mensaje a las distintas
-                    Gerencias de la Compañía, según tus intereses. Tienes la
+                    Gerencias de la Compañía según tus intereses. Tienes la
                     opción de expresar de manera respetuosa tus inconformidades,
                     inconvenientes, sugerencias o felicitaciones, dirigiendo el
                     mensaje a la Gerencia correspondiente.
@@ -144,13 +166,26 @@ const Suggestions = () => {
                     Ten en cuenta que el contenido de tu mensaje será
                     confidencial y únicamente lo conocerán tú y el Gerente del
                     área seleccionada. Te recomendamos redactar de forma clara,
-                    con prudencia y buena ortografía, para asegurar que tu
+                    con prudencia y buena ortografía para asegurar que tu
                     mensaje sea fácilmente comprensible.
                 </Typography>
+
+                <Alert severity="info" sx={{ mt: '1rem' }}>
+                    <Typography variant="body1">
+                        Ten en cuenta que tus datos de contacto serán enviados a
+                        la Gerencia correspondiente para que puedan responder a
+                        tu mensaje. Si deseas mantener tu mensaje anónimo y
+                        corresponde a una de las categorías del módulo de línea
+                        ética, por favor haz tu solicitud por ese medio.
+                        Recuerda que para acceder al módulo de línea ética
+                        tienes que cerrar sesión e ingresar por el botón de
+                        línea ética en el inicio de sesión de la intranet.
+                    </Typography>
+                </Alert>
             </Box>
 
             <Formik
-                initialValues={{ area: '', motivo: '', description: '' }}
+                initialValues={{ management: '', reason: '', description: '' }}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}
             >
@@ -164,15 +199,15 @@ const Suggestions = () => {
                     >
                         <FormikTextField
                             type="select"
-                            options={areas}
-                            name="area"
+                            options={managements}
+                            name="management"
                             label="Área"
                             autoComplete="off"
                         />
                         <FormikTextField
                             type="select"
-                            options={motivos}
-                            name="motivo"
+                            options={reasons}
+                            name="reason"
                             label="Motivo"
                             autoComplete="off"
                         />
@@ -184,40 +219,20 @@ const Suggestions = () => {
                             label="Deja tu mensaje aquí"
                             autoComplete="off"
                         />
-                        <Button
-                            disabled={loadingBar}
+                        <LoadingButton
+                            loading={isProgressVisible}
                             type="submit"
                             sx={{ width: 'max-content' }}
                             variant="outlined"
                             endIcon={<SendIcon />}
                         >
                             Enviar
-                        </Button>
+                        </LoadingButton>
                     </Box>
                 </Form>
             </Formik>
-
-            {loadingBar && (
-                <Box
-                    sx={{
-                        width: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                    }}
-                >
-                    <LinearProgress />
-                </Box>
-            )}
-
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
         </Container>
     );
 };
 
-export default Suggestions;
+export default Pqrs;
