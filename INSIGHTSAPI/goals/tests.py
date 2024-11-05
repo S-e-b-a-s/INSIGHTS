@@ -145,7 +145,7 @@ class GoalAPITestCase(BaseTestCase):
         self.test_metas_upload(called=True)
         # See if there are goals created
         number_goals = Goals.objects.all().count()
-        self.assertTrue(number_goals > 0)
+        self.assertTrue(number_goals > 0) 
         # put accepted to True and accepted_at to now() to Goals
         Goals.objects.all().update(accepted=True, accepted_at=timezone.now())
         # Read the file again and upload it
@@ -240,7 +240,7 @@ class GoalAPITestCase(BaseTestCase):
         response = self.client.get("/goals/?date=ENERO-2022&column=delivery")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)  # type: ignore
-        self.assertIn("StaffNet Pruebas", response.data[0].get("name"))  # type: ignore
+        self.assertIn("STAFFNET PRUEBAS", response.data[0].get("name"))  # type: ignore
 
     def test_get_one_history(self):
         """Test the get-one-history view."""

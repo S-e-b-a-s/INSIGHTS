@@ -1,11 +1,12 @@
 """Utility functions for the vacation app."""
 
-import holidays
 from datetime import datetime, timedelta
 from distutils.util import strtobool
 
+import holidays
 
-def is_working_day(date, sat_is_working=True):
+
+def is_working_day(date, sat_is_working):
     """Check if a date is a working day."""
     if isinstance(sat_is_working, str):
         sat_is_working = bool(strtobool(sat_is_working))
@@ -21,7 +22,7 @@ def is_working_day(date, sat_is_working=True):
     return True
 
 
-def get_working_days(start_date, end_date, sat_is_working=True):
+def get_working_days(start_date, end_date, sat_is_working: bool):
     """Get the number of working days between two dates."""
     working_days = 0
     if isinstance(sat_is_working, str):
@@ -36,7 +37,7 @@ def get_working_days(start_date, end_date, sat_is_working=True):
     return working_days
 
 
-def get_return_date(end_date, sat_is_working=True) -> datetime:
+def get_return_date(end_date, sat_is_working) -> datetime:
     """Get the return date of a vacation request."""
     if isinstance(sat_is_working, str):
         sat_is_working = bool(strtobool(sat_is_working))

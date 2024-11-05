@@ -1,11 +1,15 @@
 """This module contains the model for the vacation request """
 
+import pdfkit
+from django.conf import settings
+from django.core.mail import EmailMessage, send_mail
 from django.db import models
-from django.core.mail import send_mail
-from users.models import User
-from notifications.utils import create_notification
-from vacation.utils import get_return_date
+from django.template.loader import render_to_string
 from django.utils import timezone
+
+from notifications.utils import create_notification
+from users.models import User
+from vacation.utils import get_return_date, get_working_days
 
 
 class VacationRequest(models.Model):
@@ -16,13 +20,14 @@ class VacationRequest(models.Model):
     )
     start_date = models.DateField()
     end_date = models.DateField()
-    sat_is_working = models.BooleanField(default=True)
-    request_file = models.FileField(upload_to="files/vacation_requests/")
-    manager_approbation = models.BooleanField(null=True, blank=True)
+    sat_is_working = models.BooleanField()
+    boss_is_approved = models.BooleanField(null=True, blank=True)
+    boss_approved_at = models.DateTimeField(null=True, blank=True)
+    manager_is_approved = models.BooleanField(null=True, blank=True)
     manager_approved_at = models.DateTimeField(null=True, blank=True)
-    hr_approbation = models.BooleanField(null=True, blank=True)
+    hr_is_approved = models.BooleanField(null=True, blank=True)
     hr_approved_at = models.DateTimeField(null=True, blank=True)
-    payroll_approbation = models.BooleanField(null=True, blank=True)
+    payroll_is_approved = models.BooleanField(null=True, blank=True)
     payroll_approved_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(
         choices=[
@@ -35,23 +40,25 @@ class VacationRequest(models.Model):
         default="PENDIENTE",
     )
     comment = models.TextField(null=True, blank=True)
-    # this column is deprecated, but needs to be kept for backwards compatibility
-    uploaded_by = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="uploaded_requests"
-    )
     created_at = models.DateTimeField(auto_now_add=True)
+    # this column is used to store the job position of the user at the time of the request
+    user_job_position = models.ForeignKey(
+        "hierarchy.JobPosition",
+        related_name="vacation_requests",
+        on_delete=models.PROTECT,
+    )
 
     class Meta:
         """Meta class for the vacation request model."""
 
         permissions = [
-            ("payroll_approbation", "Can approve payroll"),
+            ("payroll_approval", "Can approve payroll"),
         ]
 
     @property
     def duration(self):
         """Return the duration of the vacation request."""
-        return (self.end_date - self.start_date).days
+        return get_working_days(self.start_date, self.end_date, self.sat_is_working)
 
     @property
     def return_date(self):
@@ -64,11 +71,13 @@ class VacationRequest(models.Model):
     def save(self, *args, **kwargs):
         """Override the save method to update status and create notifications."""
         approbation_fields = {
-            "manager_approbation": "manager_approved_at",
-            "hr_approbation": "hr_approved_at",
-            "payroll_approbation": "payroll_approved_at",
+            "boss_is_approved": "boss_approved_at",
+            "manager_is_approved": "manager_approved_at",
+            "hr_is_approved": "hr_approved_at",
+            "payroll_is_approved": "payroll_approved_at",
         }
 
+        # Set the time of approval
         for field, approved_at in approbation_fields.items():
             approbation = getattr(self, field)
             if approbation is not None:
@@ -84,23 +93,7 @@ class VacationRequest(models.Model):
                 f"Tus vacaciones del {self.start_date} al {self.end_date} han sido aprobadas. Esperamos que las disfrutes ⛱!.",
                 self.user,
             )
-            message = f"""
-                Hola {self.user.get_full_name()} 👋,
-
-                Nos complace informarte que tu solicitud de vacaciones del {self.start_date.strftime("%d de %B del %Y")} al {self.end_date.strftime("%d de %B del %Y")} ha sido aprobada. 
-
-                Esperamos que disfrutes de este merecido descanso y que regreses con energías renovadas. Si necesitas alguna información adicional o asistencia durante tus vacaciones, no dudes en contactarnos.
-
-                ¡Te deseamos unas vacaciones maravillosas y relajantes! ⛱
-
-                Saludos cordiales,
-                """
-            send_mail(
-                "Vacaciones aprobadas",
-                message,
-                None,
-                [str(self.user.email)],
-            )
+            self.send_approval_email_with_pdf()
         elif self.status == "RECHAZADA":
             message = f"""
                 Hola {self.user.get_full_name()} 👋,
@@ -144,3 +137,55 @@ class VacationRequest(models.Model):
                 self.user,
             )
         super().save(*args, **kwargs)
+
+    def send_approval_email_with_pdf(self):
+        # Render the vacation request details in a PDF
+        pdf = self.generate_pdf()
+
+        # Create the email message
+        subject = "Solicitud de vacaciones aprobada"
+        message = (
+            f"Hola {self.user.get_full_name()} 👋,\n\n"
+            "Nos complace informarte que tu solicitud de vacaciones ha sido aprobada.\n\n"
+            f"Por favor revisa el archivo adjunto para más detalles sobre tus vacaciones del {self.start_date.strftime('%d de %B del %Y')} al {self.end_date.strftime('%d de %B del %Y')}.\n\n"
+            "¡Esperamos que disfrutes tus vacaciones! 🏖️\n\n"
+        )
+
+        email = EmailMessage(
+            subject, message, settings.DEFAULT_FROM_EMAIL, [str(self.user.email)]
+        )
+
+        # Attach the generated PDF
+        email.attach(
+            filename="Solicitud de vacaciones.pdf",
+            content=pdf,
+            mimetype="application/pdf",
+        )
+
+        # Send the email
+        email.send()
+
+    def generate_pdf(self):
+        # Create context for the PDF
+        context = {
+            "vacation": self,
+        }
+
+        # Render the HTML template to a string
+        rendered_html = render_to_string("vacation_response.html", context)
+
+        # PDF options
+        options = {
+            "page-size": "Letter",
+            "orientation": "Portrait",
+            "encoding": "UTF-8",
+            "margin-top": "0mm",
+            "margin-right": "0mm",
+            "margin-bottom": "0mm",
+            "margin-left": "0mm",
+        }
+
+        # Generate the PDF from HTML
+        pdf = pdfkit.from_string(rendered_html, False, options=options)
+
+        return pdf

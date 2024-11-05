@@ -1,21 +1,20 @@
 """Serializers for the vacation app."""
 
 from datetime import datetime
-from rest_framework import serializers
-from users.models import User
 from distutils.util import strtobool
-from .utils import is_working_day, get_working_days
+
+from rest_framework import serializers
+
+from hierarchy.models import JobPosition
+
 from .models import VacationRequest
+from .utils import get_working_days, is_working_day
 
 
 class VacationRequestSerializer(serializers.ModelSerializer):
     """Serializer for the vacation request model."""
 
-    start_date = serializers.DurationField
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    uploaded_by = serializers.PrimaryKeyRelatedField(
-        read_only=True, default=serializers.CurrentUserDefault()
-    )
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         """Meta class for the serializer."""
@@ -26,34 +25,39 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "user",
             "start_date",
             "end_date",
-            "request_file",
             "created_at",
-            "manager_approbation",
+            "boss_is_approved",
+            "boss_approved_at",
+            "manager_is_approved",
             "manager_approved_at",
-            "hr_approbation",
+            "hr_is_approved",
             "hr_approved_at",
-            "payroll_approbation",
+            "payroll_is_approved",
             "payroll_approved_at",
-            "uploaded_by",
+            "sat_is_working",
             "status",
             "comment",
+            "user_job_position",
         ]
         read_only_fields = [
+            "boss_approved_at",
             "manager_approved_at",
             "hr_approved_at",
             "payroll_approved_at",
-            "uploaded_by",
             "created_at",
+            "user",
+            "user_job_position",
         ]
 
     def to_representation(self, instance):
         """Return the representation of the vacation request."""
         data = super().to_representation(instance)
-        data["user"] = instance.user.get_full_name()
-        data["uploaded_by"] = instance.uploaded_by.get_full_name()
+        data["username"] = instance.user.get_full_name()
+        data["user_id"] = instance.user.id
         data.pop("manager_approved_at")
         data.pop("hr_approved_at")
         data.pop("payroll_approved_at")
+        data.pop("user_job_position")
         return data
 
     def validate(self, attrs):
@@ -63,32 +67,32 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             # Creation
             created_at = datetime.now()
             request = self.context["request"]
-            if request.data.get("mon_to_sat") is None:
+            if request.data.get("sat_is_working") is None:
                 raise serializers.ValidationError(
                     "Debes especificar si trabajas los sábados."
                 )
             else:
                 try:
-                    mon_to_sat = bool(strtobool(request.data["mon_to_sat"]))
+                    sat_is_working = bool(strtobool(request.data["sat_is_working"]))
                 except ValueError:
                     raise serializers.ValidationError(
                         "Debes especificar si trabajas los sábados o no."
                     )
-            if not is_working_day(attrs["start_date"], mon_to_sat):
+            if not is_working_day(attrs["start_date"], sat_is_working):
                 raise serializers.ValidationError(
                     "No puedes iniciar tus vacaciones un día no laboral."
                 )
-            if not is_working_day(attrs["end_date"], mon_to_sat):
+            if not is_working_day(attrs["end_date"], sat_is_working):
                 raise serializers.ValidationError(
                     "No puedes terminar tus vacaciones un día no laboral."
                 )
-            if request.data["mon_to_sat"] == True:
+            if request.data["sat_is_working"] == True:
                 if attrs["start_date"].weekday() == 5:
                     raise serializers.ValidationError(
                         "No puedes iniciar tus vacaciones un sábado."
                     )
             if (
-                get_working_days(attrs["start_date"], attrs["end_date"], mon_to_sat)
+                get_working_days(attrs["start_date"], attrs["end_date"], sat_is_working)
                 > 15
             ):
                 raise serializers.ValidationError(
@@ -116,49 +120,42 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "No puedes terminar tus vacaciones un domingo."
                 )
-            uploaded_by = self.instance.uploaded_by if self.instance else request.user
-            if attrs["user"] == uploaded_by and attrs["user"].job_position.rank <= 3:
-                raise serializers.ValidationError(
-                    "No puedes subir solicitudes para ti mismo."
-                )
-            if (
-                attrs["user"].job_position.rank >= uploaded_by.job_position.rank
-                and uploaded_by != attrs["user"]
-            ):
-                raise serializers.ValidationError(
-                    "No puedes crear una solicitud para este usuario."
-                )
         else:
             # Update
             if (
-                self.instance.manager_approbation
+                self.instance.boss_is_approved
                 and "status" in attrs
                 and attrs["status"] == "CANCELADA"
             ):
                 raise serializers.ValidationError(
-                    "No puedes cancelar una solicitud que ya ha sido aprobada por tu jefe."
+                    "No puedes cancelar una solicitud que ya ha recibido aprobación."
                 )
         return attrs
 
     def create(self, validated_data):
         """Create the vacation request."""
-        # Remove the approbation fields from the validated data
-        validated_data.pop("hr_approbation", None)
-        validated_data.pop("payroll_approbation", None)
-        validated_data.pop("manager_approbation", None)
-        validated_data["uploaded_by"] = self.context["request"].user
+        # Remove the is_approved fields from the validated data (security check)
+        validated_data.pop("boss_is_approved", None)
+        validated_data.pop("manager_is_approved", None)
+        validated_data.pop("hr_is_approved", None)
+        validated_data.pop("payroll_is_approved", None)
+        # Add the user job position to the validated data
+        job_position = JobPosition.objects.get(
+            id=validated_data["user"].job_position_id
+        )
+        validated_data["user_job_position"] = job_position
+        # Create the vacation request
         vacation_request = super().create(validated_data)
         return vacation_request
 
     def update(self, instance, validated_data):
         """Update the vacation request."""
         allowed_fields = [
-            "manager_approbation",
-            "manager_approved_at",
-            "hr_approbation",
-            "hr_approved_at",
-            "payroll_approbation",
-            "payroll_approved_at",
+            "boss_is_approved",
+            "manager_is_approved",
+            "hr_is_approved",
+            "payroll_is_approved",
+            # Status can only be updated to CANCELADA
             "status",
             "comment",
         ]

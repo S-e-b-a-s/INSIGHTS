@@ -1,99 +1,94 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Solicitud de Vacaciones</title>
-        <style>
-            html,
-            body {
-                height: 100%;
-                margin: -100px 10px 0px 10px;
-                font-family: 'Helvetica Neue', Arial, sans-serif;
-                color: #333;
-                line-height: 1.6;
-                text-align: center;
-                align-items: center;
-                font-size: 20px;
-                display: flex;
-                justify-content: center;
-            }
 
-            #signature-rh {
-                padding-left: 200px;
-            }
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Solicitud de Vacaciones</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			line-height: 1.8;
+			color: #333;
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			height: 1330px;
+			/* Fixed height for PDF */
+			font-size: 18px;
+			position: relative;
+			/* Make the body a containing block */
+		}
 
-            .header {
-                margin-top: 80px;
-                margin-bottom: 40px;
-            }
+		.header {
+			text-align: right;
+			margin-bottom: 20px;
+		}
 
-            .header h1 {
-                margin: 0;
-                font-size: 28px;
-                color: #0056b3;
-                letter-spacing: 1px;
-            }
+		.signature {
+			margin-top: 60px;
+		}
 
-            .signature {
-                margin-top: 200px;
-                text-align: center;
-            }
+		.content {
+			position: absolute;
+			/* Absolute positioning */
+			top: 50%;
+			/* Move to the middle of the container */
+			left: 50%;
+			transform: translate(-50%, -50%);
+			/* Center it by adjusting */
+			width: 100%;
+			/* Ensure the content takes full width */
+			max-width: 800px;
+		}
 
-            .signature p {
-                margin: 5px 0;
-                text-align: left;
-            }
+		.content p {
+			margin-bottom: 35px;
+			font-size: 20px;
+		}
 
-            .footer {
-                margin-top: 20px;
-                font-size: 14px;
-                text-align: center;
-                color: #777;
-            }
-        </style>
-    </head>
+		.centered-image {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			opacity: 0.1;
+			width: 100%;
+			max-width: 800px;
+		}
+	</style>
+</head>
 
-    <body>
-        <div class="card">
-            <div class="content">
-                <p>{{ vacation.created_at|date }}</p>
-                <br />
-                <p>Estimado (a) Gestión Humana</p>
-                <p>CYC SERVICES S.A.S.</p>
-                <p>Ref. Solicitud de vacaciones disfrutadas</p>
-                <br />
-                <p>
-                    Por la presente le solicito se me conceda {{
-                    vacation.duration }} días de mi periodo vacacional
-                    comprendido para el año {{ vacation.start_date|date:"Y" }}.
-                </p>
-                <p>
-                    Los días tomados serán a partir del {{ vacation.start_date
-                    }} hasta el día {{ vacation.end_date }}, para retomar a mis
-                    labores el día {{ vacation.return_date }}.
-                </p>
-                <p>Quedo agradecido(a) ante su pronta respuesta.</p>
-                <div class="signature">
-                    <p>Atentamente,</p>
-                    <p><strong>{{ vacation.user }}</strong></p>
-                    <p>{{ vacation.user.job_position }}</p>
-                </div>
-                <!-- <div class="signature-line">
-                <table>
-                    <td>
-                        _____________________________________<br>
-                        GARZON NAVAS CESAR ALBERTO <br>
-                        <i>Gerente General</i>
-                    </td>
-                    <td id="signature-rh">
-                        _____________________________________<br>
-                        PINZON MARTINEZ JEANNETH OTILIA<br>
-                        <i>Gerente de Gestión Humana</i>
-                    </td>
-                </table>
-            </div> -->
-            </div>
-        </div>
-    </body>
+<body>
+	<img class="centered-image" alt="Logo de la empresa C&C SERVICES S.A.S"
+		src="data:image/png;base64,{{ company_logo }}" />
+
+	<div class="header">
+		<p>{{ vacation.created_at|date }}</p>
+	</div>
+
+	<div class="content">
+		<p>
+			Por la presente yo, <strong>{{ vacation.user }}</strong>, identificado(a) con la cédula de ciudadanía
+			<strong>{{ vacation.user.cedula }}</strong>, y desempeñando
+			el cargo de <strong>{{ vacation.user_job_position }}</strong> en la empresa, me permito solicitar <strong>{{ vacation.duration }}</strong> días de vacaciones.
+		</p>
+
+		<p>
+			Los días solicitados serán a partir del <strong>{{ vacation.start_date }}</strong> hasta el <strong>{{ vacation.end_date }}</strong>, y retomaré mis labores el
+			<strong>{{ vacation.return_date }}</strong>.
+		</p>
+
+		<p>Notifico con antelación mi solicitud para que se realicen los ajustes o acuerdos necesarios para el normal
+			funcionamiento de las actividades en mi ausencia.</p>
+
+		<p>Agradezco de antemano su pronta respuesta.</p>
+		<div class="signature">
+			<p>Atentamente,</p>
+			<p>{{ vacation.user }}</p>
+			<p>C.C {{ vacation.user.cedula }}</p>
+		</div>
+	</div>
+</body>
+
 </html>
