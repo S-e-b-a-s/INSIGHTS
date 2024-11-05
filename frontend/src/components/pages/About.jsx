@@ -49,7 +49,7 @@ const managements = [
     },
     {
         name: 'Diego González',
-        management: 'Gerente de Legal y Riesgo',
+        management: 'Gerente de Legal',
         image: diegoGonzales,
         description:
             'LEGAL: Prestar asesorías y representación judicial de los clientes internos y externos. \n \nRIESGO: Ejecutar procesos de Investigación y análisis mediante la implementación y desarrollo de estrategias que garanticen la mitigación del riesgo.',
@@ -505,7 +505,7 @@ const About = () => {
                             justifyContent: 'flex-end',
                         }}
                     >
-                        Pablo Cesár Castañeda
+                        Pablo César Castañeda
                     </Typography>
                 </Box>
             </Box>
