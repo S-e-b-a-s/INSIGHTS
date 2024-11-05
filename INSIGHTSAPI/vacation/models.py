@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from notifications.utils import create_notification
 from users.models import User
-from vacation.utils import get_return_date
+from vacation.utils import get_return_date, get_working_days
 
 
 class VacationRequest(models.Model):
@@ -20,7 +20,7 @@ class VacationRequest(models.Model):
     )
     start_date = models.DateField()
     end_date = models.DateField()
-    sat_is_working = models.BooleanField(default=True)
+    sat_is_working = models.BooleanField()
     boss_is_approved = models.BooleanField(null=True, blank=True)
     boss_approved_at = models.DateTimeField(null=True, blank=True)
     manager_is_approved = models.BooleanField(null=True, blank=True)
@@ -58,7 +58,7 @@ class VacationRequest(models.Model):
     @property
     def duration(self):
         """Return the duration of the vacation request."""
-        return (self.end_date - self.start_date).days
+        return get_working_days(self.start_date, self.end_date, self.sat_is_working)
 
     @property
     def return_date(self):

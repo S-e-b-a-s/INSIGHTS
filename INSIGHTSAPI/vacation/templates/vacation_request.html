@@ -1,67 +1,94 @@
 <!DOCTYPE html>
 <html lang="es">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Solicitud de Vacaciones</title>
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-				line-height: 1.6;
-				color: #333;
-				max-width: 800px;
-				margin: 0 auto;
-				padding: 20px;
-			}
-			.header {
-				text-align: right;
-				margin-bottom: 20px;
-			}
-			.content {
-				margin-bottom: 20px;
-			}
-			.signature {
-				margin-top: 40px;
-			}
-			.signature-line {
-				border-bottom: 1px solid #000;
-				width: 200px;
-				height: 20px;
-				margin-bottom: 5px;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="header">
-			<p>Fecha de envío de la solicitud: {{ fecha_solicitud }}</p>
-		</div>
 
-		<div class="content">
-			<p>Estimado(a) {{ nombre_destinatario }},</p>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Solicitud de Vacaciones</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			line-height: 1.8;
+			color: #333;
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			height: 1330px;
+			/* Fixed height for PDF */
+			font-size: 18px;
+			position: relative;
+			/* Make the body a containing block */
+		}
 
-			<p>
-				Mediante la presente carta, yo, {{ nombre_solicitante }} identificado(a) con la cédula de ciudadanía {{ numero_cedula }} y ocupando el cargo en la empresa de {{
-				cargo_empresa }}, me permito solicitar {{ dias_vacaciones }} días de vacaciones, que corresponden al período del año {{ año }}.
-			</p>
+		.header {
+			text-align: right;
+			margin-bottom: 20px;
+		}
 
-			<p>
-				Me remito con respeto a mi jefe inmediato {{ nombre_jefe_inmediato }} para informar que los días para este periodo serán a partir del {{ fecha_inicio_vacaciones
-				}} hasta el día {{ fecha_fin_vacaciones }}, para retomar a mis labores el día {{ fecha_retorno_trabajo }}.
-			</p>
+		.signature {
+			margin-top: 60px;
+		}
 
-			<p>
-				Decido notificar mi solicitud con antelación con el fin de realizar los cambios o acuerdos correspondientes para el normal funcionamiento de las actividades
-				empresariales en mi ausencia.
-			</p>
+		.content {
+			position: absolute;
+			/* Absolute positioning */
+			top: 50%;
+			/* Move to the middle of the container */
+			left: 50%;
+			transform: translate(-50%, -50%);
+			/* Center it by adjusting */
+			width: 100%;
+			/* Ensure the content takes full width */
+			max-width: 800px;
+		}
 
-			<p>Quedo agradecido(a) ante su pronta respuesta.</p>
-		</div>
+		.content p {
+			margin-bottom: 35px;
+			font-size: 20px;
+		}
 
+		.centered-image {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			opacity: 0.1;
+			width: 100%;
+			max-width: 800px;
+		}
+	</style>
+</head>
+
+<body>
+	<img class="centered-image" alt="Logo de la empresa C&C SERVICES S.A.S"
+		src="data:image/png;base64,{{ company_logo }}" />
+
+	<div class="header">
+		<p>{{ vacation.created_at|date }}</p>
+	</div>
+
+	<div class="content">
+		<p>
+			Por la presente yo, <strong>{{ vacation.user }}</strong>, identificado(a) con la cédula de ciudadanía
+			<strong>{{ vacation.user.cedula }}</strong>, y desempeñando
+			el cargo de <strong>{{ vacation.user_job_position }}</strong> en la empresa, me permito solicitar <strong>{{ vacation.duration }}</strong> días de vacaciones.
+		</p>
+
+		<p>
+			Los días solicitados serán a partir del <strong>{{ vacation.start_date }}</strong> hasta el <strong>{{ vacation.end_date }}</strong>, y retomaré mis labores el
+			<strong>{{ vacation.return_date }}</strong>.
+		</p>
+
+		<p>Notifico con antelación mi solicitud para que se realicen los ajustes o acuerdos necesarios para el normal
+			funcionamiento de las actividades en mi ausencia.</p>
+
+		<p>Agradezco de antemano su pronta respuesta.</p>
 		<div class="signature">
-			<p>Atentamente:</p>
-			<div class="signature-line"></div>
-			<p>{{ nombre_solicitante }}</p>
-			<p>C.C {{ numero_cedula }}</p>
+			<p>Atentamente,</p>
+			<p>{{ vacation.user }}</p>
+			<p>C.C {{ vacation.user.cedula }}</p>
 		</div>
-	</body>
+	</div>
+</body>
+
 </html>

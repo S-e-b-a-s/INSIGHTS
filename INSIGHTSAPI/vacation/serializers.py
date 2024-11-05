@@ -5,6 +5,8 @@ from distutils.util import strtobool
 
 from rest_framework import serializers
 
+from hierarchy.models import JobPosition
+
 from .models import VacationRequest
 from .utils import get_working_days, is_working_day
 
@@ -32,14 +34,19 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "hr_approved_at",
             "payroll_is_approved",
             "payroll_approved_at",
+            "sat_is_working",
             "status",
             "comment",
+            "user_job_position",
         ]
         read_only_fields = [
+            "boss_approved_at",
             "manager_approved_at",
             "hr_approved_at",
             "payroll_approved_at",
             "created_at",
+            "user",
+            "user_job_position",
         ]
 
     def to_representation(self, instance):
@@ -50,6 +57,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         data.pop("manager_approved_at")
         data.pop("hr_approved_at")
         data.pop("payroll_approved_at")
+        data.pop("user_job_position")
         return data
 
     def validate(self, attrs):
@@ -59,32 +67,32 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             # Creation
             created_at = datetime.now()
             request = self.context["request"]
-            if request.data.get("mon_to_sat") is None:
+            if request.data.get("sat_is_working") is None:
                 raise serializers.ValidationError(
                     "Debes especificar si trabajas los sábados."
                 )
             else:
                 try:
-                    mon_to_sat = bool(strtobool(request.data["mon_to_sat"]))
+                    sat_is_working = bool(strtobool(request.data["sat_is_working"]))
                 except ValueError:
                     raise serializers.ValidationError(
                         "Debes especificar si trabajas los sábados o no."
                     )
-            if not is_working_day(attrs["start_date"], mon_to_sat):
+            if not is_working_day(attrs["start_date"], sat_is_working):
                 raise serializers.ValidationError(
                     "No puedes iniciar tus vacaciones un día no laboral."
                 )
-            if not is_working_day(attrs["end_date"], mon_to_sat):
+            if not is_working_day(attrs["end_date"], sat_is_working):
                 raise serializers.ValidationError(
                     "No puedes terminar tus vacaciones un día no laboral."
                 )
-            if request.data["mon_to_sat"] == True:
+            if request.data["sat_is_working"] == True:
                 if attrs["start_date"].weekday() == 5:
                     raise serializers.ValidationError(
                         "No puedes iniciar tus vacaciones un sábado."
                     )
             if (
-                get_working_days(attrs["start_date"], attrs["end_date"], mon_to_sat)
+                get_working_days(attrs["start_date"], attrs["end_date"], sat_is_working)
                 > 15
             ):
                 raise serializers.ValidationError(
@@ -126,11 +134,17 @@ class VacationRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create the vacation request."""
-        # Remove the is_approved fields from the validated data
+        # Remove the is_approved fields from the validated data (security check)
         validated_data.pop("boss_is_approved", None)
         validated_data.pop("manager_is_approved", None)
         validated_data.pop("hr_is_approved", None)
         validated_data.pop("payroll_is_approved", None)
+        # Add the user job position to the validated data
+        job_position = JobPosition.objects.get(
+            id=validated_data["user"].job_position_id
+        )
+        validated_data["user_job_position"] = job_position
+        # Create the vacation request
         vacation_request = super().create(validated_data)
         return vacation_request
 

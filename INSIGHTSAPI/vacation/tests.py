@@ -23,10 +23,10 @@ class WorkingDayTestCase(TestCase):
 
     def test_is_working_day(self):
         """Test the is_working_day function."""
-        self.assertTrue(is_working_day("2024-01-02"))
-        self.assertFalse(is_working_day("2024-01-01"))
-        self.assertTrue(is_working_day("2024-01-05"))
-        self.assertTrue(is_working_day("2024-01-06"))
+        self.assertTrue(is_working_day("2024-01-02", True))
+        self.assertFalse(is_working_day("2024-01-01", True))
+        self.assertTrue(is_working_day("2024-01-05", True))
+        self.assertTrue(is_working_day("2024-01-06", True))
         self.assertFalse(is_working_day("2024-01-06", False))
 
     def test_get_working_days_no_sat(self):
@@ -36,6 +36,7 @@ class WorkingDayTestCase(TestCase):
         # The 8th is a holiday
         self.assertEqual(get_working_days("2024-01-01", "2024-01-09", False), 5)
         self.assertEqual(get_working_days("2024-01-01", "2024-01-23", False), 15)
+        self.assertEqual(get_working_days("2024-12-09", "2024-12-27", False), 14)
 
     def test_get_working_days_sat(self):
         """Test the get_working_days function with Saturdays."""
@@ -74,22 +75,33 @@ class VacationRequestModelTestCase(BaseTestCase):
             "start_date": "2024-01-02",
             "end_date": "2024-01-18",
             "user": self.test_user,
+            "user_job_position": self.test_user.job_position,
+            "sat_is_working": True,
         }
 
     def test_vacation_create(self):
         """Test creating a vacation endpoint."""
 
         self.vacation_request["hr_is_approved"] = True  # This is just a check
-        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["sat_is_working"] = False
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(response.data["hr_is_approved"], None)
+        self.assertEqual(response.data["status"], "PENDIENTE")
+        self.assertEqual(response.data["user_id"], self.user.id)
+        self.assertEqual(response.data.get("user_job_position"), None)
+        self.assertEqual(response.data["start_date"], "2024-01-02")
+        self.assertEqual(response.data["end_date"], "2024-01-18")
+        vacation = VacationRequest.objects.get(pk=response.data["id"])
+        self.assertEqual(vacation.user_job_position, self.user.job_position)
+        self.assertEqual(vacation.sat_is_working, False)
+        self.assertEqual(vacation.duration, 12)
 
-    def test_vacation_create_no_mon_to_sat(self):
-        """Test creating a vacation without mon_to_sat."""
+    def test_vacation_create_no_sat_is_working(self):
+        """Test creating a vacation without sat_is_working."""
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
@@ -106,7 +118,7 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_vacation_create_same_month(self):
         """Test creating a vacation that spans two months."""
         super().setUp()
-        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["sat_is_working"] = False
         self.vacation_request["start_date"] = "2024-07-22"
         response = self.client.post(
             reverse("vacation-list"),
@@ -204,7 +216,7 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_vacation_create_end_before_start(self):
         """Test creating a vacation with the end date before the start date."""
         self.vacation_request["end_date"] = "2021-01-04"
-        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["sat_is_working"] = False
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
@@ -414,7 +426,7 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_validate_vacation_request_after_20th(self):
         """Test the validation of a vacation request after the 20th."""
         super().setUp()
-        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["sat_is_working"] = False
         self.vacation_request["start_date"] = "2024-08-12"
         response = self.client.post(
             reverse("vacation-list"),
@@ -430,7 +442,7 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_validate_vacation_request_not_working_day(self):
         """Test the validation of a vacation request on a non-working day."""
-        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["sat_is_working"] = False
         self.vacation_request["start_date"] = "2024-01-01"
         response = self.client.post(
             reverse("vacation-list"),
@@ -446,7 +458,7 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_validate_vacation_request_not_working_day_sat(self):
         """Test the validation of a vacation request on a Saturday."""
-        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["sat_is_working"] = False
         self.vacation_request["start_date"] = "2024-05-04"
         response = self.client.post(
             reverse("vacation-list"),
@@ -463,7 +475,7 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_validate_vacation_request_not_working_day_sat_working(self):
         """Test the validation of a vacation request on a Saturday with working Saturdays."""
-        self.vacation_request["mon_to_sat"] = True
+        self.vacation_request["sat_is_working"] = True
         self.vacation_request["start_date"] = "2024-05-04"
         self.vacation_request["end_date"] = "2024-05-06"
         response = self.client.post(
@@ -474,7 +486,7 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_validate_vacation_request_not_working_day_end(self):
         """Test the validation of a vacation request on a non-working day."""
-        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["sat_is_working"] = False
         self.vacation_request["end_date"] = "2024-01-01"
         response = self.client.post(
             reverse("vacation-list"),
@@ -490,7 +502,7 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_validate_vacation_request_not_working_day_sat_end(self):
         """Test the validation of a vacation request on a Saturday."""
-        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["sat_is_working"] = False
         self.vacation_request["end_date"] = "2024-05-04"
         response = self.client.post(
             reverse("vacation-list"),
@@ -507,7 +519,7 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_validate_vacation_request_not_working_day_sat_working_end(self):
         """Test the validation of a vacation request on a Saturday with working Saturdays."""
-        self.vacation_request["mon_to_sat"] = True
+        self.vacation_request["sat_is_working"] = True
         self.vacation_request["start_date"] = "2024-05-03"
         self.vacation_request["end_date"] = "2024-05-04"
         response = self.client.post(
@@ -518,7 +530,7 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_validate_vacation_request_more_than_15_days(self):
         """Test the validation of a vacation request with more than 15 days."""
-        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["sat_is_working"] = False
         self.vacation_request["end_date"] = "2024-01-24"
         response = self.client.post(
             reverse("vacation-list"),

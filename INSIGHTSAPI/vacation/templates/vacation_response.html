@@ -1,143 +1,107 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Respuesta a Solicitud de Vacaciones</title>
-        <style>
-            html,
-            body {
-                margin: 0;
-                padding: 20px;
-                font-family: 'Helvetica Neue', Arial, sans-serif;
-                color: #333;
-                line-height: 1.6;
-                background-color: #f0f4f8;
-                display: block;
-                justify-content: center;
-                align-items: center;
-            }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Respuesta a Solicitud de Vacaciones</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				line-height: 1.8;
+				color: #333;
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+				height: 1330px;
+				/* Fixed height for PDF */
+				font-size: 18px;
+				position: relative;
+				/* Make the body a containing block */
+			}
 
-            .card {
-                background-color: #ffffff;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                padding: 40px;
-                height: 80%;
-                width: 90%;
-            }
+			.header {
+				text-align: right;
+				margin-bottom: 20px;
+			}
 
-            .header {
-                margin-bottom: 30px;
-                text-align: center;
-            }
+			.signature {
+				margin-top: 60px;
+			}
 
-            .header h1 {
-                margin: 0;
-                font-size: 40px;
-                color: #2c3e50;
-                letter-spacing: 1px;
-            }
+			.content {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 100%;
+				max-width: 800px;
+			}
 
-            .content {
-                text-align: left;
-                font-size: 20px;
-            }
+			.content p {
+				margin-bottom: 35px;
+				font-size: 20px;
+			}
 
-            .approval {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 20px;
-                color: #27ae60;
-                font-size: 24px;
-                font-weight: bold;
-            }
+			.approval {
+				text-align: center;
+				margin-bottom: 20px;
+				color: #27ae60;
+				font-size: 24px;
+				font-weight: bold;
+			}
 
-            .approval-icon {
-                width: 30px;
-                height: 30px;
-                margin-right: 10px;
-                fill: currentColor;
-            }
+			.centered-image {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				opacity: 0.1;
+				width: 100%;
+				max-width: 800px;
+			}
+		</style>
+	</head>
 
-            .date {
-                color: #7f8c8d;
-                font-style: italic;
-                text-align: right;
-                margin-bottom: 20px;
-            }
+	<body>
+		<img class="centered-image" alt="Logo de la empresa C&C SERVICES S.A.S" src="data:image/png;base64,{{ company_logo }}" />
 
-            .highlight {
-                color: #3498db;
-                font-weight: bold;
-            }
+		<div class="header">
+			<p>
+				Bogotá D.C.; {% if vacation.payroll_approved_at %} {{ vacation.payroll_approved_at|date:"d \d\e F \d\e Y" }} {% elif vacation.hr_approved_at %}
+				{{vacation.hr_approved_at|date:"d \d\e F \d\e Y" }} {% elif vacation.manager_approved_at %} {{vacation.manager_approved_at|date:"d \d\e F \d\e Y" }} {% elif
+				vacation.boss_approved_at %} {{ vacation.boss_approved_at|date:"d \d\e F \d\e Y" }} {% else %} No approval date available {% endif %}
+			</p>
+		</div>
 
-            .signature {
-                margin-top: 40px;
-            }
+		<div class="content">
+			<p>Señor/a:</p>
+			<p style="margin: 0"><strong>{{vacation.user}}</strong></p>
+			<p style="margin: 0"><strong>{{vacation.user_job_position}}</strong> - Bogotá</p>
+			<p style="margin: 0">De. Gestión Humana</p>
+			<p style="margin-bottom: 0">
+				REF: aprobación de vacaciones mes de <strong>{{ vacation.start_date|date:"F" }} de {{ vacation.start_date|date:"Y" }} </strong>
+			</p>
 
-            .footer {
-                margin-top: 30px;
-                text-align: center;
-            }
+			{% if vacation.status == 'APROBADA' %}
+			<p>
+				Me permito informarle que en respuesta a su comunicación recibida el día <strong>{{ vacation.created_at|date }}</strong>, usted podrá disfrutar de sus vacaciones
+				a partir del día <strong>{{ vacation.start_date }}</strong>, retomando actividades laborales el día <strong>{{ vacation.return_date }}</strong>.
+			</p>
+			<p>Espero disfrute con agrado sus merecidas vacaciones.</p>
+			{% else %}
+			<p>
+				Lamentamos informarle que su solicitud de vacaciones recibida el día <strong>{{ vacation.created_at|date }}</strong> no ha sido aprobada debido al siguiente motivo:
+			</p>
+			<p><strong>{{ vacation.comment }}</strong>.</p>
+			{% endif %}
 
-            {% comment %} @media print {
-                html, body {
-                    height: auto; /* Reset height */
-                    display: block; /* Reset the flexbox layout */
-                    padding: 0; /* Adjust padding as necessary */
-                }
-                .card {
-                    margin: 0;
-                    padding: 20px;
-                    width: 100%; /* Ensure the card takes up the full width */
-                    height: auto; /* Reset height for better PDF rendering */
-                    background-color: #ffffff;
-                }
-            } {% endcomment %}
-
-        </style>
-    </head>
-
-    <body>
-        <div class="card">
-            <div class="header">
-                <h1>Respuesta a Solicitud de Vacaciones</h1>
-            </div>
-            <div class="content">
-                <div class="approval">
-                    <svg class="approval-icon" viewBox="0 0 20 20">
-                        <path d="M10 0C4.477 0 0 4.477 0 10c0 5.523 4.477 10 10 10s10-4.477 10-10c0-5.523-4.477-10-10-10zm5.293 7.293l-6 6c-.39.39-1.024.39-1.414 0l-3-3c-.39-.39-.39-1.024 0-1.414.39-.39 1.024-.39 1.414 0L8 10.586l5.293-5.293c.39-.39 1.024-.39 1.414 0 .39.39.39 1.024 0 1.414z"/>
-                    </svg>
-                    Solicitud Aprobada
-                </div>
-                <p class="date">{{ current_date }}</p>
-                <p>Estimado(a) <span class="highlight">{{ vacation.user }}</span>,</p>
-                <p>
-                    Nos complace informarle que su solicitud de vacaciones realizada el {{ vacation.created_at|date }}
-                     ha sido aprobada. Los detalles de su periodo vacacional son los siguientes:
-                </p>
-                <ul>
-                    <li>Fecha de inicio: <span class="highlight">{{ vacation.start_date }}</span></li>
-                    <li>Fecha de finalización: <span class="highlight">{{ vacation.end_date }}</span></li>
-                    <li>Fecha de reincorporación: <span class="highlight">{{ vacation.return_date }}</span></li>
-                    <li>Dias utilizados: <span class="highlight">{{ vacation.duration }}</span></li>
-                </ul>
-                <p>
-                    Por favor, asegúrese de completar todas las tareas pendientes y de informar a su equipo sobre su ausencia. Si tiene alguna pregunta o necesita realizar algún cambio, no dude en contactarnos.
-                </p>
-                <p>
-                    Le deseamos unas excelentes vacaciones.
-                </p>
-                <div class="signature">
-                    <p>
-                        JEANNETH PINZON MARTINEZ<br>
-                        Gerente Gestión Humana<br>
-                        CYC SERVICES S.A.S.<br>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </body>
+			<div class="signature">
+				<p>
+					JEANNETH PINZON MARTINEZ<br />
+					Gerente Gestión Humana<br />
+					C&C SERVICES S.A.S.<br />
+				</p>
+			</div>
+		</div>
+	</body>
 </html>
