@@ -42,6 +42,12 @@ import Vacations from './components/pages/Vacations';
 import PowerBI from './components/pages/PowerBI';
 import Pqrs from './components/pages/Pqrs';
 import CoexistenceCommittee from './components/pages/CoexistenceCommittee';
+import Assistance from './components/pages/Assistance';
+import Points from './components/pages/Points';
+
+// Context
+import { ProgressbarProvider } from './components/context/ProgressbarContext';
+import { SnackbarProvider } from './components/context/SnackbarContext';
 
 Sentry.init({
     dsn: 'https://5c6491f1c851a0f106e61adad4c4d46c@o4507664328359936.ingest.us.sentry.io/4507664339107840',
@@ -194,10 +200,10 @@ const router = createBrowserRouter([
                 path: 'pqrs',
                 element: <Pqrs />,
             },
-            // {
-            //     path: "points",
-            //     element: <Points />,
-            // },
+            {
+                path: 'points',
+                element: <Points />,
+            },
             {
                 path: 'coexistence-committee',
                 element: <CoexistenceCommittee />,
@@ -205,6 +211,10 @@ const router = createBrowserRouter([
             {
                 path: 'test',
                 element: <PowerBI />,
+            },
+            {
+                path: 'demo-assistance',
+                element: <Assistance />,
             },
         ],
     },
@@ -218,7 +228,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline>
-                <RouterProvider router={router} />
+                <ProgressbarProvider>
+                    <SnackbarProvider>
+                        <RouterProvider router={router} />
+                    </SnackbarProvider>
+                </ProgressbarProvider>
             </CssBaseline>
         </ThemeProvider>
     </React.StrictMode>
