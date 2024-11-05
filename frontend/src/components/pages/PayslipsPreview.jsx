@@ -54,6 +54,17 @@ const columns = [
             new Intl.NumberFormat('es-CO', {
                 style: 'currency',
                 currency: 'COP',
+            }).format(value),   
+    },
+    {
+        field: 'bearing',
+        headerName: 'Rodamiento',
+        width: 130,
+        type: 'number',
+        valueFormatter: (value) =>
+            new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
             }).format(value),
     },
     {
