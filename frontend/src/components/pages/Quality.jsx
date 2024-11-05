@@ -3,8 +3,10 @@ import { useState, useEffect, useRef } from 'react';
 // Libraries
 import { useNavigate } from 'react-router-dom';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 
@@ -69,9 +71,7 @@ const Quality = () => {
     const [openCollapse, setOpenCollapse] = useState(true);
     const [fileName, setFileName] = useState('');
     const [loading, setLoading] = useState(false);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
+    const { showSnack } = useSnackbar();
     const [selectedCampaign, setSelectedCampaign] = useState(campaigns[0]); // Set default campaign
     const callType = useRef();
     const navigate = useNavigate();
@@ -96,12 +96,6 @@ const Quality = () => {
         }
     };
 
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
     const handleCampaignChange = (event) => {
         const selectedCampaignValue = event.target.value;
         const campaign = campaigns.find(
@@ -109,8 +103,6 @@ const Quality = () => {
         );
         setSelectedCampaign(campaign);
     };
-
-    const handleCloseSnack = () => setOpenSnack(false);
 
     const handleUpload = async () => {
         setLoading(true);
@@ -314,12 +306,6 @@ const Quality = () => {
                         ) : null}
                     </Box>
                 </Collapse>
-                <SnackbarAlert
-                    message={message}
-                    severity={severity}
-                    openSnack={openSnack}
-                    closeSnack={handleCloseSnack}
-                />
             </Container>
         </>
     );

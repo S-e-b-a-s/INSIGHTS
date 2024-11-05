@@ -4,8 +4,10 @@ import * as Yup from 'yup';
 import { Formik, Form, useField } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 import {
@@ -388,11 +390,9 @@ export const Legal = () => {
     };
 
     const [rows, setRows] = useState([]);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
     const [details, setDetails] = useState({});
-    const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
+    const { showSnack } = useSnackbar();
     const [openDialogEdit, setOpenDialogEdit] = useState(false);
     const [disabled, setDisabled] = useState(false);
     const [inputs, setInputs] = useState(initialInputs);
@@ -482,14 +482,6 @@ export const Legal = () => {
     const handleDisabledChange = () => {
         setDisabled(!disabled);
     };
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
-    const handleCloseSnack = () => setOpenSnack(false);
 
     const handleDeleteClick = async (id) => {
         try {
@@ -772,12 +764,7 @@ export const Legal = () => {
                     ></DataGrid>
                 </Box>
             </Container>
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
+
             <Dialog
                 maxWidth={'md'}
                 open={openDialog}

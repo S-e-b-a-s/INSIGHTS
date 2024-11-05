@@ -19,18 +19,22 @@ import {
     MenuItem,
     Box,
     DialogContentText,
-    LinearProgress,
-    Fade,
     FormGroup,
     FormControlLabel,
     Checkbox,
     Collapse,
 } from '@mui/material';
 
+// MUI Lab
+import { LoadingButton } from '@mui/lab';
+
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../context/ProgressbarContext';
+
 // Custom components and assets
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
-import SnackbarAlert from '../common/SnackBarAlert';
 
 registerPlugin(
     FilePondPluginImageExifOrientation,
@@ -46,26 +50,35 @@ const AddImagesCarouselDialog = ({
     setImages,
 }) => {
     const [image, setImage] = useState([]);
-    const [openSnack, setOpenSnack] = useState(false);
-    const [message, setMessage] = useState('');
-    const [severity, setSeverity] = useState('success');
-    const [loadingBar, setLoadingBar] = useState(false);
+    const { showSnack } = useSnackbar();
     const [openCollapse, setOpenCollapse] = useState(false);
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
 
-    const handleCloseSnack = () => {
-        setOpenSnack(false);
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        showProgressbar();
+        const position = event.target.position?.value || '';
+        const link = openCollapse ? event.target.link.value : '';
+        if (!validateFormData(image)) return;
+
+        const formData = createFormData(image, position, link);
+        await sendApiRequest(formData);
     };
 
-    const showSnack = (severity, message) => {
-        setMessage(message);
-        setSeverity(severity);
-        setOpenSnack(true);
+    const validateFormData = (image) => {
+        if (image.length === 0) {
+            showSnack('error', 'Debes añadir una imagen');
+            hideProgressbar();
+            return false;
+        }
+        return true;
     };
 
     const createFormData = (image, position, link) => {
         const formData = new FormData();
         formData.append('image', image[0]);
-        formData.append('title', image[0].name);
+        formData.append('title', image[0]?.name);
         formData.append('order', position);
 
         if (link) {
@@ -74,25 +87,13 @@ const AddImagesCarouselDialog = ({
         return formData;
     };
 
-    const validateFormData = (image) => {
-        if (image.length === 0) {
-            showSnack('error', 'Debes añadir una imagen');
-            setLoadingBar(false);
-            return false;
-        }
-        return true;
-    };
-
     const sendApiRequest = async (formData) => {
         try {
-            const response = await fetch(
-                `${getApiUrl().apiUrl}carousel-images/banners/`,
-                {
-                    method: 'POST',
-                    credentials: 'include',
-                    body: formData,
-                }
-            );
+            const response = await fetch('http://localhost/', {
+                method: 'POST',
+                credentials: 'include',
+                body: formData,
+            });
 
             await handleError(response, showSnack);
 
@@ -106,36 +107,17 @@ const AddImagesCarouselDialog = ({
             }
         } finally {
             setOpenAddDialog(false);
-            setLoadingBar(false);
+            hideProgressbar();
         }
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        console.log(event.target.position);
-        const position = event.target.position.value;
-        const link = openCollapse ? event.target.link.value : '';
-        if (!validateFormData(image)) return;
-
-        const formData = createFormData(image, position, link);
-        await sendApiRequest(formData);
     };
 
     return (
         <Box>
-            <Fade in={loadingBar}>
-                <LinearProgress sx={{ zIndex: '1301' }} color="secondary" />
-            </Fade>
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
             <Dialog
                 maxWidth={'md'}
                 fullWidth={true}
                 component="form"
+                data-testid="add-images-carousel-form"
                 onSubmit={handleSubmit}
                 open={openAddDialog}
                 onClose={() => setOpenAddDialog(false)}
@@ -180,7 +162,6 @@ const AddImagesCarouselDialog = ({
                             id="position"
                             name="position"
                             select
-                            required
                             label="Posición"
                             variant="outlined"
                             defaultValue={1}
@@ -196,6 +177,7 @@ const AddImagesCarouselDialog = ({
                             </MenuItem>
                         </TextField>
                         <FilePond
+                            name="filepond"
                             required
                             allowMultiple={true}
                             maxFiles={1}
@@ -213,14 +195,19 @@ const AddImagesCarouselDialog = ({
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        disabled={isProgressVisible}
                         variant="contained"
                         onClick={() => setOpenAddDialog(false)}
                     >
                         Cancelar
                     </Button>
-                    <Button variant="contained" type="submit">
+                    <LoadingButton
+                        loading={isProgressVisible}
+                        variant="contained"
+                        type="submit"
+                    >
                         Actualizar
-                    </Button>
+                    </LoadingButton>
                 </DialogActions>
             </Dialog>
         </Box>

@@ -3,13 +3,16 @@ import { useState, useEffect, useRef } from 'react';
 // Libraries
 import { useNavigate, useMatch } from 'react-router-dom';
 
-// Custom Components
+// Custom Hooks
+import { useProgressbar } from '../context/ProgressbarContext'; // Adjust the path
+import { useSnackbar } from '../context/SnackbarContext';
+
+// Custom Components/Functions
 import Goals from '../shared/Goals';
-import SnackbarAlert from './SnackBarAlert';
-import { getApiUrl } from '../../assets/getApi';
 import MyAccountDialog from '../shared/MyAccount';
 import InactivityDetector from '../shared/InactivityDetector';
 import Notifications from '../shared/Notifications';
+import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 
 // Material-UI
@@ -24,8 +27,6 @@ import {
     Avatar,
     ListItemIcon,
     ListItemText,
-    LinearProgress,
-    Fade,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -40,6 +41,9 @@ import {
     Badge,
     Alert,
 } from '@mui/material';
+
+// MUI Lab
+import { LoadingButton } from '@mui/lab';
 
 // Icons
 import Logout from '@mui/icons-material/Logout';
@@ -58,29 +62,24 @@ import TopicIcon from '@mui/icons-material/Topic';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
-import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import EmailIcon from '@mui/icons-material/Email';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 
 // Media
 import logotipo from '../../images/cyc-logos/logo-navbar.webp';
 
 const Navbar = () => {
-    const [openCollapse, setOpenCollapse] = useState(false);
     const [openCollapseEmail, setOpenCollapseEmail] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorElUtils, setAnchorElUtils] = useState(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
     const [openAccountDialog, setOpenAccountDialog] = useState(false);
     const [openCertification, setOpenCertification] = useState(false);
     const [openCollapseBonuses, setOpenCollapseBonuses] = useState(false);
     const [checked, setChecked] = useState(false);
-    const [openPqrs, setOpenPqrs] = useState(false);
     const cargoItem = localStorage.getItem('cargo');
     const isAdvisor = cargoItem && JSON.parse(cargoItem).includes('ASESOR');
     const permissions = JSON.parse(localStorage.getItem('permissions'));
@@ -92,6 +91,9 @@ const Navbar = () => {
     const operationalRiskPermission =
         permissions && permissions.includes('operational_risk.view_events');
     const rank = JSON.parse(localStorage.getItem('rango'));
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
+    const { showSnack } = useSnackbar();
 
     const servicesPermission =
         permissions &&
@@ -219,8 +221,6 @@ const Navbar = () => {
         getNotifications();
     }, [openNotification]);
 
-    const handleCloseSnack = () => setOpenSnack(false);
-
     const handleOpenCertification = () => setOpenCertification(true);
 
     const handleCloseCertification = () => {
@@ -261,12 +261,6 @@ const Navbar = () => {
         setOpenCollapseEmail(!openCollapseEmail);
     };
 
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
     const handleLogout = async (inactivity) => {
         try {
             const response = await fetch(
@@ -302,7 +296,7 @@ const Navbar = () => {
     };
 
     const sendCertification = async () => {
-        setOpenCollapse(true);
+        showProgressbar();
         let body = {};
 
         if (checked) {
@@ -341,7 +335,7 @@ const Navbar = () => {
                 console.error(error);
             }
         } finally {
-            setOpenCollapse(false);
+            hideProgressbar();
         }
     };
 
@@ -359,12 +353,6 @@ const Navbar = () => {
                     showSnack={showSnack}
                 />
             ) : null}
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
             <MyAccountDialog
                 open={openAccountDialog}
                 onClose={handleCloseAccountDialog}
@@ -447,22 +435,20 @@ const Navbar = () => {
                 <DialogActions
                     sx={{ display: 'flex', justifyContent: 'space-between' }}
                 >
-                    <Button onClick={handleCloseCertification}>Cancelar</Button>
-                    <Button onClick={sendCertification}>Enviar</Button>
+                    <Button
+                        disabled={isProgressVisible}
+                        onClick={handleCloseCertification}
+                    >
+                        Cancelar
+                    </Button>
+                    <LoadingButton
+                        loading={isProgressVisible}
+                        onClick={sendCertification}
+                    >
+                        Enviar
+                    </LoadingButton>
                 </DialogActions>
             </Dialog>
-            <Fade in={openCollapse}>
-                <LinearProgress
-                    sx={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        zIndex: 1301,
-                    }}
-                    variant="query"
-                />
-            </Fade>
             <Box
                 className="navbar"
                 sx={{
@@ -670,47 +656,26 @@ const Navbar = () => {
                         <ListItemText primary="Mis Vacaciones" />
                     </MenuItem>
                 ) : null}
-                {getApiUrl().environment === 'development' ? (
-                    <MenuItem onClick={() => navigate('/logged/points')}>
-                        <ListItemIcon>
-                            <SportsScoreIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Puntos C&C" />
-                    </MenuItem>
-                ) : null}
-                {getApiUrl().environment === 'development' ? (
-                    <MenuItem onClick={() => navigate('/logged/pqrs')}>
-                        <ListItemIcon>
-                            <TipsAndUpdatesIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="PQRS" />
-                    </MenuItem>
-                ) : null}
-                {getApiUrl().environment === 'development' ? (
-                    <MenuItem
-                        onClick={() =>
-                            navigate('/logged/coexistence-committee')
-                        }
-                    >
-                        <ListItemIcon>
-                            <VolunteerActivismIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Comité de convivencia" />
-                    </MenuItem>
-                ) : null}
-                <Collapse in={openPqrs}>
-                    {getApiUrl().environment === 'development' ? (
-                        <MenuItem
-                            sx={{ pl: 4 }}
-                            onClick={() => navigate('/logged/pqrs')}
-                        >
-                            <ListItemIcon>
-                                <TipsAndUpdatesIcon fontSize="small" />
-                            </ListItemIcon>
-                            <ListItemText primary="PQRS" />
-                        </MenuItem>
-                    ) : null}
-                </Collapse>
+                <MenuItem onClick={() => navigate('/logged/points')}>
+                    <ListItemIcon>
+                        <SportsScoreIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Puntos C&C" />
+                </MenuItem>
+                <MenuItem onClick={() => navigate('/logged/pqrs')}>
+                    <ListItemIcon>
+                        <EmailIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="PQRS" />
+                </MenuItem>
+                <MenuItem
+                    onClick={() => navigate('/logged/coexistence-committee')}
+                >
+                    <ListItemIcon>
+                        <VolunteerActivismIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Comité de convivencia" />
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -765,7 +730,8 @@ const Navbar = () => {
                 ) : null}
                 {permissions &&
                 (permissions.includes('users.upload_robinson_list') ||
-                    permissions.includes('goals.add_goals')) ? (
+                    permissions.includes('goals.add_goals') ||
+                    permissions.includes('users.upload_points')) ? (
                     <MenuItem onClick={() => navigate('/logged/upload-files')}>
                         <ListItemIcon>
                             <UploadFileIcon fontSize="small" />

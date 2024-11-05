@@ -4,8 +4,10 @@ import { Fragment, useState, useCallback, useEffect, useRef } from 'react';
 import * as Yup from 'yup';
 import { Formik, Form, useField } from 'formik';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 import {
@@ -120,9 +122,7 @@ export const Sgc = () => {
     const hiddenFileInput = useRef(null);
     const [rowModesModel, setRowModesModel] = useState({});
     const [rows, setRows] = useState([]);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
+    const { showSnack } = useSnackbar();
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFileUpdate, setSelectedFileUpdate] = useState(null);
@@ -173,14 +173,6 @@ export const Sgc = () => {
         setSelectedFile(null);
     };
     const handleOpenDialog = () => setOpenDialog(true);
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
-    const handleCloseSnack = () => setOpenSnack(false);
 
     const handleEditClick = (id) => () => {
         setRowModesModel({
@@ -652,12 +644,7 @@ export const Sgc = () => {
                     ></DataGrid>
                 </Box>
             </Container>
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
+
             <Dialog
                 fullWidth={true}
                 maxWidth="md"
