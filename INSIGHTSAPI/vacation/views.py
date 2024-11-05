@@ -2,7 +2,7 @@ import base64
 import datetime
 
 import pdfkit
-from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.mail import mail_admins, send_mail
 from django.db.models import Q
@@ -405,7 +405,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             "vacation": self.get_object(),
             "current_date": timezone.now().strftime("%d de %B de %Y").capitalize(),
             "company_logo": base64.b64encode(
-                open("static/images/just_logo.png", "rb").read()
+                open(str(settings.STATIC_ROOT) + "/images/just_logo.png", "rb").read()
             ).decode("utf-8"),
         }
         # Import the html template
@@ -440,7 +440,10 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             "vacation": self.get_object(),
             "current_date": timezone.now().strftime("%d de %B de %Y").capitalize(),
             "company_logo": base64.b64encode(
-                open("static/images/just_logo.png", "rb").read()
+                open(str(settings.STATIC_ROOT) + "/images/just_logo.png", "rb").read()
+            ).decode("utf-8"),
+            "company_logo_vertical": base64.b64encode(
+                open(str(settings.STATIC_ROOT) + "/images/vertical_logo.png", "rb").read()
             ).decode("utf-8"),
         }
         # Import the html template
