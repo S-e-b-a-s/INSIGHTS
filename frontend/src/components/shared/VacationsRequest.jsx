@@ -288,7 +288,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
 
     return (
         <Dialog
-            maxWidth
+            maxWidth={'md'}
             open={openVacation}
             onClose={handleCloseVacationDialog}
             aria-labelledby="alert-dialog-title"

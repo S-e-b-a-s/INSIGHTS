@@ -319,7 +319,6 @@ export const RiskEvent = () => {
             return (
                 <TextField
                     sx={{ width: '800px' }}
-                    InputLabelProps={{ shrink: true }}
                     multiline={multiline}
                     rows={rows}
                     type={type}
@@ -328,12 +327,14 @@ export const RiskEvent = () => {
                     {...field}
                     helperText={errorText}
                     error={!!errorText}
+                    slotProps={{
+                        inputLabel: { shrink: true },
+                    }}
                 />
             );
         } else if (type === 'date' || type === 'datetime-local') {
             return (
                 <TextField
-                    InputLabelProps={{ shrink: true }}
                     sx={{ width: '390px' }}
                     rows={rows}
                     type={type}
@@ -342,6 +343,9 @@ export const RiskEvent = () => {
                     {...field}
                     helperText={errorText}
                     error={!!errorText}
+                    slotProps={{
+                        inputLabel: { shrink: true },
+                    }}
                 />
             );
         } else if (multiline) {

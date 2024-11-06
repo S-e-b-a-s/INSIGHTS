@@ -342,7 +342,7 @@ const columns = [
         width: 200,
         editable: true,
         type: 'number',
-        // Count `dias laborados` + `ipe` + `im` + `af` + `ar` + `c` + `cd/cf` + `aru` +  `am` + `df
+        // Count `días laborados` + `ipe` + `im` + `af` + `ar` + `c` + `cd/cf` + `aru` +  `am` + `df
         valueGetter: (value, row) => {
             let count = 0;
             for (let i = 1; i <= 30; i++) {
@@ -389,35 +389,35 @@ export default function Assistance() {
         }
     };
 
-    const handleEditClick = (id) => () => {
-        setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.Edit },
-        });
-    };
+    // const handleEditClick = (id) => () => {
+    //     setRowModesModel({
+    //         ...rowModesModel,
+    //         [id]: { mode: GridRowModes.Edit },
+    //     });
+    // };
 
-    const handleSaveClick = (id) => () => {
-        setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View },
-        });
-    };
+    // const handleSaveClick = (id) => () => {
+    //     setRowModesModel({
+    //         ...rowModesModel,
+    //         [id]: { mode: GridRowModes.View },
+    //     });
+    // };
 
-    const handleDeleteClick = (id) => () => {
-        setRows(rows.filter((row) => row.id !== id));
-    };
+    // const handleDeleteClick = (id) => () => {
+    //     setRows(rows.filter((row) => row.id !== id));
+    // };
 
-    const handleCancelClick = (id) => () => {
-        setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
+    // const handleCancelClick = (id) => () => {
+    //     setRowModesModel({
+    //         ...rowModesModel,
+    //         [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    //     });
 
-        const editedRow = rows.find((row) => row.id === id);
-        if (editedRow.isNew) {
-            setRows(rows.filter((row) => row.id !== id));
-        }
-    };
+    //     const editedRow = rows.find((row) => row.id === id);
+    //     if (editedRow.isNew) {
+    //         setRows(rows.filter((row) => row.id !== id));
+    //     }
+    // };
 
     const processRowUpdate = (newRow) => {
         const updatedRow = { ...newRow, isNew: false };

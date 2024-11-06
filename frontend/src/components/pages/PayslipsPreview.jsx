@@ -54,7 +54,7 @@ const columns = [
             new Intl.NumberFormat('es-CO', {
                 style: 'currency',
                 currency: 'COP',
-            }).format(value),   
+            }).format(value),
     },
     {
         field: 'bearing',

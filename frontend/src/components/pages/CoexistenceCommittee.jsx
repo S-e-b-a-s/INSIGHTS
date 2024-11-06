@@ -81,7 +81,7 @@ const FormikTextField = ({
 const CoexistenceCommittee = () => {
     const { showSnack } = useSnackbar();
     const { isProgressVisible, showProgressbar, hideProgressbar } =
-        useProgressbar(); 
+        useProgressbar();
 
     // Maneja el envío del formulario
     const handleSubmit = async (values, { resetForm }) => {

@@ -554,33 +554,32 @@ export const Vacations = () => {
             cellClassName: 'actions',
             getActions: ({ row }) => {
                 return [
-                    <Tooltip
-                        key={`tooltip-${row.id}`}
-                        title="Ver carta de respuesta de vacaciones"
-                        arrow
-                    >
-                        <GridActionsCellItem
-                            key={`open-response-letter-${row.id}`}
-                            icon={<FileOpenIcon />}
-                            disabled={row.status === 'PENDIENTE'}
-                            label="open-response-letter"
-                            sx={{
-                                color: 'primary.main',
-                            }}
-                            onClick={() => {
-                                window.open(
-                                    `${getApiUrl().apiUrl}vacation/${row.id}/get-response`,
-                                    '_blank'
-                                );
-                            }}
-                        />
+                    <Tooltip key={`tooltip-${row.id}`} arrow>
+                        <span>
+                            <GridActionsCellItem
+                                title="Ver carta de respuesta de vacaciones"
+                                key={`open-response-letter-${row.id}`}
+                                icon={<FileOpenIcon />}
+                                disabled={row.status === 'PENDIENTE'}
+                                label="open-response-letter"
+                                sx={{
+                                    color: 'primary.main',
+                                }}
+                                onClick={() => {
+                                    window.open(
+                                        `${getApiUrl().apiUrl}vacation/${row.id}/get-response`,
+                                        '_blank'
+                                    );
+                                }}
+                            />
+                        </span>
                     </Tooltip>,
                 ];
             },
         },
     ];
 
-    // const handleOpenDialog = () => setOpenVacation(true);
+    const handleOpenDialog = () => setOpenVacation(true);
 
     const CustomToolbar = () => {
         return (
@@ -595,21 +594,14 @@ export const Vacations = () => {
                         utf8WithBom: true,
                     }}
                 />
-                <Tooltip
-                    title="Dentro de unos días se habilitará la opción para solicitar vacaciones"
-                    arrow
+
+                <Button
+                    size="small"
+                    onClick={handleOpenDialog}
+                    startIcon={<BeachAccessIcon />}
                 >
-                    <span>
-                        <Button
-                            disabled
-                            size="small"
-                            // onClick={handleOpenDialog}
-                            startIcon={<BeachAccessIcon />}
-                        >
-                            Crear solicitud
-                        </Button>
-                    </span>
-                </Tooltip>
+                    Crear solicitud
+                </Button>
                 <Box sx={{ textAlign: 'end', flex: '1' }}>
                     <GridToolbarQuickFilter />
                 </Box>

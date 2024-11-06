@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// Libraries
-import { useNavigate } from 'react-router-dom';
-
 import { useSnackbar } from '../context/SnackbarContext';
 
 // Custom Components

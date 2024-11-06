@@ -160,9 +160,6 @@ const AnalisisMetas = () => {
     const [goalsQuantity, setGoalsQuantity] = useState([]);
     const [yearsArray, setYearsArray] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [currentMonth, setCurrentMonth] = useState('');
-    const [currentYear, setCurrentYear] = useState('');
-    const [campaigns, setCampaigns] = useState([]);
     const [initialValues, setInitialValues] = useState({});
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
@@ -180,9 +177,6 @@ const AnalisisMetas = () => {
         });
 
         const currentYear = currentDate.getFullYear();
-
-        setCurrentMonth(currentMonth);
-        setCurrentYear(currentYear);
 
         const basedInitialValues = {
             deliveryType: 'delivery',
@@ -297,25 +291,6 @@ const AnalisisMetas = () => {
         setRows(modifiedData);
     };
 
-    const getCampaignOptions = (data) => {
-        const campaigns = data.map((row) => row.campaign_goal).filter(Boolean);
-        const uniqueCampaigns = [...new Set(campaigns)];
-        const campaignOptions = uniqueCampaigns.map((campaign) => ({
-            value: campaign.toLowerCase(),
-            label:
-                campaign.charAt(0).toUpperCase() +
-                campaign.slice(1).toLowerCase(),
-        }));
-        const uniqueCampaignOptions = Array.from(
-            new Map(
-                campaignOptions.map((item) => [item['value'], item])
-            ).values()
-        );
-
-        console.log(uniqueCampaignOptions);
-        setCampaigns(uniqueCampaignOptions);
-    };
-
     const constructStats = (data, deliveryType) => {
         const stats = {
             metasCumplidas: 0,
@@ -337,29 +312,6 @@ const AnalisisMetas = () => {
         });
 
         setGoalsQuantity(stats);
-    };
-
-    const getAllGoals = async () => {
-        setLoading(true);
-        try {
-            const response = await fetch(`${getApiUrl().apiUrl}goals/`, {
-                method: 'GET',
-                credentials: 'include',
-            });
-
-            await handleError(response, showSnack);
-
-            if (response.status === 200) {
-                const data = await response.json();
-                getCampaignOptions(data);
-            }
-        } catch (error) {
-            if (getApiUrl().environment === 'development') {
-                console.error(error);
-            }
-        } finally {
-            setLoading(false);
-        }
     };
 
     const getCurrentGoals = async () => {
@@ -392,7 +344,6 @@ const AnalisisMetas = () => {
 
     useEffect(() => {
         getCurrentGoals();
-        getAllGoals();
     }, []);
 
     const currentColumns = [
@@ -477,21 +428,6 @@ const AnalisisMetas = () => {
             </GridToolbarContainer>
         );
     }
-
-    const months = [
-        { value: 'ENERO', label: 'ENERO' },
-        { value: 'FEBRERO', label: 'FEBRERO' },
-        { value: 'MARZO', label: 'MARZO' },
-        { value: 'ABRIL', label: 'ABRIL' },
-        { value: 'MAYO', label: 'MAYO' },
-        { value: 'JUNIO', label: 'JUNIO' },
-        { value: 'JULIO', label: 'JULIO' },
-        { value: 'AGOSTO', label: 'AGOSTO' },
-        { value: 'SEPTIEMBRE', label: 'SEPTIEMBRE' },
-        { value: 'octubre', label: 'OCTUBRE' },
-        { value: 'NOVIEMBRE', label: 'NOVIEMBRE' },
-        { value: 'DICIEMBRE', label: 'DICIEMBRE' },
-    ];
 
     const stats = [
         { title: 'Metas Aceptadas', quantity: goalsQuantity.metasCumplidas },
