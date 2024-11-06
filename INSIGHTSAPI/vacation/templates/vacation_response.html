@@ -80,9 +80,18 @@
 
 		<div class="header">
 			<p>
-				Bogotá D.C.; {% if vacation.payroll_approved_at %} {{ vacation.payroll_approved_at|date:"d \d\e F \d\e Y" }} {% elif vacation.hr_approved_at %}
-				{{vacation.hr_approved_at|date:"d \d\e F \d\e Y" }} {% elif vacation.manager_approved_at %} {{vacation.manager_approved_at|date:"d \d\e F \d\e Y" }} {% elif
-				vacation.boss_approved_at %} {{ vacation.boss_approved_at|date:"d \d\e F \d\e Y" }} {% else %} No approval date available {% endif %}
+				Bogotá D.C.;
+				{% if vacation.payroll_approved_at %}
+				{{ vacation.payroll_approved_at|date:"d \\d\\e F \\d\\e Y" }}
+				{% elif vacation.hr_approved_at %}
+				{{ vacation.hr_approved_at|date:"d \\d\\e F \\d\\e Y" }}
+				{% elif vacation.manager_approved_at %}
+				{{ vacation.manager_approved_at|date:"d \\d\\e F \\d\\e Y" }}
+				{% elif vacation.boss_approved_at %}
+				{{ vacation.boss_approved_at|date:"d \\d\\e F \\d\\e Y" }}
+				{% else %}
+				No approval date available
+				{% endif %}
 			</p>
 		</div>
 
