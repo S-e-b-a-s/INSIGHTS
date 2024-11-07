@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 import {
@@ -16,12 +15,15 @@ import {
 import { Container, Typography, Box } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
+// Custom hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 export const EmploymentCertification = () => {
     const [rows, setRows] = useState([]);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
+
     const [loading, setLoading] = useState(false);
+    const { showSnack } = useSnackbar();
+
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
 
@@ -66,14 +68,6 @@ export const EmploymentCertification = () => {
     useEffect(() => {
         getEmploymentCertifications();
     }, []);
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
-    const handleCloseSnack = () => setOpenSnack(false);
 
     const columns = [
         { field: 'cedula', headerName: 'Cedula', width: 100 },
@@ -186,13 +180,6 @@ export const EmploymentCertification = () => {
                     ></DataGrid>
                 </Box>
             </Container>
-
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
         </>
     );
 };

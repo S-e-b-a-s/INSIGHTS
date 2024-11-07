@@ -8,10 +8,31 @@ export const handleError = async (response, showSnack) => {
         switch (response.status) {
             case 400:
                 const data = await response.json();
-                const firstKey = Object.keys(data)[0];
-                errorMessage = firstKey
-                    ? data[firstKey]
-                    : 'Por favor, verifica la información ingresada y vuelve a intentarlo.';
+                let firstKey = Object.keys(data)[0];
+
+                if (firstKey === 'Error') {
+                    // Check if the "Error" value is a string and handle it directly
+                    if (typeof data[firstKey] === 'string') {
+                        errorMessage = data[firstKey]; // Directly set the error message
+                    } else if (Array.isArray(data[firstKey])) {
+                        // If it's an array, pick the first item
+                        errorMessage = data[firstKey][0];
+                    } else {
+                        // If it's an object or anything unexpected, fall back to a generic message
+                        errorMessage =
+                            'Por favor, verifica la información ingresada y vuelve a intentarlo.';
+                    }
+                } else {
+                    // Handle non-nested error cases (same logic as before)
+                    if (typeof data[firstKey] === 'string') {
+                        errorMessage = data[firstKey];
+                    } else if (Array.isArray(data[firstKey])) {
+                        errorMessage = data[firstKey][0];
+                    } else {
+                        errorMessage =
+                            'Por favor, verifica la información ingresada y vuelve a intentarlo.';
+                    }
+                }
                 break;
             case 401:
                 errorMessage =

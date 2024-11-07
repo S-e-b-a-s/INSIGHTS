@@ -5,22 +5,26 @@ import {
     Dialog,
     DialogContent,
     DialogActions,
-    Button,
     TextField,
     Typography,
     MenuItem,
     Box,
     DialogContentText,
-    LinearProgress,
-    Fade,
+    Button,
 } from '@mui/material';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 
+// Material-UI Lab
+import { LoadingButton } from '@mui/lab';
+
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../context/ProgressbarContext';
+
 // Custom components and assets
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
-import SnackbarAlert from '../common/SnackBarAlert';
 
 const personalFields = [
     {
@@ -129,21 +133,10 @@ const validationSchema = Yup.object().shape({
 });
 
 const MyAccountDialog = ({ open, onClose }) => {
-    const [openSnack, setOpenSnack] = useState(false);
-    const [message, setMessage] = useState('');
-    const [severity, setSeverity] = useState('success');
+    const { showSnack } = useSnackbar();
     const [initialValues, setInitialValues] = useState({});
-    const [loadingBar, setLoadingBar] = useState(false);
-
-    const handleCloseSnack = () => {
-        setOpenSnack(false);
-    };
-
-    const showSnack = (severity, message) => {
-        setMessage(message);
-        setSeverity(severity);
-        setOpenSnack(true);
-    };
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
 
     const getInitialValues = async () => {
         try {
@@ -199,7 +192,7 @@ const MyAccountDialog = ({ open, onClose }) => {
     };
 
     const handleSave = async (values) => {
-        setLoadingBar(true);
+        showProgressbar();
         try {
             const response = await fetch(
                 `${getApiUrl().apiUrl}users/update-profile/`,
@@ -225,59 +218,56 @@ const MyAccountDialog = ({ open, onClose }) => {
                 console.error(error);
             }
         } finally {
-            setLoadingBar(false);
+            hideProgressbar();
         }
     };
 
     return (
-        <>
-            <Fade in={loadingBar}>
-                <LinearProgress sx={{ zIndex: '1301' }} color="secondary" />
-            </Fade>
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
-            <Dialog open={open} onClose={onClose}>
-                <Formik
-                    initialValues={initialValues}
-                    validationSchema={validationSchema}
-                    onSubmit={handleSave}
-                >
-                    <Form>
-                        <DialogContent>
-                            <Typography variant="h4">Tu Cuenta</Typography>
-                            <DialogContentText
-                                sx={{ marginBottom: '1rem' }}
-                                id="alert-dialog-slide-description"
-                            >
-                                Completa y actualiza tu información personal
-                            </DialogContentText>
-                            <Box
-                                sx={{
-                                    '& .MuiTextField-root': {
-                                        m: 1,
-                                        width: '25ch',
-                                    },
-                                }}
-                            >
-                                <MyTextFields />
-                            </Box>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button variant="contained" onClick={onClose}>
-                                Cancelar
-                            </Button>
-                            <Button variant="contained" type="submit">
-                                Actualizar
-                            </Button>
-                        </DialogActions>
-                    </Form>
-                </Formik>
-            </Dialog>
-        </>
+        <Dialog open={open} onClose={onClose}>
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={handleSave}
+            >
+                <Form>
+                    <DialogContent>
+                        <Typography variant="h4">Tu Cuenta</Typography>
+                        <DialogContentText
+                            sx={{ marginBottom: '1rem' }}
+                            id="alert-dialog-slide-description"
+                        >
+                            Completa y actualiza tu información personal
+                        </DialogContentText>
+                        <Box
+                            sx={{
+                                '& .MuiTextField-root': {
+                                    m: 1,
+                                    width: '25ch',
+                                },
+                            }}
+                        >
+                            <MyTextFields />
+                        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            required={isProgressVisible}
+                            variant="contained"
+                            onClick={onClose}
+                        >
+                            Cancelar
+                        </Button>
+                        <LoadingButton
+                            loading={isProgressVisible}
+                            variant="contained"
+                            type="submit"
+                        >
+                            Actualizar
+                        </LoadingButton>
+                    </DialogActions>
+                </Form>
+            </Formik>
+        </Dialog>
     );
 };
 

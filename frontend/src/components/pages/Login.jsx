@@ -5,12 +5,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 import * as Sentry from '@sentry/react';
+// import { Toaster, toast } from 'sonner';
 
-// Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../context/ProgressbarContext';
+
+// Custom Components/Functions
 import { getApiUrl } from '../../assets/getApi.js';
 
-// Material-UI
+// MUI Components
 import {
     Box,
     Typography,
@@ -19,8 +23,10 @@ import {
     Link,
     Alert,
     Collapse,
-    LinearProgress,
 } from '@mui/material';
+
+// MUI Lab
+import { LoadingButton } from '@mui/lab';
 
 // Icons
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
@@ -51,18 +57,16 @@ const FormikTextField = ({ label, type, disabled, autoComplete, ...props }) => {
 
 const Login = () => {
     const [open, setOpen] = useState(false);
-    const [openSnack, setOpenSnack] = useState(false);
+    const { showSnack } = useSnackbar();
     const navigate = useNavigate();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [loadingBar, setLoadingBar] = useState(false);
     const location = useLocation();
     const showAlert = location.state?.showAlert;
     const lastLocationPath = location.state?.lastLocation
         ? new URL(location.state?.lastLocation).pathname
         : null;
     const [lastLocation, setLastLocation] = useState(null);
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
 
     // Use Effect Hook to update localStorage when items state changes
     useEffect(() => {
@@ -97,17 +101,62 @@ const Login = () => {
         }
     }, [showAlert, navigate, location, lastLocation]);
 
-    const handleCloseSnack = () => setOpenSnack(false);
+    // Constants
+    const ERROR_MESSAGES = {
+        ACCOUNT_CREATION:
+            'Tu usuario esta siendo creado, por favor intenta mas tarde.',
+        INVALID_CREDENTIALS:
+            'No se puede iniciar sesión con las credenciales proporcionadas.',
+        GENERIC_ERROR: 'Ha ocurrido un error. Por favor, inténtelo de nuevo.',
+    };
 
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
+    const REFRESH_TIMER_EXPIRY = 15 * 60 * 60 * 1000; // 15 hours in milliseconds
+
+    // Helper functions
+    const saveUserDataToLocalStorage = (data) => {
+        const itemsToStore = {
+            'refresh-timer-ls': {
+                expiry: new Date().getTime() + REFRESH_TIMER_EXPIRY,
+            },
+            permissions: data.permissions,
+            cedula: data.cedula,
+            cargo: data.cargo,
+            email: data.email,
+            rango: data.rango,
+        };
+
+        Object.entries(itemsToStore).forEach(([key, value]) => {
+            localStorage.setItem(key, JSON.stringify(value));
+        });
+    };
+
+    const setupSentryUser = (data, username) => {
+        Sentry.setUser({
+            id: data.cedula,
+            email: data.email,
+            username,
+        });
+    };
+
+    const handleNavigation = (lastLocation, navigate) => {
+        const destination = lastLocation || '/logged/home';
+        navigate(destination, { replace: true });
+    };
+
+    const handleErrorResponse = (response, data) => {
+        if (response.status === 400 && data?.non_field_errors?.length > 0) {
+            throw new Error(ERROR_MESSAGES.ACCOUNT_CREATION);
+        }
+
+        if (response.status === 401 && data?.detail?.length > 0) {
+            throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
+        }
+
+        throw new Error(ERROR_MESSAGES.GENERIC_ERROR);
     };
 
     const handleSubmit = async (values) => {
-        setIsSubmitting(true);
-        setLoadingBar(true);
+        showProgressbar();
 
         try {
             const response = await fetch(`${getApiUrl().apiUrl}token/obtain/`, {
@@ -117,93 +166,33 @@ const Login = () => {
                 credentials: 'include',
             });
 
-            setIsSubmitting(false);
-            setLoadingBar(false);
-
             const data = await response.json();
 
             if (!response.ok) {
-                // Check if the response contains the expected error structure
-                if (
-                    response.status === 400 &&
-                    data &&
-                    data.non_field_errors &&
-                    data.non_field_errors.length > 0
-                ) {
-                    // If the error structure is as expected, throw the first error message
-                    throw new Error(
-                        'Tu usuario esta siendo creado, por favor intenta mas tarde.'
-                    );
-                } else if (
-                    response.status === 401 &&
-                    data &&
-                    data.detail &&
-                    data.detail.length > 0
-                ) {
-                    showSnack(
-                        'error',
-                        'No se puede iniciar sesión con las credenciales proporcionadas.'
-                    );
-                } else {
-                    // If the error structure is not as expected, throw a generic error
-                    throw new Error(
-                        'Ha ocurrido un error. Por favor, inténtelo de nuevo.'
-                    );
-                }
+                handleErrorResponse(response, data);
             }
 
             if (response.status === 200) {
-                // Set the item in localStorage
-                localStorage.setItem(
-                    'refresh-timer-ls',
-                    JSON.stringify({
-                        expiry: new Date().getTime() + 15 * 60 * 60 * 1000, // 24 hours from now
-                    })
-                );
-                localStorage?.setItem(
-                    'permissions',
-                    JSON.stringify(data.permissions)
-                );
-                localStorage?.setItem('cedula', JSON.stringify(data.cedula));
-                localStorage?.setItem('cargo', JSON.stringify(data.cargo));
-                localStorage?.setItem('email', JSON.stringify(data.email));
-                localStorage?.setItem('rango', JSON.stringify(data.rango));
-                Sentry.setUser({
-                    id: data.cedula,
-                    email: data.email,
-                    username: values.username,
-                });
-                if (lastLocation) {
-                    navigate(lastLocation, { replace: true });
-                } else {
-                    navigate('/logged/home');
-                }
+                saveUserDataToLocalStorage(data);
+                setupSentryUser(data, values.username);
+                handleNavigation(lastLocation, navigate);
             }
         } catch (error) {
-            if (
-                error.message ===
-                'Tu usuario esta siendo creado, por favor intenta mas tarde.'
-            ) {
-                showSnack('info', error.message);
-            } else {
-                console.error(error);
-                if (
-                    error.message ===
-                        'Unable to log in with provided credentials.' ||
-                    error.message ===
-                        'No active account found with the given credentials'
-                ) {
-                    showSnack(
-                        'error',
-                        'No se puede iniciar sesión con las credenciales proporcionadas.'
-                    );
-                } else {
-                    console.error(error.message);
-                    showSnack('error', error.message);
-                }
-            }
-            setIsSubmitting(false);
-            setLoadingBar(false);
+            console.error(error);
+
+            const errorMessage =
+                error.message === ERROR_MESSAGES.ACCOUNT_CREATION
+                    ? { type: 'info', message: error.message }
+                    : error.message === ERROR_MESSAGES.INVALID_CREDENTIALS
+                      ? {
+                            type: 'error',
+                            message: ERROR_MESSAGES.INVALID_CREDENTIALS,
+                        }
+                      : { type: 'error', message: error.message };
+
+            showSnack(errorMessage.type, errorMessage.message);
+        } finally {
+            hideProgressbar();
         }
     };
 
@@ -212,6 +201,21 @@ const Login = () => {
     const ethicalLine = () => {
         navigate('ethical-line');
     };
+
+    // const toastPromise = () => {
+    //     const promise = () =>
+    //         new Promise((resolve) =>
+    //             setTimeout(() => resolve({ name: 'Sonner' }), 2000)
+    //         );
+
+    //     toast.promise(promise, {
+    //         loading: 'Loading...',
+    //         success: (data) => {
+    //             return `${data.name} toast has been added`;
+    //         },
+    //         error: 'Error',
+    //     });
+    // };
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -298,15 +302,15 @@ const Login = () => {
                                     </Alert>
                                 </Collapse>
                             </Box>
-                            <Button
+                            <LoadingButton
                                 sx={{ fontFamily: 'Montserrat' }}
                                 type="submit"
                                 variant="contained"
                                 startIcon={<LoginOutlinedIcon />}
-                                disabled={isSubmitting}
+                                loading={isProgressVisible}
                             >
                                 Iniciar Sesión
-                            </Button>
+                            </LoadingButton>
                             <Button
                                 onClick={ethicalLine}
                                 sx={{ fontFamily: 'Montserrat' }}
@@ -334,20 +338,23 @@ const Login = () => {
                         C&C SERVICES © - Bogotá D.C. / Colombia.
                     </Typography>
                 </Box>
-            </Box>
-            {loadingBar && (
-                <Box
-                    sx={{ width: '100vw', position: 'absolute', zIndex: 1000 }}
+                {/* <button
+                    onClick={() =>
+                        toast.error(
+                            'No se puede iniciar sesión con las credenciales proporcionadas.',
+                            { duration: Infinity }
+                        )
+                    }
                 >
-                    <LinearProgress variant="indeterminate" />
-                </Box>
-            )}
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
+                    error
+                </button>
+                <button onClick={toastPromise}>success</button>
+                <button onClick={() => toast.warning('test alert')}>
+                    warning
+                </button>
+                <button onClick={() => toast.info('test alert')}>info</button> */}
+            </Box>
+            {/* <Toaster richColors position="top-center" /> */}
         </Box>
     );
 };

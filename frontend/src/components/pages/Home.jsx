@@ -3,9 +3,11 @@ import React, { useEffect, useState } from 'react';
 // Custom Components
 import { getApiUrl } from '../../assets/getApi.js';
 import CarouselComponent from '../shared/Carousel';
-import SnackbarAlert from '../common/SnackBarAlert';
 import { handleError } from '../../assets/handleError';
-import { EmblaCarousel } from '../shared/EmblaCarousel.jsx';
+// import { EmblaCarousel } from '../shared/EmblaCarousel.jsx';
+
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
 
 // Material-UI
 import { Typography, Box, Container, useMediaQuery, Card } from '@mui/material';
@@ -19,50 +21,40 @@ import AvatarImage from '../../images/home-carousel/avatar.jpg';
 import securityPractices from '../../images/home-carousel/security-practices.png';
 import differentiationMatrices from '../../images/home-carousel/differentiation-matrices.png';
 import points from '../../images/home-carousel/points.png';
-import water from '../../images/home-carousel/water.png';
 import socialMedia from '../../images/home-carousel/social-media.png';
 import mapProcess from '../../images/home-carousel/process-map.png';
-import electricityCampaign from '../../images/home-carousel/electricity-campaign.png';
-import passwords from '../../images/home-carousel/password.png';
-import valentine from '../../images/home-carousel/valentine.png';
-import valentine2 from '../../images/home-carousel/valentine-2.png';
-import valentine3 from '../../images/home-carousel/valentine-3.png';
-import halloween from '../../images/home-carousel/halloween-2.png';
+import harassmentPrevention from '../../images/home-carousel/harassment-prevention.png';
+import harassmentPrevention2 from '../../images/home-carousel/harassment-prevention-2.png';
+import harassmentPrevention3 from '../../images/home-carousel/harassment-prevention-3.png';
+import compensationFund from '../../images/home-carousel/compensation-fund.png';
+import clothSize from '../../images/home-carousel/cloth-size.png';
+import halloween from '../../images/home-carousel/halloween.png';
+import noViolenceWomen from '../../images/home-carousel/no-violence-women.png';
 
 const benefits = [{ image: realBenefit2, title: 'Beneficio 2' }];
 
 const homeImages = [
+    { image: noViolenceWomen },
     { image: halloween },
-    { image: valentine },
-    { image: valentine2 },
-    { image: valentine3 },
-    { image: passwords },
-    { image: electricityCampaign },
-    { image: mapProcess },
+    { image: compensationFund },
+    { image: clothSize },
     { image: points },
-    { image: water },
+    { image: mapProcess },
+    { image: harassmentPrevention },
+    { image: harassmentPrevention2 },
+    { image: harassmentPrevention3 },
+    { image: securityPractices },
     { image: socialMedia },
     { image: differentiationMatrices },
-    { image: securityPractices },
     { image: ceroDiscrimination },
 ];
 
 const Home = () => {
-    const [openSnack, setOpenSnack] = useState(false);
-    const [message, setMessage] = useState('');
-    const [severity, setSeverity] = useState('success');
     const [todayBirthdays, setTodayBirthdays] = useState([]);
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
+    const { showSnack } = useSnackbar();
     const matches = useMediaQuery('(min-width:1025px)');
-
-    const handleCloseSnack = () => setOpenSnack(false);
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
 
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
@@ -155,12 +147,12 @@ const Home = () => {
 
     return (
         <>
-            {/* <Box
+            <Box
                 sx={{
                     display: 'flex',
                     mt: '5.5rem',
                     px: '2rem',
-                    textAlign: 'center',    
+                    textAlign: 'center',
                     justifyContent: 'center',
                 }}
             >
@@ -170,8 +162,8 @@ const Home = () => {
                     height={matches ? '648px' : '480px'}
                     width={matches ? '1152px' : '854px'}
                 />
-            </Box> */}
-            <Box
+            </Box>
+            {/* <Box
                 sx={{
                     mt: '2rem',
                     p: '2rem',
@@ -181,7 +173,7 @@ const Home = () => {
                 }}
             >
                 <EmblaCarousel />
-            </Box>
+            </Box> */}
             <Container
                 sx={{
                     display: 'flex',
@@ -492,13 +484,6 @@ const Home = () => {
                     />
                 </Box>
             </Box>
-
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
         </>
     );
 };

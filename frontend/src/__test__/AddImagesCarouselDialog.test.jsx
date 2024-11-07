@@ -21,6 +21,7 @@ vi.mock('react-filepond', () => {
         registerPlugin: vi.fn(),
     };
 });
+vi.spyOn(console, 'warn');
 
 describe('AddImagesCarouselDialog Component', () => {
     const mockSetOpenAddDialog = vi.fn();
@@ -61,28 +62,31 @@ describe('AddImagesCarouselDialog Component', () => {
         render(<AddImagesCarouselDialog {...defaultProps} />);
 
         // Simulate opening the dropdown (for "position" field)
-        const positionInput = screen.getByLabelText(/Posición/i);
+        const positionInput = screen.getByDisplayValue('1');
+        const positionBox = screen.getByLabelText(/Posición/i);
 
-        fireEvent.mouseDown(positionInput); // Open the dropdown
+        // console.log(positionInput);
+
+        fireEvent.mouseDown(positionBox); // Open the dropdown
 
         // Find the dropdown list within the document
-        const listbox = within(screen.getByRole('listbox'));
+        const listbox = within(screen.getByRole('listbox', { hidden: true }));
 
         // Select the first option (e.g., value "1")
         const firstOption = listbox.getByText('1');
 
         fireEvent.click(firstOption);
 
+        // Now, simulate a change event to ensure the value is set
+        fireEvent.change(positionInput, { target: { value: '1' } });
+
         // Now, add the file using the mocked FilePond input
         const fileInput = screen.getByTestId('filepond-input');
         const file = new File(['dummy content'], 'example.png', {
             type: 'image/png',
         });
-        fireEvent.change(fileInput, { target: { files: [file] } });
 
-        // Add a console log to inspect the form elements
-        const form = screen.getByRole('form');
-        console.log(form);
+        fireEvent.change(fileInput, { target: { files: [file] } });
 
         // Submit the form
         const submitButton = screen.getByText('Actualizar');

@@ -3,8 +3,10 @@ import { useState, useEffect } from 'react';
 // Libraries
 import { useNavigate } from 'react-router-dom';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 import {
@@ -26,9 +28,7 @@ import {
 
 export const VacanciesReferred = () => {
     const [rows, setRows] = useState([]);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
+    const { showSnack } = useSnackbar();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
@@ -69,14 +69,6 @@ export const VacanciesReferred = () => {
     useEffect(() => {
         getVacanciesReferred();
     }, []);
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
-    const handleCloseSnack = () => setOpenSnack(false);
 
     const CustomToolbar = () => {
         return (
@@ -168,13 +160,6 @@ export const VacanciesReferred = () => {
                     ></DataGrid>
                 </Box>
             </Container>
-
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
         </>
     );
 };

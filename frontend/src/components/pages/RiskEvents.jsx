@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom components
 import { getApiUrl } from '../../assets/getApi';
-import SnackbarAlert from '../common/SnackBarAlert';
 import { handleError } from '../../assets/handleError';
 import {
     CustomNoResultsOverlay,
@@ -69,11 +71,9 @@ const validationSchema = Yup.object().shape({
 });
 
 export const RiskEvent = () => {
+    const { showSnack } = useSnackbar();
     const [rows, setRows] = useState([]);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
     const [details, setDetails] = useState({});
-    const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogEdit, setOpenDialogEdit] = useState(false);
     const [disabled, setDisabled] = useState(false);
@@ -176,14 +176,6 @@ export const RiskEvent = () => {
     const handleDisabledChange = () => {
         setDisabled(!disabled);
     };
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
-    const handleCloseSnack = () => setOpenSnack(false);
 
     const handleDeleteClick = async (id) => {
         try {
@@ -327,7 +319,6 @@ export const RiskEvent = () => {
             return (
                 <TextField
                     sx={{ width: '800px' }}
-                    InputLabelProps={{ shrink: true }}
                     multiline={multiline}
                     rows={rows}
                     type={type}
@@ -336,12 +327,14 @@ export const RiskEvent = () => {
                     {...field}
                     helperText={errorText}
                     error={!!errorText}
+                    slotProps={{
+                        inputLabel: { shrink: true },
+                    }}
                 />
             );
         } else if (type === 'date' || type === 'datetime-local') {
             return (
                 <TextField
-                    InputLabelProps={{ shrink: true }}
                     sx={{ width: '390px' }}
                     rows={rows}
                     type={type}
@@ -350,6 +343,9 @@ export const RiskEvent = () => {
                     {...field}
                     helperText={errorText}
                     error={!!errorText}
+                    slotProps={{
+                        inputLabel: { shrink: true },
+                    }}
                 />
             );
         } else if (multiline) {
@@ -501,7 +497,6 @@ export const RiskEvent = () => {
         },
         {
             field: 'event_title',
-            type: 'text',
             headerName: 'Evento',
             width: 100,
             editable: false,
@@ -557,7 +552,6 @@ export const RiskEvent = () => {
         },
         {
             field: 'description',
-            type: 'text',
             headerName: 'Descripción del Evento',
             width: 100,
             editable: false,
@@ -634,7 +628,6 @@ export const RiskEvent = () => {
         },
         {
             field: 'reported_by',
-            type: '',
             headerName: 'Reportado Por',
             width: 100,
             editable: false,
@@ -673,21 +666,18 @@ export const RiskEvent = () => {
         },
         {
             field: 'public_accounts_affected',
-            type: 'text',
             headerName: 'Cuentas PUC Afectadas',
             width: 100,
             editable: false,
         },
         {
             field: 'plan',
-            type: '',
             headerName: 'Plan',
             width: 100,
             editable: false,
         },
         {
             field: 'learning',
-            type: '',
             headerName: 'Aprendizaje',
             width: 100,
             editable: false,
@@ -787,12 +777,7 @@ export const RiskEvent = () => {
                     ></DataGrid>
                 </Box>
             </Container>
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
+
             <Dialog
                 maxWidth={'md'}
                 open={openDialog}

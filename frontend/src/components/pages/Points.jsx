@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 
-// Libraries
-import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from '../context/SnackbarContext';
 
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 import {
@@ -40,20 +38,9 @@ const StyledDataGrid = styled(DataGrid)(() => ({
 
 export const Points = () => {
     const [rows, setRows] = useState([]);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
+    const { showSnack } = useSnackbar();
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
     const cedula = JSON.parse(localStorage.getItem('cedula'));
-    const permissions = JSON.parse(localStorage.getItem('permissions'));
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-        if (!permissions || !permissions.includes('vacancy.view_reference')) {
-            navigate('/logged/home');
-        }
-    }, []);
 
     const getPoints = async () => {
         setLoading(true);
@@ -93,14 +80,6 @@ export const Points = () => {
     useEffect(() => {
         getPoints();
     }, []);
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
-    const handleCloseSnack = () => setOpenSnack(false);
 
     const CustomToolbar = () => {
         return (
@@ -195,13 +174,6 @@ export const Points = () => {
                     ></StyledDataGrid>
                 </Box>
             </Container>
-
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
         </>
     );
 };

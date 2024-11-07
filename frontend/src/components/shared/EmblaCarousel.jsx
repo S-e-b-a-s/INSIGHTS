@@ -4,11 +4,13 @@ import Autoplay from 'embla-carousel-autoplay';
 import { useState, useEffect } from 'react';
 import { DotButton, useDotButton } from './EmblaCarouselDotButton';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom Functions and Components
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 import AddImagesCarouselDialog from './AddImagesCarouselDialog';
-import SnackbarAlert from '../common/SnackBarAlert';
 
 // Icons
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -83,22 +85,14 @@ const IconButtonsStyle = {
 };
 
 export function EmblaCarousel() {
+    const { showSnack } = useSnackbar();
     const [images, setImages] = useState([]);
     const [openAddDialog, setOpenAddDialog] = useState(false);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState('');
-    const [openSnack, setOpenSnack] = useState(false);
     const permissions = JSON.parse(localStorage.getItem('permissions'));
 
     useEffect(() => {
         getCarouselImages(setImages);
     }, []);
-
-    const showSnack = (severity, message) => {
-        setMessage(message);
-        setSeverity(severity);
-        setOpenSnack(true);
-    };
 
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
         Autoplay({ delay: 4000, stopOnInteraction: false }),
@@ -109,12 +103,6 @@ export function EmblaCarousel() {
 
     return (
         <Box>
-            <SnackbarAlert
-                openSnack={openSnack}
-                message={message}
-                severity={severity}
-                closeSnack={() => setOpenSnack(false)}
-            ></SnackbarAlert>
             <AddImagesCarouselDialog
                 openAddDialog={openAddDialog}
                 setOpenAddDialog={setOpenAddDialog}

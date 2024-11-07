@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-// Material-UI
+// MUI
 import {
     Tooltip,
     Container,
@@ -11,18 +11,24 @@ import {
     Button,
     Collapse,
     Box,
-    LinearProgress,
-    Fade,
     Alert,
 } from '@mui/material';
+
+// MUI X
 import { DataGrid, GridActionsCellItem, GridToolbar } from '@mui/x-data-grid';
-import { handleError } from '../../assets/handleError';
+
+// MUI Lab
+import { LoadingButton } from '@mui/lab';
 
 // Icons
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 
-// Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../context/ProgressbarContext';
+
+//Custom Components/Functions
+import { handleError } from '../../assets/handleError';
 import { getApiUrl } from '../../assets/getApi';
 import {
     CustomNoResultsOverlay,
@@ -31,18 +37,16 @@ import {
 
 export const MyPayslips = () => {
     const [rows, setRows] = useState([]);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
+    const { showSnack } = useSnackbar();
     const [openDialog, setOpenDialog] = useState(false);
     const [openCollapse, setOpenCollapse] = useState(false);
     const [paySlipId, setPaySlipId] = useState(null);
-    const [disabled, setDisabled] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [loadingRows, setLoadingRows] = useState(false);
     const currentEmail = JSON.parse(localStorage.getItem('email'));
     const permissions = JSON.parse(localStorage.getItem('permissions'));
     const cedula = JSON.parse(localStorage.getItem('cedula'));
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -85,12 +89,6 @@ export const MyPayslips = () => {
         getPayslips();
     }, []);
 
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
     const handleCollapse = () => {
         setOpenCollapse(!openCollapse);
     };
@@ -100,8 +98,6 @@ export const MyPayslips = () => {
         setOpenDialog(true);
     };
 
-    const handleCloseSnack = () => setOpenSnack(false);
-
     const handleCloseDialog = () => {
         setOpenDialog(false);
         setOpenCollapse(false);
@@ -109,8 +105,7 @@ export const MyPayslips = () => {
     };
 
     const handleResend = async () => {
-        setDisabled(true);
-        setLoading(true);
+        showProgressbar();
 
         try {
             const response = await fetch(
@@ -126,17 +121,15 @@ export const MyPayslips = () => {
             if (response.status === 201) {
                 showSnack('success', 'Desprendible reenviado correctamente');
                 setPaySlipId(null);
-                setDisabled(false);
                 setOpenDialog(false);
                 setOpenCollapse(false);
-                setLoading(false);
             }
         } catch (error) {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
-            setDisabled(false);
-            setLoading(false);
+        } finally {
+            hideProgressbar();
         }
     };
 
@@ -218,17 +211,6 @@ export const MyPayslips = () => {
 
     return (
         <>
-            <Fade in={loading} unmountOnExit>
-                <LinearProgress
-                    variant="query"
-                    sx={{
-                        width: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        zIndex: '100000',
-                    }}
-                />
-            </Fade>
             <Dialog
                 open={openDialog}
                 onClose={handleCloseDialog}
@@ -275,7 +257,7 @@ export const MyPayslips = () => {
                         </Box>
                         <Box>
                             <Button
-                                disabled={disabled}
+                                disabled={isProgressVisible}
                                 variant="contained"
                                 sx={{ mt: '1rem', mx: '1rem' }}
                                 onClick={handleCloseDialog}
@@ -283,26 +265,19 @@ export const MyPayslips = () => {
                             >
                                 Cancelar
                             </Button>
-                            <Button
-                                disabled={disabled}
+                            <LoadingButton
+                                loading={isProgressVisible}
                                 variant="contained"
                                 sx={{ mt: '1rem' }}
                                 onClick={handleResend}
                                 color="primary"
                             >
                                 Enviar
-                            </Button>
+                            </LoadingButton>
                         </Box>
                     </Box>
                 </DialogContent>
             </Dialog>
-
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
 
             <Container
                 sx={{

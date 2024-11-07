@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 
@@ -18,12 +20,11 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const UploadFiles = () => {
+    const { showSnack } = useSnackbar();
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState('Example');
     const [loading, setLoading] = useState(false);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
+
     const permissions = JSON.parse(localStorage.getItem('permissions'));
     const navigate = useNavigate();
 
@@ -31,17 +32,13 @@ const UploadFiles = () => {
         window.scrollTo(0, 0);
         if (
             !permissions ||
-            !permissions.includes('users.upload_robinson_list')
+            (!permissions.includes('users.upload_robinson_list') &&
+                !permissions.includes('goals.add_goals') &&
+                !permissions.includes('users.upload_points'))
         ) {
             navigate('/logged/home');
         }
     }, []);
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
 
     const onDrop = useCallback((acceptedFiles) => {
         setSelectedFile(acceptedFiles[0]);
@@ -75,7 +72,6 @@ const UploadFiles = () => {
         if (selectedFile) {
             const formData = new FormData();
             formData.append('file', selectedFile);
-            formData.append('cedula', cedula);
             let path;
             if (selectedFile.name.includes('meta')) {
                 path = `${getApiUrl().apiUrl}goals/`;
@@ -99,8 +95,6 @@ const UploadFiles = () => {
                     body: formData,
                     credentials: 'include',
                 });
-
-                setLoading(false);
 
                 await handleError(response, showSnack);
 
@@ -126,19 +120,18 @@ const UploadFiles = () => {
                         'La importación se ejecutó exitosamente, no se encontraron registros por añadir.\nRegistros totales en la base de datos: ' +
                             data.database_rows
                     );
-                } else if (response.status === 200) {
+                } else if (response.status === 201 || response.status === 200) {
                     showSnack('success', 'El cargue se subió exitosamente.');
                 }
             } catch (error) {
                 if (getApiUrl().environment === 'development') {
                     console.error(error);
                 }
+            } finally {
                 setLoading(false);
             }
         }
     };
-
-    const handleCloseSnack = () => setOpenSnack(false);
 
     return (
         <Box
@@ -243,12 +236,6 @@ const UploadFiles = () => {
                     </LoadingButton>{' '}
                 </Box>
             </Collapse>
-            <SnackbarAlert
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-                severity={severity}
-                message={message}
-            />
         </Box>
     );
 };

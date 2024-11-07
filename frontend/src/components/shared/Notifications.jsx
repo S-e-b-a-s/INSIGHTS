@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom Components
 import { getApiUrl } from '../../assets/getApi';
-import SnackbarAlert from '../common/SnackBarAlert';
 import { handleError } from '../../assets/handleError';
 
 // Material UI
@@ -34,26 +36,14 @@ const Notifications = ({
     notifications,
     getNotifications,
 }) => {
+    const { showSnack } = useSnackbar();
     const [anchorElOptions, setAnchorElOptions] = useState(null);
     const openOptions = Boolean(anchorElOptions);
     const [notificationStatus, setNotificationStatus] = useState(false);
     const [notificationId, setNotificationId] = useState(null);
-    const [openSnack, setOpenSnack] = useState(false);
-    const [message, setMessage] = useState('');
-    const [severity, setSeverity] = useState('');
 
     const handleClose = () => {
         setAnchorNotification(null);
-    };
-
-    const showSnack = (severity, message) => {
-        setMessage(message);
-        setSeverity(severity);
-        setOpenSnack(true);
-    };
-
-    const closeSnack = () => {
-        setOpenSnack(false);
     };
 
     const handleCloseOptions = () => {
@@ -122,12 +112,6 @@ const Notifications = ({
 
     return (
         <Box>
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={closeSnack}
-            />
             <Menu
                 id="notifications-menu"
                 anchorEl={anchorNotification}
@@ -161,8 +145,8 @@ const Notifications = ({
                             key={notification.id}
                             sx={{
                                 backgroundColor: notification.read
-                                    ? '#f5fafc'
-                                    : '#fff',
+                                    ? '#fff'
+                                    : '#f5fafc',
                                 width: '100%',
                                 maxWidth: 400,
                             }}

@@ -5,8 +5,10 @@ import { Formik, Form, useField, Field } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 
@@ -22,7 +24,6 @@ import {
     TextField,
     MenuItem,
     Button,
-    LinearProgress,
     Collapse,
     Radio,
     RadioGroup,
@@ -81,11 +82,9 @@ const baseInitialValues = {
 
 const EthicalLine = () => {
     const [loadingBar, setLoadingBar] = useState(false);
-    const [openSnack, setOpenSnack] = useState(false);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
     const [collapse, setCollapse] = useState(false);
     const navigate = useNavigate();
+    const { showSnack } = useSnackbar();
 
     const FormikError = ({ name }) => {
         const [meta] = useField(name);
@@ -93,14 +92,6 @@ const EthicalLine = () => {
         return errorText ? (
             <FormHelperText error>{errorText}</FormHelperText>
         ) : null;
-    };
-
-    const handleCloseSnack = () => setOpenSnack(false);
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
     };
 
     const handleSubmit = async (values) => {
@@ -418,25 +409,6 @@ const EthicalLine = () => {
                         </Form>
                     )}
                 </Formik>
-                {loadingBar && (
-                    <Box
-                        sx={{
-                            width: '100%',
-                            position: 'absolute',
-                            zIndex: 1000,
-                            top: 0,
-                            left: 0,
-                        }}
-                    >
-                        <LinearProgress variant="indeterminate" />
-                    </Box>
-                )}
-                <SnackbarAlert
-                    message={message}
-                    severity={severity}
-                    openSnack={openSnack}
-                    closeSnack={handleCloseSnack}
-                />
             </Container>
         </>
     );

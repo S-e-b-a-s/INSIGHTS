@@ -3,29 +3,19 @@ import { useEffect, useState } from 'react';
 // Material-UI
 import { Box, Card, Typography, Container } from '@mui/material';
 
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+
 // Custom Components
 import CarouselComponent from '../shared/Carousel';
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 
 const Promotions = () => {
+    const { showSnack } = useSnackbar();
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [todayBirthdays, setTodayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
-    const [openSnack, setOpenSnack] = useState(false);
-    const [message, setMessage] = useState('');
-    const [severity, setSeverity] = useState('success');
-
-    const handleCloseSnack = () => {
-        setOpenSnack(false);
-    };
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
 
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
@@ -169,12 +159,6 @@ const Promotions = () => {
                         width={'100%'}
                     />
                 </Card>
-                <SnackbarAlert
-                    message={message}
-                    severity={severity}
-                    openSnack={openSnack}
-                    closeSnack={handleCloseSnack}
-                />
             </Box>
         </Container>
     );

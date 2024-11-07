@@ -5,21 +5,21 @@ import { read, utils } from 'xlsx';
 
 import { useNavigate } from 'react-router-dom';
 
-// Material-UI
+// MUI
 import {
     Container,
     Box,
     Button,
     Typography,
     styled,
-    LinearProgress,
-    Fade,
     Tooltip,
     Dialog,
     DialogTitle,
     DialogContent,
     TextField,
 } from '@mui/material';
+
+// MUI DataGrid
 import {
     DataGrid,
     GridActionsCellItem,
@@ -31,8 +31,14 @@ import {
     GridToolbarQuickFilter,
 } from '@mui/x-data-grid';
 
+// MUI Lab
+import { LoadingButton } from '@mui/lab';
+
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../context/ProgressbarContext';
+
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import PayslipsPreview from './PayslipsPreview.jsx';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
@@ -49,22 +55,20 @@ import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 
 export const Payslips = () => {
     const [rows, setRows] = useState([]);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
+    const { showSnack } = useSnackbar();
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
     const [openDialog, setOpenDialog] = useState(false);
     const [fileName, setFileName] = useState('Subir archivo');
     const [payslipFile, setPayslipFile] = useState(null);
     const [previewRows, setPreviewRows] = useState([]);
-    const [loadingPreview, setLoadingPreview] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [loadingRows, setLoadingRows] = useState(false);
     const [openDialogPayslip, setOpenDialogPayslip] = useState(false);
     const [idPayslip, setIdPayslip] = useState();
     const [disabled, setDisabled] = useState(false);
     const emailRef = useRef();
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -100,14 +104,6 @@ export const Payslips = () => {
         getPayslips();
     }, []);
 
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
-    const handleCloseSnack = () => setOpenSnack(false);
-
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
         clipPath: 'inset(50%)',
@@ -122,8 +118,7 @@ export const Payslips = () => {
 
     const handleResend = async (event) => {
         event.preventDefault();
-        setDisabled(true);
-        setLoading(true);
+        showProgressbar();
         const formData = new FormData();
         formData.append('email', emailRef.current.value);
 
@@ -139,9 +134,7 @@ export const Payslips = () => {
 
             await handleError(response, showSnack);
 
-            if (response.status === 201) {
-                setLoading(false);
-                setDisabled(false);
+            if (response.status === 200) {
                 getPayslips();
                 showSnack('success', 'Desprendible reenviado correctamente');
                 handleCloseDialogPayslip();
@@ -150,8 +143,8 @@ export const Payslips = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
-            setLoading(false);
-            setDisabled(false);
+        } finally {
+            hideProgressbar();
         }
     };
 
@@ -267,6 +260,7 @@ export const Payslips = () => {
             'days',
             'biweekly_period',
             'transport_allowance',
+            'bearing',
             'surcharge_night_shift_hours',
             'surcharge_night_shift_allowance',
             'surcharge_night_shift_holiday_hours',
@@ -344,7 +338,11 @@ export const Payslips = () => {
     };
 
     const submitPayslipFile = async () => {
-        setLoadingPreview(true);
+        showProgressbar();
+        if (!payslipFile) {
+            showSnack('error', 'Debes seleccionar un archivo');
+            return;
+        }
 
         try {
             const formData = new FormData();
@@ -359,7 +357,6 @@ export const Payslips = () => {
 
             if (response.status === 201) {
                 handleCloseDialog();
-                setLoadingPreview(false);
                 getPayslips();
                 showSnack(
                     'success',
@@ -370,7 +367,8 @@ export const Payslips = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
-            setLoadingPreview(false);
+        } finally {
+            hideProgressbar();
         }
     };
 
@@ -431,29 +429,18 @@ export const Payslips = () => {
                             >
                                 Cancelar
                             </Button>
-                            <Button
+                            <LoadingButton
                                 type="submit"
-                                disabled={disabled}
+                                loading={isProgressVisible}
                                 variant="contained"
                                 color="primary"
                             >
                                 Enviar
-                            </Button>
+                            </LoadingButton>
                         </Box>
                     </Box>
                 </DialogContent>
             </Dialog>
-            <Fade in={loading} unmountOnExit>
-                <LinearProgress
-                    variant="query"
-                    sx={{
-                        width: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        zIndex: '100000',
-                    }}
-                />
-            </Fade>
             <Container
                 sx={{
                     marginTop: '6rem',
@@ -509,15 +496,6 @@ export const Payslips = () => {
                 open={openDialog}
                 onClose={handleCloseDialog}
             >
-                <Fade
-                    in={loadingPreview}
-                    style={{
-                        transitionDelay: loadingPreview ? '800ms' : '0ms',
-                    }}
-                    unmountOnExit
-                >
-                    <LinearProgress />
-                </Fade>
                 <DialogTitle>Cargar Desprendibles de Nomina</DialogTitle>
                 <DialogContent>
                     <Button
@@ -536,7 +514,8 @@ export const Payslips = () => {
                         />
                     </Button>
                     <PayslipsPreview rows={previewRows} />
-                    <Button
+                    <LoadingButton
+                        loading={isProgressVisible}
                         sx={{ mt: '1rem' }}
                         variant="contained"
                         onClick={submitPayslipFile}
@@ -544,15 +523,9 @@ export const Payslips = () => {
                         startIcon={<ArrowCircleUpIcon></ArrowCircleUpIcon>}
                     >
                         Subir
-                    </Button>
+                    </LoadingButton>
                 </DialogContent>
             </Dialog>
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
         </>
     );
 };

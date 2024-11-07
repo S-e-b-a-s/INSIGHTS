@@ -1,25 +1,33 @@
-import React, { useState } from 'react';
+// Libraries
+import { LoadingButton } from '@mui/lab';
+import { Formik, Form, useField } from 'formik';
+import * as Yup from 'yup';
+
+// MUI Components
 import {
     Container,
     Box,
     Typography,
     TextField,
     MenuItem,
-    Button,
-    LinearProgress,
     List,
     ListItem,
     ListItemText,
 } from '@mui/material';
-import { Formik, Form, useField } from 'formik';
-import * as Yup from 'yup';
+
+// MUI Icons
 import SendIcon from '@mui/icons-material/Send';
-import SnackbarAlert from '../common/SnackBarAlert';
+
+// Custom components and assets
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 
 // Media
 import CoexistenceCommitteeSVG from '../../images/coexistence-committee/coexistence-committee.svg';
+
+// Custom hooks
+import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../context/ProgressbarContext';
 
 // Opciones de motivos de la denuncia
 const motivos = [
@@ -32,8 +40,7 @@ const motivos = [
 
 // Esquema de validación con Yup
 const validationSchema = Yup.object().shape({
-    area: Yup.string().required('Campo requerido'),
-    motivo: Yup.string().required('Campo requerido'),
+    reason: Yup.string().required('Campo requerido'),
     description: Yup.string().required('Campo requerido'),
 });
 
@@ -72,26 +79,17 @@ const FormikTextField = ({
 
 // Componente principal del Comité de Convivencia
 const CoexistenceCommittee = () => {
-    const [loadingBar, setLoadingBar] = useState(false);
-    const [openSnack, setOpenSnack] = useState(false);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState('');
-
-    const handleCloseSnack = () => setOpenSnack(false);
-
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
+    const { showSnack } = useSnackbar();
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
 
     // Maneja el envío del formulario
-    const handleSubmit = async (values) => {
-        setLoadingBar(true);
+    const handleSubmit = async (values, { resetForm }) => {
+        showProgressbar();
 
         try {
             const response = await fetch(
-                `${getApiUrl().apiUrl}pqrs/complaints/`,
+                `${getApiUrl().apiUrl}coexistence-committee/complaints/`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -100,11 +98,16 @@ const CoexistenceCommittee = () => {
                 }
             );
 
-            setLoadingBar(false);
             await handleError(response, showSnack);
+
+            if (response.status === 201) {
+                showSnack('success', 'Mensaje enviado correctamente');
+                resetForm();
+            }
         } catch (error) {
             console.error(error);
-            setLoadingBar(false);
+        } finally {
+            hideProgressbar();
         }
     };
 
@@ -174,7 +177,10 @@ const CoexistenceCommittee = () => {
 
                 {/* Formulario para enviar mensajes al Comité */}
                 <Formik
-                    initialValues={{ area: '', motivo: '', description: '' }}
+                    initialValues={{
+                        reason: '',
+                        description: '',
+                    }}
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
@@ -195,7 +201,7 @@ const CoexistenceCommittee = () => {
                             <FormikTextField
                                 type="select"
                                 options={motivos}
-                                name="motivo"
+                                name="reason"
                                 label="Motivo"
                                 autoComplete="off"
                             />
@@ -209,42 +215,19 @@ const CoexistenceCommittee = () => {
                                 autoComplete="off"
                             />
 
-                            <Button
-                                disabled={loadingBar}
-                                type="submit"
+                            <LoadingButton
                                 sx={{ alignSelf: 'flex-start' }}
-                                variant="outlined"
-                                endIcon={<SendIcon />}
+                                type="submit"
+                                startIcon={<SendIcon />}
+                                variant="contained"
+                                loading={isProgressVisible}
                             >
                                 Enviar
-                            </Button>
+                            </LoadingButton>
                         </Box>
                     </Form>
                 </Formik>
             </Box>
-
-            {/* Barra de carga */}
-            {loadingBar && (
-                <Box
-                    sx={{
-                        width: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        zIndex: 1000,
-                    }}
-                >
-                    <LinearProgress variant="indeterminate" />
-                </Box>
-            )}
-
-            {/* Alerta Snackbar */}
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
         </Container>
     );
 };

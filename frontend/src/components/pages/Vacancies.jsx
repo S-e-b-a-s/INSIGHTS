@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
+
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
 
 // Material-UI
 import {
@@ -31,9 +33,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 const Vacancies = () => {
     const [openVacancy, setOpenVacancy] = useState(false);
-    const [openSnack, setOpenSnack] = useState(false);
-    const [message, setMessage] = useState('');
-    const [severity, setSeverity] = useState('success');
+    const { showSnack } = useSnackbar();
     const [vacancyId, setVacancyId] = useState();
     const [openCollapse, setOpenCollapse] = useState(false);
     const [openAddVacancy, setOpenAddVacancy] = useState(false);
@@ -162,12 +162,6 @@ const Vacancies = () => {
         }
     };
 
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
     const handleCloseVacancy = () => {
         setOpenVacancy(false);
         setOpenCollapse(false);
@@ -226,7 +220,6 @@ const Vacancies = () => {
 
     const handleOpenAddVacancy = () => setOpenAddVacancy(true);
 
-    const handleCloseSnack = () => setOpenSnack(false);
     const handleOpenCollapse = () => {
         setOpenCollapse(true);
         setVacancyDescription(
@@ -518,12 +511,6 @@ const Vacancies = () => {
                     <Button onClick={handleInactiveVacancy}>Inactivar</Button>
                 </DialogActions>
             </Dialog>
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
         </>
     );
 };

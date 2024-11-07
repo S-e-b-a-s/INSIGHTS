@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 
-// Material-UI
+// MUI
 import {
     Container,
     Box,
     Button,
     Typography,
-    LinearProgress,
-    Fade,
     Tooltip,
     Dialog,
     DialogTitle,
@@ -16,6 +14,8 @@ import {
     Chip,
     Collapse,
 } from '@mui/material';
+
+// MUI Data Grid
 import {
     DataGrid,
     gridClasses,
@@ -28,8 +28,14 @@ import {
     GridToolbarQuickFilter,
 } from '@mui/x-data-grid';
 
+// MUI Lab
+import { LoadingButton } from '@mui/lab';
+
+// Custom Hooks
+import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../context/ProgressbarContext';
+
 // Custom Components
-import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 import VacationsRequest from '../shared/VacationsRequest.jsx';
@@ -47,30 +53,30 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 
 export const Vacations = () => {
+    const { showSnack } = useSnackbar();
     const [rows, setRows] = useState([]);
-    const [severity, setSeverity] = useState('success');
-    const [message, setMessage] = useState();
-    const [openSnack, setOpenSnack] = useState(false);
     const permissions = JSON.parse(localStorage.getItem('permissions'));
     const [openVacation, setOpenVacation] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [loadingRows, setLoadingRows] = useState(false);
     const [openDialogPayslip, setOpenDialogPayslip] = useState(false);
     const [vacationId, setVacationId] = useState();
-    const [disabled, setDisabled] = useState(false);
     const [openObservationsInput, setOpenObservationsInput] = useState(false);
     const observationsRef = useRef();
     const cargo = localStorage.getItem('cargo');
     const rank = JSON.parse(localStorage.getItem('rango'));
     const cedula = JSON.parse(localStorage.getItem('cedula'));
+    const bossApprovalPermission = rank > 1;
     const managerApprovalPermission =
         cargo.includes('GERENTE') || cedula === '1022370826';
     const hrApprovalPermission = cargo === `"GERENTE DE GESTION HUMANA"`;
     const payrollApprovalPermission = permissions.includes(
-        'vacation.payroll_approbation'
+        'vacation.payroll_approval'
     );
     const [buttonType, setButtonType] = useState('button');
     const [approvalType, setApprovalType] = useState('');
+
+    const { isProgressVisible, showProgressbar, hideProgressbar } =
+        useProgressbar();
 
     const getVacations = async () => {
         setLoadingRows(true);
@@ -99,18 +105,9 @@ export const Vacations = () => {
         getVacations();
     }, []);
 
-    const showSnack = (severity, message) => {
-        setSeverity(severity);
-        setMessage(message);
-        setOpenSnack(true);
-    };
-
-    const handleCloseSnack = () => setOpenSnack(false);
-
     const handleApproval = async (event) => {
         event.preventDefault();
-        setDisabled(true);
-        setLoading(true);
+        showProgressbar();
 
         const formData = new FormData();
 
@@ -134,8 +131,6 @@ export const Vacations = () => {
             await handleError(response, showSnack);
 
             if (response.status === 200) {
-                setLoading(false);
-                setDisabled(false);
                 getVacations();
                 showSnack('success', 'Solicitud de vacaciones actualizada');
                 handleCloseDialogPayslip();
@@ -144,8 +139,8 @@ export const Vacations = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
-            setLoading(false);
-            setDisabled(false);
+        } finally {
+            hideProgressbar();
         }
     };
 
@@ -194,17 +189,80 @@ export const Vacations = () => {
             },
         },
         {
-            field: 'uploaded_by',
+            field: 'username',
             headerName: 'Solicitado por',
             width: 250,
         },
         {
-            field: 'user',
-            headerName: 'Solicitado para',
-            width: 250,
+            field: 'boss_is_approved',
+            headerName: 'Aprobación Jefe',
+            width: 160,
+            type: 'singleSelect',
+            valueOptions: ['PENDIENTE', 'APROBADA', 'RECHAZADA'],
+            // return a chip with the status
+            valueGetter: (value) => {
+                if (value === null) {
+                    return 'PENDIENTE';
+                } else if (value === true) {
+                    return 'APROBADA';
+                }
+                return 'RECHAZADA';
+            },
+            renderCell: (params) => {
+                if (params.value === 'PENDIENTE') {
+                    return (
+                        <Chip
+                            onClick={
+                                bossApprovalPermission
+                                    ? () =>
+                                          handleVacancyApproval(
+                                              params.id,
+                                              'boss_is_approved'
+                                          )
+                                    : undefined
+                            }
+                            icon={<PendingIcon />}
+                            label="Pendiente"
+                        />
+                    );
+                } else if (params.value === 'APROBADA') {
+                    return (
+                        <Chip
+                            onClick={
+                                bossApprovalPermission
+                                    ? () =>
+                                          handleVacancyApproval(
+                                              params.id,
+                                              'boss_is_approved'
+                                          )
+                                    : undefined
+                            }
+                            icon={<CheckCircleIcon />}
+                            label="Aprobada"
+                            color="success"
+                        />
+                    );
+                }
+                return (
+                    <Chip
+                        onClick={
+                            bossApprovalPermission
+                                ? () =>
+                                      handleVacancyApproval(
+                                          params.id,
+                                          'boss_is_approved'
+                                      )
+                                : undefined
+                        }
+                        icon={<CancelIcon />}
+                        label="Rechazado"
+                        color="error"
+                    />
+                );
+            },
         },
         {
-            field: 'manager_approbation',
+            field: 'manager_is_approved',
             headerName: 'Aprobación gerente',
             width: 160,
             type: 'singleSelect',
@@ -223,11 +281,12 @@ export const Vacations = () => {
                     return (
                         <Chip
                             onClick={
-                                managerApprovalPermission
+                                managerApprovalPermission &&
+                                params.row.boss_is_approved === true
                                     ? () =>
                                           handleVacancyApproval(
                                               params.id,
-                                              'manager_approbation'
+                                              'manager_is_approved'
                                           )
                                     : undefined
                             }
@@ -239,11 +298,12 @@ export const Vacations = () => {
                     return (
                         <Chip
                             onClick={
-                                managerApprovalPermission
+                                managerApprovalPermission &&
+                                params.row.boss_is_approved === true
                                     ? () =>
                                           handleVacancyApproval(
                                               params.id,
-                                              'manager_approbation'
+                                              'manager_is_approved'
                                           )
                                     : undefined
                             }
@@ -256,11 +316,12 @@ export const Vacations = () => {
                 return (
                     <Chip
                         onClick={
-                            managerApprovalPermission
+                            managerApprovalPermission &&
+                            params.row.boss_is_approved === true
                                 ? () =>
                                       handleVacancyApproval(
                                           params.id,
-                                          'manager_approbation'
+                                          'manager_is_approved'
                                       )
                                 : undefined
                         }
@@ -272,7 +333,7 @@ export const Vacations = () => {
             },
         },
         {
-            field: 'hr_approbation',
+            field: 'hr_is_approved',
             headerName: 'Aprobación RH',
             width: 150,
             type: 'singleSelect',
@@ -291,12 +352,12 @@ export const Vacations = () => {
                     return (
                         <Chip
                             onClick={
-                                params.row.manager_approbation === true &&
+                                params.row.manager_is_approved === true &&
                                 hrApprovalPermission
                                     ? () =>
                                           handleVacancyApproval(
                                               params.id,
-                                              'hr_approbation'
+                                              'hr_is_approved'
                                           )
                                     : undefined
                             }
@@ -312,7 +373,7 @@ export const Vacations = () => {
                                     ? () =>
                                           handleVacancyApproval(
                                               params.id,
-                                              'hr_approbation'
+                                              'hr_is_approved'
                                           )
                                     : undefined
                             }
@@ -325,12 +386,12 @@ export const Vacations = () => {
                 return (
                     <Chip
                         onClick={
-                            params.row.manager_approbation === true &&
+                            params.row.manager_is_approved === true &&
                             hrApprovalPermission
                                 ? () =>
                                       handleVacancyApproval(
                                           params.id,
-                                          'hr_approbation'
+                                          'hr_is_approved'
                                       )
                                 : undefined
                         }
@@ -342,7 +403,7 @@ export const Vacations = () => {
             },
         },
         {
-            field: 'payroll_approbation',
+            field: 'payroll_is_approved',
             headerName: 'Aprobación nomina',
             width: 160,
             type: 'singleSelect',
@@ -361,12 +422,12 @@ export const Vacations = () => {
                     return (
                         <Chip
                             onClick={
-                                params.row.hr_approbation === true &&
+                                params.row.hr_is_approved === true &&
                                 payrollApprovalPermission
                                     ? () =>
                                           handleVacancyApproval(
                                               params.id,
-                                              'payroll_approbation'
+                                              'payroll_is_approved'
                                           )
                                     : undefined
                             }
@@ -378,12 +439,12 @@ export const Vacations = () => {
                     return (
                         <Chip
                             onClick={
-                                params.row.hr_approbation === true &&
+                                params.row.hr_is_approved === true &&
                                 payrollApprovalPermission
                                     ? () =>
                                           handleVacancyApproval(
                                               params.id,
-                                              'payroll_approbation'
+                                              'payroll_is_approved'
                                           )
                                     : undefined
                             }
@@ -396,12 +457,12 @@ export const Vacations = () => {
                 return (
                     <Chip
                         onClick={
-                            params.row.hr_approbation === true &&
+                            params.row.hr_is_approved === true &&
                             payrollApprovalPermission
                                 ? () =>
                                       handleVacancyApproval(
                                           params.id,
-                                          'payroll_approbation'
+                                          'payroll_is_approved'
                                       )
                                 : undefined
                         }
@@ -455,7 +516,7 @@ export const Vacations = () => {
             },
         },
         {
-            field: 'letter',
+            field: 'request_letter',
             headerName: 'Carta de solicitud',
             width: 150,
             type: 'actions',
@@ -468,23 +529,50 @@ export const Vacations = () => {
                         arrow
                     >
                         <GridActionsCellItem
-                            key={`open-letter-${row.id}`}
+                            key={`open-request-letter-${row.id}`}
                             icon={<FileOpenIcon />}
-                            label="open-letter"
+                            label="open-request-letter"
                             sx={{
                                 color: 'primary.main',
                             }}
                             onClick={() => {
-                                const requestFile = row.request_file.replace(
-                                    /^\//,
-                                    ''
-                                );
                                 window.open(
-                                    `${getApiUrl().apiUrl}${requestFile}`,
+                                    `${getApiUrl().apiUrl}vacation/${row.id}/get-request`,
                                     '_blank'
                                 );
                             }}
                         />
+                    </Tooltip>,
+                ];
+            },
+        },
+        {
+            field: 'response_letter',
+            headerName: 'Carta de respuesta',
+            width: 150,
+            type: 'actions',
+            cellClassName: 'actions',
+            getActions: ({ row }) => {
+                return [
+                    <Tooltip key={`tooltip-${row.id}`} arrow>
+                        <span>
+                            <GridActionsCellItem
+                                title="Ver carta de respuesta de vacaciones"
+                                key={`open-response-letter-${row.id}`}
+                                icon={<FileOpenIcon />}
+                                disabled={row.status === 'PENDIENTE'}
+                                label="open-response-letter"
+                                sx={{
+                                    color: 'primary.main',
+                                }}
+                                onClick={() => {
+                                    window.open(
+                                        `${getApiUrl().apiUrl}vacation/${row.id}/get-response`,
+                                        '_blank'
+                                    );
+                                }}
+                            />
+                        </span>
                     </Tooltip>,
                 ];
             },
@@ -506,15 +594,14 @@ export const Vacations = () => {
                         utf8WithBom: true,
                     }}
                 />
-                {rank > 1 ? (
-                    <Button
-                        size="small"
-                        onClick={handleOpenDialog}
-                        startIcon={<BeachAccessIcon />}
-                    >
-                        Crear solicitud
-                    </Button>
-                ) : null}
+
+                <Button
+                    size="small"
+                    onClick={handleOpenDialog}
+                    startIcon={<BeachAccessIcon />}
+                >
+                    Crear solicitud
+                </Button>
                 <Box sx={{ textAlign: 'end', flex: '1' }}>
                     <GridToolbarQuickFilter />
                 </Box>
@@ -524,10 +611,8 @@ export const Vacations = () => {
 
     const handleCloseDialogPayslip = () => {
         setOpenDialogPayslip(false);
-        setDisabled(false);
         setOpenObservationsInput(false);
         setButtonType('button');
-        setLoading(false);
     };
 
     const handleDecline = async () => {
@@ -548,12 +633,7 @@ export const Vacations = () => {
                 openVacation={openVacation}
                 setOpenVacation={setOpenVacation}
             />
-            <SnackbarAlert
-                message={message}
-                severity={severity}
-                openSnack={openSnack}
-                closeSnack={handleCloseSnack}
-            />
+
             <Dialog
                 open={openDialogPayslip}
                 onClose={handleCloseDialogPayslip}
@@ -575,7 +655,7 @@ export const Vacations = () => {
                                 inputRef={observationsRef}
                                 sx={{ my: '1rem' }}
                                 required={buttonType === 'submit'}
-                                disabled={disabled}
+                                disabled={isProgressVisible}
                                 variant="filled"
                                 fullWidth
                                 id="outlined-multiline-flexible"
@@ -594,7 +674,7 @@ export const Vacations = () => {
                             }}
                         >
                             <Button
-                                disabled={disabled}
+                                disabled={isProgressVisible}
                                 variant="contained"
                                 onClick={handleCloseDialogPayslip}
                                 color="primary"
@@ -606,16 +686,16 @@ export const Vacations = () => {
                                     <Button
                                         onClick={handleDecline}
                                         type={buttonType}
-                                        disabled={disabled}
+                                        disabled={isProgressVisible}
                                         variant="contained"
                                         color="error"
                                     >
                                         Rechazar
                                     </Button>
                                 </Collapse>
-                                <Button
+                                <LoadingButton
                                     type="submit"
-                                    disabled={disabled}
+                                    loading={isProgressVisible}
                                     variant="contained"
                                     color={
                                         buttonType === 'submit'
@@ -626,23 +706,12 @@ export const Vacations = () => {
                                     {buttonType === 'submit'
                                         ? 'Rechazar'
                                         : 'Aprobar'}
-                                </Button>
+                                </LoadingButton>
                             </Box>
                         </Box>
                     </Box>
                 </DialogContent>
             </Dialog>
-            <Fade in={loading} unmountOnExit>
-                <LinearProgress
-                    variant="query"
-                    sx={{
-                        width: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        zIndex: '100000',
-                    }}
-                />
-            </Fade>
             <Container
                 sx={{
                     marginTop: '6rem',
