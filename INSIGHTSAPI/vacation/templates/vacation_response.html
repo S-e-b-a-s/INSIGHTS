@@ -1,129 +1,141 @@
 <!DOCTYPE html>
 <html lang="es">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Respuesta a Solicitud de Vacaciones</title>
-		<style>
-			body {
-				font-family: Arial, sans-serif;
-				line-height: 1.8;
-				color: #333;
-				max-width: 800px;
-				margin: 0 auto;
-				padding: 20px;
-				height: 1330px;
-				/* Fixed height for PDF */
-				font-size: 18px;
-				position: relative;
-				/* Make the body a containing block */
-			}
 
-			.header {
-				text-align: right;
-				margin-bottom: 20px;
-			}
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Respuesta a Solicitud de Vacaciones</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			line-height: 1.8;
+			color: #333;
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 20px;
+			height: 1330px;
+			/* Fixed height for PDF */
+			font-size: 18px;
+			position: relative;
+			/* Make the body a containing block */
+		}
 
-			.signature {
-				margin-top: 60px;
-			}
+		.header {
+			text-align: right;
+			margin-bottom: 20px;
+		}
 
-			.content {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				width: 100%;
-				max-width: 800px;
-			}
+		.signature {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 60px;
+		}
 
-			.content p {
-				margin-bottom: 35px;
-				font-size: 20px;
-			}
+		.content {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 100%;
+			max-width: 800px;
+		}
 
-			.approval {
-				text-align: center;
-				margin-bottom: 20px;
-				color: #27ae60;
-				font-size: 24px;
-				font-weight: bold;
-			}
+		.content p {
+			margin-bottom: 35px;
+			font-size: 20px;
+		}
 
-			.centered-image {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				opacity: 0.1;
-				width: 100%;
-				max-width: 800px;
-			}
-		</style>
-	</head>
+		.approval {
+			text-align: center;
+			margin-bottom: 20px;
+			color: #27ae60;
+			font-size: 24px;
+			font-weight: bold;
+		}
 
-	<body>
-		<div id="logo_bpo" style="justify-content: space-between; display: flex; text-align: end;">
-			<div style="text-align: start">
-				<img src="data:image/png;base64,{{ company_logo_vertical }}" alt="Logo" width="150px" />
-			</div>
-			<div style="text-align: left; padding-top: 5rem">
-				<p style="font-size: 14px; color: lightgray; border-left: 2px solid lightgray; margin-top: 0; padding-left: 1rem;" class="text">
-					www.cyc-bpo.com<br />
-					info@cyc-bpo.com<br />
-					PBX: (57 +601) 746 11 66<br />
-					Bogotá D.C.<br />
-				</p>
-			</div>
+		.centered-image {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			opacity: 0.1;
+			width: 100%;
+			max-width: 800px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="logo_bpo" style="justify-content: space-between; display: flex; text-align: end;">
+		<div style="text-align: start">
+			<img src="data:image/png;base64,{{ company_logo_vertical }}" alt="Logo" width="150px" />
 		</div>
-		<img class="centered-image" alt="Logo de la empresa C&C SERVICES S.A.S" src="data:image/png;base64,{{ company_logo }}" />
-
-		<div class="header">
-			<p>
-				Bogotá D.C.;
-				{% if vacation.payroll_approved_at %}
-				{{ vacation.payroll_approved_at|date:"d \\d\\e F \\d\\e Y" }}
-				{% elif vacation.hr_approved_at %}
-				{{ vacation.hr_approved_at|date:"d \\d\\e F \\d\\e Y" }}
-				{% elif vacation.manager_approved_at %}
-				{{ vacation.manager_approved_at|date:"d \\d\\e F \\d\\e Y" }}
-				{% elif vacation.boss_approved_at %}
-				{{ vacation.boss_approved_at|date:"d \\d\\e F \\d\\e Y" }}
-				{% else %}
-				No approval date available
-				{% endif %}
+		<div style="text-align: left; padding-top: 5rem">
+			<p style="font-size: 14px; color: lightgray; border-left: 2px solid lightgray; margin-top: 0; padding-left: 1rem;"
+				class="text">
+				www.cyc-bpo.com<br />
+				info@cyc-bpo.com<br />
+				PBX: (57 +601) 746 11 66<br />
+				Bogotá D.C.<br />
 			</p>
 		</div>
+	</div>
+	<img class="centered-image" alt="Logo de la empresa C&C SERVICES S.A.S"
+		src="data:image/png;base64,{{ company_logo }}" />
 
-		<div class="content">
-			<p>Señor/a:</p>
-			<p style="margin: 0"><strong>{{vacation.user}}</strong></p>
-			<p style="margin: 0"><strong>{{vacation.user_job_position}}</strong> - Bogotá</p>
-			<p style="margin: 0">De. Gestión Humana</p>
-			<p style="margin-bottom: 0">
-				REF: aprobación de vacaciones mes de <strong>{{ vacation.start_date|date:"F" }} de {{ vacation.start_date|date:"Y" }} </strong>
-			</p>
-
-			{% if vacation.status == 'APROBADA' %}
-			<p>
-				Me permito informarle que en respuesta a su comunicación recibida el día <strong>{{ vacation.created_at|date }}</strong>, usted podrá disfrutar de sus vacaciones
-				a partir del día <strong>{{ vacation.start_date }}</strong>, retomando actividades laborales el día <strong>{{ vacation.return_date }}</strong>.
-			</p>
-			<p>Espero disfrute con agrado sus merecidas vacaciones.</p>
+	<div class="header">
+		<p>
+			Bogotá D.C.;
+			{% if vacation.payroll_approved_at %}
+			{{ vacation.payroll_approved_at|date:"d \\d\\e F \\d\\e Y" }}
+			{% elif vacation.hr_approved_at %}
+			{{ vacation.hr_approved_at|date:"d \\d\\e F \\d\\e Y" }}
+			{% elif vacation.manager_approved_at %}
+			{{ vacation.manager_approved_at|date:"d \\d\\e F \\d\\e Y" }}
+			{% elif vacation.boss_approved_at %}
+			{{ vacation.boss_approved_at|date:"d \\d\\e F \\d\\e Y" }}
 			{% else %}
-			<p>
-				Lamentamos informarle que su solicitud de vacaciones recibida el día <strong>{{ vacation.created_at|date }}</strong> no ha sido aprobada debido al siguiente motivo:
-			</p>
-			<p><strong>{{ vacation.comment }}</strong>.</p>
+			No approval date available
 			{% endif %}
+		</p>
+	</div>
 
-			<div class="signature">
-				<p>
-					<strong>JEANNETH PINZON MARTINEZ</strong><br />
-					Gerente Gestión Humana<br />
-					C&C SERVICES S.A.S.<br />
-				</p>
-			</div>
+	<div class="content">
+		<p>Señor/a:</p>
+		<p style="margin: 0"><strong>{{vacation.user}}</strong></p>
+		<p style="margin: 0"><strong>{{vacation.user_job_position}}</strong> - Bogotá</p>
+		<p style="margin: 0">De. Gestión Humana</p>
+		<p style="margin-bottom: 0">
+			REF: aprobación de vacaciones mes de <strong>{{ vacation.start_date|date:"F" }} de {{ vacation.start_date|date:"Y" }} </strong>
+		</p>
+
+		{% if vacation.status == 'APROBADA' %}
+		<p>
+			Me permito informarle que en respuesta a su comunicación recibida el día <strong>{{ vacation.created_at|date }}</strong>, usted podrá disfrutar de sus vacaciones
+			a partir del día <strong>{{ vacation.start_date }}</strong>, retomando actividades laborales el día
+			<strong>{{ vacation.return_date }}</strong>.
+		</p>
+		<p>Espero disfrute con agrado sus merecidas vacaciones.</p>
+		{% else %}
+		<p>
+			Lamentamos informarle que su solicitud de vacaciones recibida el día <strong>{{ vacation.created_at|date }}</strong> no ha sido aprobada debido al siguiente motivo:
+		</p>
+		<p><strong>{{ vacation.comment }}</strong>.</p>
+		{% endif %}
+
+		<div class="signature">
+			<p>
+				<strong>JEANNETH PINZON MARTINEZ</strong><br />
+				Gerente Gestión Humana<br />
+				C&C SERVICES S.A.S.<br />
+			</p>
+			<p>
+				<strong>{{ vacation.user|upper }}</strong><br />
+				{{ vacation.user_job_position }}<br />
+				C&C SERVICES S.A.S.<br />
+			</p>
 		</div>
-	</body>
+	</div>
+</body>
+
 </html>
