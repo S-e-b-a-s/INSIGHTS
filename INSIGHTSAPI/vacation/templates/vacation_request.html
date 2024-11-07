@@ -85,8 +85,8 @@
 		<p>Agradezco de antemano su pronta respuesta.</p>
 		<div class="signature">
 			<p>Atentamente,</p>
-			<p>{{ vacation.user }}</p>
-			<p>C.C {{ vacation.user.cedula }}</p>
+			<p><strong>{{ vacation.user|upper }}</strong></p>
+			<p><strong>C.C {{ vacation.user.cedula }}</strong></p>
 		</div>
 	</div>
 </body>
