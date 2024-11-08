@@ -91,7 +91,7 @@ class GoalAPITestCase(BaseTestCase):
         # Assert the response status code and perform additional assertions for the response data
         number_goals = Goals.objects.all().count()
         # print(response.data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, response.data)
         self.assertTrue(number_goals > 0)
 
     def test_metas_upload_without_permission(self):
@@ -133,7 +133,7 @@ class GoalAPITestCase(BaseTestCase):
             # Send the POST request to the upload-excel URL with the Excel file data
             response = self.client.post(reverse("goal-list"), {"file": excel_file})
             # Assert the response status code and perform additional assertions for the response data
-            self.assertEqual(response.status_code, 201)
+            self.assertEqual(response.status_code, 201, response.data)
             count = Goals.objects.exclude(total="").count()
             self.assertTrue(count > 0)
 
@@ -159,7 +159,7 @@ class GoalAPITestCase(BaseTestCase):
         )
         # Send the POST request to the upload-excel URL with the Excel file data
         response = self.client.post(reverse("goal-list"), {"file": excel_file})
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, response.data)
         # See if the accepted goals were deleted
         first_goal = Goals.objects.exclude(accepted_at=None).first()
         self.assertIsNone(first_goal)
@@ -193,7 +193,7 @@ class GoalAPITestCase(BaseTestCase):
         # Send the POST request to the upload-excel URL with the Excel file data
         response = self.client.post(reverse("goal-list"), {"file": excel_file})
         # Assert the response status code and perform additional assertions for the response data
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, response.data)
         self.assertTrue(Goals.objects.all().count() > 0)
         self.assertTrue(TableInfo.objects.all().count() > 0)
         self.assertTrue(Goals.objects.all().exclude(table_goal=None).count() > 0)
@@ -226,7 +226,7 @@ class GoalAPITestCase(BaseTestCase):
         )
         # Send the POST request to the upload-excel URL with the Excel file data
         response = self.client.post(reverse("goal-list"), {"file": excel_file})
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, response.data)
         # Check with a month that has twice
         response = self.client.get("/goals/?date=ENERO-2022&column=delivery")
         self.assertEqual(response.status_code, 200)
@@ -540,3 +540,16 @@ class GoalAPITestCase(BaseTestCase):
             "Patch request solo acepta el campo 'accepted' o 'accepted_execution'.",
             response.data,
         )
+
+    def test_csv_not_allowed(self):
+        """Test the upload-excel view."""
+        file_path = "utils/excels/Entrega de metas-ENERO-2018.xlsx"
+        with open(file_path, "rb") as file_obj:
+            file_data = file_obj.read()
+        excel_file = SimpleUploadedFile(
+            "Entrega de metas-ENERO-2018.csv",
+            file_data,
+            content_type="application/vnd.ms-excel",
+        )
+        response = self.client.post(reverse("goal-list"), {"file": excel_file})
+        self.assertEqual(response.status_code, 400)
