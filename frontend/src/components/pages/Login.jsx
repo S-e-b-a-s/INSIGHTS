@@ -31,7 +31,7 @@ import { LoadingButton } from '@mui/lab';
 // Icons
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
-import login_image from '../../images/login/new-login-image.jpg';
+import login_image from '../../images/login/login-image.webp';
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required('Campo requerido'),
