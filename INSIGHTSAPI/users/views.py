@@ -1,16 +1,18 @@
-import os
 import csv
 import logging
-import requests
+import os
 import sys
-from notifications.utils import create_notification
-from django.db import connections
-from rest_framework.decorators import api_view
-from django.db.models import Q
+
+import requests
 from django.conf import settings
-from django.core.validators import validate_email
-from django.core.mail import mail_admins
 from django.contrib.auth.decorators import permission_required
+
+from django.core.mail import mail_admins
+from django.core.validators import validate_email
+from django.db import connections
+from django.db.models import Q
+from notifications.utils import create_notification
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from users.models import User
 
@@ -282,13 +284,16 @@ def upload_points(request):
         else:
             errors.append(cedula)
     if errors:
+        message = f"Algunos usuarios no fueron encontrados: {', '.join(errors)}"
+        if message.__len__() > 250:
+            message = message[:250]
         create_notification(
             "Error actualizando puntos",
-            f"Algunos usuarios no fueron encontrados: {', '.join(errors)}",
+            message,
             request.user,
         )
         return Response(
-            {"error": "Algunos usuarios no fueron encontrados", "errors": errors},
+            {"error": "Actualización exitosa, pero algunos usuarios no fueron encontrados", "errors": errors},
             status=400,
         )
     return Response({"message": "User points updated"})

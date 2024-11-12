@@ -6,8 +6,9 @@ import re
 
 from django.core.exceptions import ValidationError
 from django.core.mail import get_connection, send_mail
-from django.db import transaction
+from django.db import connections, transaction
 from django.db.models import Max, Q, Subquery
+from django.db.utils import IntegrityError
 from django.utils import timezone
 from openpyxl import load_workbook
 from rest_framework import status as framework_status
@@ -379,6 +380,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
         # Get the file from the request
         file_obj = request.FILES.get("file")
         if file_obj:
+            if not file_obj.name.endswith(".xlsx"):
+                return Response(
+                    {"message": "Formato de archivo inválido."},
+                    status=framework_status.HTTP_400_BAD_REQUEST,
+                )
             file_name = str(file_obj.name)
             year_pattern = r"\b\d{4}\b"
             months = [
@@ -529,7 +535,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                         instance.update(accepted=None, accepted_at=None)
                                     Goals.objects.update_or_create(
                                         defaults=default_value,
-                                        **{unique_constraint: cedula},
+                                        cedula=cedula,
                                     )
                                 except ValidationError as validation_e:
                                     logger.setLevel(logging.ERROR)
@@ -542,6 +548,38 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                         },
                                         status=framework_status.HTTP_400_BAD_REQUEST,
                                     )
+                                except IntegrityError:
+                                    try:
+                                        with connections["default"].cursor() as cursor:
+                                            logger.setLevel(logging.ERROR)
+                                            cursor.execute(
+                                                "SELECT COUNT(*) FROM goals_goals WHERE cedula = %s",
+                                                [cedula],
+                                            )
+                                            count = cursor.fetchone()[0]
+                                            logger.exception("Error: %s", str(count))
+                                            cursor.execute(
+                                                f"DELETE FROM goals_goals WHERE cedula = '{cedula}'"
+                                            )
+                                            cursor.execute(
+                                                "SELECT COUNT(*) FROM goals_goals WHERE cedula = %s",
+                                                [cedula],
+                                            )
+                                            count = cursor.fetchone()[0]
+                                            logger.exception("Error: %s", str(count))
+                                        Goals.objects.update_or_create(
+                                            defaults=default_value,
+                                            cedula=cedula,
+                                        )
+                                    except Exception as error:
+                                        logger.setLevel(logging.ERROR)
+                                        logger.exception("Error: %s", str(error))
+                                        return Response(
+                                            {
+                                                "message": "Excel upload Failed data corruption.",
+                                            },
+                                            status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                        )
                                 except Exception as error:
                                     logger.setLevel(logging.ERROR)
                                     logger.exception("Error: %s", str(error))
@@ -648,7 +686,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         cedula = row[cedula_index].value
                         name = row[name_index].value
 
-                        entrega = True
                         unique_constraint = "cedula"
                         if (
                             file_name.upper().find("EJECUCION") != -1
