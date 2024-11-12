@@ -71,7 +71,7 @@ class TableInfo(models.Model):
     name = models.CharField(max_length=50)
     fringe = models.CharField(max_length=100)
     diary_goal = models.IntegerField()
-    days = models.CharField(max_length=350)
+    days = models.IntegerField()
     month_goal = models.IntegerField()
     hours = models.IntegerField()
     collection_account = models.IntegerField()
