@@ -175,62 +175,6 @@ export function EmblaCarousel() {
                             />
                         </Box>
                     ))}
-                    <Box
-                        key={1}
-                        style={{
-                            flex: '0 0 100%',
-                            minWidth: 0,
-                            maxWidth: '100%',
-                            margin: '20px 20px 0 0',
-                            position: 'relative',
-                        }}
-                        className="embla__slide"
-                    >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                gap: '.5rem',
-                                position: 'absolute',
-                                top: '1rem',
-                                right: '1rem',
-                            }}
-                        >
-                            {permissions &&
-                            permissions.includes(
-                                'carousel_image.add_banner'
-                            ) ? (
-                                <IconButton
-                                    onClick={() => setOpenAddDialog(true)}
-                                    sx={IconButtonsStyle}
-                                >
-                                    <AddIcon />
-                                </IconButton>
-                            ) : null}
-                            {permissions &&
-                            permissions.includes(
-                                'carousel_image.delete_banner'
-                            ) ? (
-                                <IconButton
-                                    onClick={() =>
-                                        deleteCarouselImage(
-                                            1,
-                                            showSnack,
-                                            setImages
-                                        )
-                                    }
-                                    sx={IconButtonsStyle}
-                                >
-                                    <DeleteForeverIcon />
-                                </IconButton>
-                            ) : null}
-                        </Box>
-                        <img
-                            width={'100%'}
-                            style={{ borderRadius: '1.8rem' }}
-                            src={depression}
-                            alt={'test'}
-                        />
-                    </Box>
                 </div>
                 <div className="embla__dots">
                     {scrollSnaps.map((_, index) => (

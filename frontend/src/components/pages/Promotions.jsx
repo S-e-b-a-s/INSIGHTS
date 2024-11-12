@@ -7,7 +7,6 @@ import { Box, Card, Typography, Container } from '@mui/material';
 import { useSnackbar } from '../context/SnackbarContext';
 
 // Custom Components
-import CarouselComponent from '../shared/Carousel';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 

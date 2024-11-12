@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { getApiUrl } from '../../assets/getApi.js';
 import CarouselComponent from '../shared/Carousel';
 import { handleError } from '../../assets/handleError';
-// import { EmblaCarousel } from '../shared/EmblaCarousel.jsx';
+import { EmblaCarousel } from '../shared/EmblaCarousel.jsx';
 
 // Custom Hooks
 import { useSnackbar } from '../context/SnackbarContext';
@@ -149,22 +149,6 @@ const Home = () => {
         <>
             <Box
                 sx={{
-                    display: 'flex',
-                    mt: '5.5rem',
-                    px: '2rem',
-                    textAlign: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <CarouselComponent
-                    items={homeImages}
-                    contain={true}
-                    height={matches ? '648px' : '480px'}
-                    width={matches ? '1152px' : '854px'}
-                />
-            </Box>
-            {/* <Box
-                sx={{
                     mt: '2rem',
                     p: '2rem',
                     display: 'flex',
@@ -173,7 +157,7 @@ const Home = () => {
                 }}
             >
                 <EmblaCarousel />
-            </Box> */}
+            </Box>
             <Container
                 sx={{
                     display: 'flex',
