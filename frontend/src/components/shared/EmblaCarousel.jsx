@@ -19,9 +19,6 @@ import AddIcon from '@mui/icons-material/Add';
 // Material-UI
 import { IconButton, Box } from '@mui/material';
 
-// media
-import depression from '../../images/home-carousel/depression.png';
-
 const getCarouselImages = async (setImages, showSnack) => {
     try {
         const response = await fetch(
@@ -102,7 +99,7 @@ export function EmblaCarousel() {
         useDotButton(emblaApi);
 
     return (
-        <Box>
+        <>
             <AddImagesCarouselDialog
                 openAddDialog={openAddDialog}
                 setOpenAddDialog={setOpenAddDialog}
@@ -116,7 +113,14 @@ export function EmblaCarousel() {
                 style={{ overflow: 'hidden' }}
                 ref={emblaRef}
             >
-                <div className="embla__container" style={{ display: 'flex' }}>
+                <div
+                    className="embla__container"
+                    style={{
+                        display: 'flex',
+                        height: '100%',
+                        width: '1280px',
+                    }}
+                >
                     {images.map((image, index) => (
                         <Box
                             key={index}
@@ -169,6 +173,7 @@ export function EmblaCarousel() {
                             </Box>
                             <img
                                 width={'100%'}
+                                height={'720px'}
                                 style={{ borderRadius: '1.8rem' }}
                                 src={image.image}
                                 alt={image.title}
@@ -190,6 +195,6 @@ export function EmblaCarousel() {
                     ))}
                 </div>
             </div>
-        </Box>
+        </>
     );
 }

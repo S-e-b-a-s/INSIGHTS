@@ -11,6 +11,7 @@ import WebIcon from '@mui/icons-material/Web';
 
 // Media
 import logo_CYC from '../../images/cyc-logos/logo-footer.webp';
+import { Height } from '@mui/icons-material';
 
 const Footer = () => {
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ const Footer = () => {
                         window.open('https://cyc-bpo.com/', '_blank')
                     }
                     src={logo_CYC}
-                    style={{ width: 200, cursor: 'pointer' }}
+                    style={{ width: 200, height: 100, cursor: 'pointer' }}
                 />
                 <Typography variant="body2" color="white">
                     Calle 19 No. 3 - 16 Piso 3CC Barichara - Bogotá D. C.

@@ -476,6 +476,7 @@ const Navbar = () => {
                             alt="logo-cyc-navbar"
                             style={{ cursor: 'pointer' }}
                             width={110}
+                            height={55}
                             src={logotipo}
                             onClick={() => navigate('/logged/home')}
                         />
