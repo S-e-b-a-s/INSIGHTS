@@ -46,23 +46,10 @@
 			margin-bottom: 35px;
 			font-size: 20px;
 		}
-
-		.centered-image {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			opacity: 0.1;
-			width: 100%;
-			max-width: 800px;
-		}
 	</style>
 </head>
 
 <body>
-	<img class="centered-image" alt="Logo de la empresa C&C SERVICES S.A.S"
-		src="data:image/png;base64,{{ company_logo }}" />
-
 	<div class="header">
 		<p>{{ vacation.created_at|date }}</p>
 	</div>
