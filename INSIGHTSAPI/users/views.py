@@ -6,7 +6,6 @@ import sys
 import requests
 from django.conf import settings
 from django.contrib.auth.decorators import permission_required
-
 from django.core.mail import mail_admins
 from django.core.validators import validate_email
 from django.db import connections
@@ -277,6 +276,13 @@ def upload_points(request):
     for line in lines:
         cedula = line[0]
         points = line[1]
+        if not cedula.isdigit() or not points.isdigit():
+            return Response(
+                {
+                    "error": f"{'La cédula' if not cedula.isdigit() else 'Los puntos'} ingresados no son válidos, por favor verifica el valor {cedula if not cedula.isdigit() else points} e intenta de nuevo."
+                },
+                status=400,
+            )
         user = User.objects.filter(cedula=cedula).first()
         if user:
             user.points = points
@@ -293,7 +299,9 @@ def upload_points(request):
             request.user,
         )
         return Response(
-            {"error": "Actualización exitosa, pero algunos usuarios no fueron encontrados", "errors": errors},
+            {
+                "error": f"Actualización exitosa, pero algunos usuarios no fueron encontrados: {', '.join(errors)}"
+            },
             status=400,
         )
     return Response({"message": "User points updated"})

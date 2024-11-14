@@ -1,18 +1,19 @@
 """Tests for the users app."""
 
 import os
-import ldap  # type: ignore
 import random
-from notifications.models import Notification
-from services.tests import BaseTestCase
-from users.models import User
-from hierarchy.models import Area
+
+import ldap  # type: ignore
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
-from django.conf import settings
-from django.urls import reverse
 from django.test.client import Client
+from django.urls import reverse
+from hierarchy.models import Area
+from notifications.models import Notification
+from services.tests import BaseTestCase
+from users.models import User
 
 
 class LDAPAuthenticationTest(TestCase):
@@ -348,7 +349,7 @@ class UserTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data["error"],
-            "Algunos usuarios no fueron encontrados",
+            "Actualización exitosa, pero algunos usuarios no fueron encontrados: 1001185391",
         )
         self.assertEqual(response.data["errors"], ["1001185391"])
         self.assertEqual(Notification.objects.count(), 1)
