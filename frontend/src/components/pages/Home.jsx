@@ -4,57 +4,27 @@ import React, { useEffect, useState } from 'react';
 import { getApiUrl } from '../../assets/getApi.js';
 import CarouselComponent from '../shared/Carousel';
 import { handleError } from '../../assets/handleError';
-// import { EmblaCarousel } from '../shared/EmblaCarousel.jsx';
+import { EmblaCarousel } from '../shared/EmblaCarousel.jsx';
 
 // Custom Hooks
 import { useSnackbar } from '../context/SnackbarContext';
 
 // Material-UI
-import { Typography, Box, Container, useMediaQuery, Card } from '@mui/material';
+import { Typography, Box, Container, Card } from '@mui/material';
 
 // Media
-import realBenefit2 from '../../images/benefits/benefit-1.png';
+import realBenefit2 from '../../images/benefits/benefit-1.webp';
 import video from '../../videos/futbol.mp4';
-import cake from '../../images/birthdays/cake.png';
-import ceroDiscrimination from '../../images/home-carousel/cero-discrimination.png';
+import cake from '../../images/birthdays/cake.webp';
 import AvatarImage from '../../images/home-carousel/avatar.jpg';
-import securityPractices from '../../images/home-carousel/security-practices.png';
-import differentiationMatrices from '../../images/home-carousel/differentiation-matrices.png';
-import points from '../../images/home-carousel/points.png';
-import socialMedia from '../../images/home-carousel/social-media.png';
-import mapProcess from '../../images/home-carousel/process-map.png';
-import harassmentPrevention from '../../images/home-carousel/harassment-prevention.png';
-import harassmentPrevention2 from '../../images/home-carousel/harassment-prevention-2.png';
-import harassmentPrevention3 from '../../images/home-carousel/harassment-prevention-3.png';
-import compensationFund from '../../images/home-carousel/compensation-fund.png';
-import clothSize from '../../images/home-carousel/cloth-size.png';
-import halloween from '../../images/home-carousel/halloween.png';
-import noViolenceWomen from '../../images/home-carousel/no-violence-women.png';
 
 const benefits = [{ image: realBenefit2, title: 'Beneficio 2' }];
-
-const homeImages = [
-    { image: noViolenceWomen },
-    { image: halloween },
-    { image: compensationFund },
-    { image: clothSize },
-    { image: points },
-    { image: mapProcess },
-    { image: harassmentPrevention },
-    { image: harassmentPrevention2 },
-    { image: harassmentPrevention3 },
-    { image: securityPractices },
-    { image: socialMedia },
-    { image: differentiationMatrices },
-    { image: ceroDiscrimination },
-];
 
 const Home = () => {
     const [todayBirthdays, setTodayBirthdays] = useState([]);
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
     const { showSnack } = useSnackbar();
-    const matches = useMediaQuery('(min-width:1025px)');
 
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
@@ -149,22 +119,6 @@ const Home = () => {
         <>
             <Box
                 sx={{
-                    display: 'flex',
-                    mt: '5.5rem',
-                    px: '2rem',
-                    textAlign: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <CarouselComponent
-                    items={homeImages}
-                    contain={true}
-                    height={matches ? '648px' : '480px'}
-                    width={matches ? '1152px' : '854px'}
-                />
-            </Box>
-            {/* <Box
-                sx={{
                     mt: '2rem',
                     p: '2rem',
                     display: 'flex',
@@ -173,7 +127,7 @@ const Home = () => {
                 }}
             >
                 <EmblaCarousel />
-            </Box> */}
+            </Box>
             <Container
                 sx={{
                     display: 'flex',
@@ -217,7 +171,11 @@ const Home = () => {
                     }}
                 >
                     <video
-                        style={{ borderRadius: '8px', width: '100%' }}
+                        style={{
+                            borderRadius: '8px',
+                            width: '100%',
+                            height: '100%',
+                        }}
                         controls
                     >
                         <source
@@ -439,7 +397,11 @@ const Home = () => {
                     }}
                 >
                     <video
-                        style={{ borderRadius: '8px', width: '100%' }}
+                        style={{
+                            borderRadius: '8px',
+                            width: '100%',
+                            height: '100%',
+                        }}
                         controls
                     >
                         <source src={video} type="video/mp4" />

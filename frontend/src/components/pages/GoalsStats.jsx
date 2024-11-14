@@ -61,6 +61,7 @@ const FormikTextField = ({
             multiline={multiline}
             rows={rows}
             label={label}
+            defaultValue={''}
             {...field}
             error={!!errorText}
             helperText={errorText}
@@ -106,7 +107,6 @@ const options = [
     { label: 'Sura', value: 'Sura' },
     { label: 'CLARO', value: 'CLARO' },
     { label: 'Metlife', value: 'Metlife' },
-    { label: 'Banco Agrario', value: 'Banco Agrario' },
     { label: 'No', value: 'No' },
     { label: 'PayU', value: 'PayU' },
     { label: 'Liberty', value: 'Liberty' },
@@ -141,7 +141,6 @@ const options = [
     { label: 'Flexfintech', value: 'Flexfintech' },
     { label: 'Banco Finandina', value: 'Banco Finandina' },
     { label: 'Banco Pichincha', value: 'Banco Pichincha' },
-    { label: 'Scotiabank', value: 'Scotiabank' },
     { label: 'Nueva Eps Sc', value: 'Nueva Eps Sc' },
     { label: 'Banco Santander', value: 'Banco Santander' },
     { label: 'Mi Banco', value: 'Mi Banco' },
@@ -154,13 +153,19 @@ const options = [
     { label: 'Falabella / Stock', value: 'Falabella / Stock' },
 ];
 
+const initialValues = {
+    deliveryType: '',
+    month: '',
+    campaign: '',
+    year: '',
+};
+
 const AnalisisMetas = () => {
     const { showSnack } = useSnackbar();
     const [rows, setRows] = useState([]);
     const [goalsQuantity, setGoalsQuantity] = useState([]);
     const [yearsArray, setYearsArray] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [initialValues, setInitialValues] = useState({});
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
 
@@ -169,24 +174,6 @@ const AnalisisMetas = () => {
             navigate('/logged/home');
         }
     }, []);
-
-    const getCurrentDate = () => {
-        const currentDate = new Date();
-        const currentMonth = currentDate.toLocaleString('es-ES', {
-            month: 'long',
-        });
-
-        const currentYear = currentDate.getFullYear();
-
-        const basedInitialValues = {
-            deliveryType: 'delivery',
-            month: currentMonth,
-            campaign: '',
-            year: currentYear,
-        };
-
-        setInitialValues(basedInitialValues);
-    };
 
     const YearSelect = () => {
         const currentYear = new Date().getFullYear();
@@ -198,7 +185,6 @@ const AnalisisMetas = () => {
     };
 
     useEffect(() => {
-        getCurrentDate();
         YearSelect();
     }, []);
 

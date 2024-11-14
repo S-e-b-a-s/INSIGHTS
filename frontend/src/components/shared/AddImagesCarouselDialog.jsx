@@ -89,11 +89,14 @@ const AddImagesCarouselDialog = ({
 
     const sendApiRequest = async (formData) => {
         try {
-            const response = await fetch('http://localhost/', {
-                method: 'POST',
-                credentials: 'include',
-                body: formData,
-            });
+            const response = await fetch(
+                `${getApiUrl().apiUrl}carousel-images/banners/`,
+                {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData,
+                }
+            );
 
             await handleError(response, showSnack);
 
@@ -162,14 +165,14 @@ const AddImagesCarouselDialog = ({
                             id="position"
                             name="position"
                             select
-                            label="Posición"
+                            label="Posición a remplazar"
                             variant="outlined"
                             defaultValue={1}
                             sx={{ width: '550px', mb: '1rem' }}
                         >
                             {currentImages.map((image, index) => (
                                 <MenuItem key={index} value={index + 1}>
-                                    {index + 1}
+                                    {index + 1} - {image.title}
                                 </MenuItem>
                             ))}
                             <MenuItem value={currentImages.length + 1}>
