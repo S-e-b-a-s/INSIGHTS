@@ -119,7 +119,6 @@ const Home = () => {
         <>
             <Box
                 sx={{
-                    mt: '2rem',
                     p: '2rem',
                     display: 'flex',
                     alignItems: 'center',
@@ -133,7 +132,6 @@ const Home = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '2rem',
-                    mt: '2rem',
                 }}
             >
                 <Typography

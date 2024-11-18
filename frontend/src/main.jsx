@@ -1,7 +1,5 @@
 import './index.css';
-import React, { useEffect } from 'react';
-
-// Libraries
+import React, { useEffect, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ReactDOM from 'react-dom/client';
 import * as Sentry from '@sentry/react';
@@ -11,43 +9,51 @@ import {
     createRoutesFromChildren,
     matchRoutes,
 } from 'react-router-dom';
-
-// Material-UI
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-// Custom Components
-import ErrorPage from './components/pages/ErrorPage';
-import Login from './components/pages/Login';
-import Home from './components/pages/Home';
-import Blog from './components/pages/Blog';
-import Article from './components/pages/Article';
-import Root from './components/container/root';
-import About from './components/pages/About';
-import GoalsStats from './components/pages/GoalsStats';
-import Sgc from './components/pages/Sgc';
-import UploadFiles from './components/pages/UploadFiles';
-import EthicalLine from './components/pages/EthicalLine';
-import Quality from './components/pages/Quality';
-import Legal from './components/pages/Legal';
-import Vacancies from './components/pages/Vacancies';
-import VacanciesReferred from './components/pages/VacanciesReferred';
-import RiskEvents from './components/pages/RiskEvents';
-import Promotions from './components/pages/Promotions';
-import Payslips from './components/pages/Payslips';
-import MyPayslips from './components/pages/MyPayslips';
-import EmploymentCertification from './components/pages/EmploymentCertification';
-import InactivityDetector from './components/shared/InactivityDetector';
-import Vacations from './components/pages/Vacations';
-import PowerBI from './components/pages/PowerBI';
-import Pqrs from './components/pages/Pqrs';
-import CoexistenceCommittee from './components/pages/CoexistenceCommittee';
-import Assistance from './components/pages/Assistance';
-import Points from './components/pages/Points';
 
 // Context
 import { ProgressbarProvider } from './components/context/ProgressbarContext';
 import { SnackbarProvider } from './components/context/SnackbarContext';
+
+// MUI
+import { Backdrop, CircularProgress } from '@mui/material';
+
+// Lazy load components
+const ErrorPage = React.lazy(() => import('./components/pages/ErrorPage'));
+const Login = React.lazy(() => import('./components/pages/Login'));
+const Home = React.lazy(() => import('./components/pages/Home'));
+const Blog = React.lazy(() => import('./components/pages/Blog'));
+const Article = React.lazy(() => import('./components/pages/Article'));
+const Root = React.lazy(() => import('./components/container/root'));
+const About = React.lazy(() => import('./components/pages/About'));
+const GoalsStats = React.lazy(() => import('./components/pages/GoalsStats'));
+const Sgc = React.lazy(() => import('./components/pages/Sgc'));
+const UploadFiles = React.lazy(() => import('./components/pages/UploadFiles'));
+const EthicalLine = React.lazy(() => import('./components/pages/EthicalLine'));
+const Quality = React.lazy(() => import('./components/pages/Quality'));
+const Legal = React.lazy(() => import('./components/pages/Legal'));
+const Vacancies = React.lazy(() => import('./components/pages/Vacancies'));
+const VacanciesReferred = React.lazy(
+    () => import('./components/pages/VacanciesReferred')
+);
+const RiskEvents = React.lazy(() => import('./components/pages/RiskEvents'));
+const Payslips = React.lazy(() => import('./components/pages/Payslips'));
+const MyPayslips = React.lazy(() => import('./components/pages/MyPayslips'));
+const EmploymentCertification = React.lazy(
+    () => import('./components/pages/EmploymentCertification')
+);
+const InactivityDetector = React.lazy(
+    () => import('./components/shared/InactivityDetector')
+);
+const Vacations = React.lazy(() => import('./components/pages/Vacations'));
+const PowerBI = React.lazy(() => import('./components/pages/PowerBI'));
+const Pqrs = React.lazy(() => import('./components/pages/Pqrs'));
+const CoexistenceCommittee = React.lazy(
+    () => import('./components/pages/CoexistenceCommittee')
+);
+const Assistance = React.lazy(() => import('./components/pages/Assistance'));
+const Points = React.lazy(() => import('./components/pages/Points'));
 
 Sentry.init({
     dsn: 'https://5c6491f1c851a0f106e61adad4c4d46c@o4507664328359936.ingest.us.sentry.io/4507664339107840',
@@ -109,112 +115,128 @@ const theme = createTheme({
     },
 });
 
+// Loading fallback component
+const LoadingFallback = () => (
+    <Backdrop sx={{ zIndex: '1002', backgroundColor: 'white' }} open>
+        <CircularProgress />
+    </Backdrop>
+);
+
+// Wrap component with Suspense
+const wrapWithSuspense = (Component) => (
+    <Suspense fallback={<LoadingFallback />}>
+        <Component />
+    </Suspense>
+);
+
+// Rest of your Sentry and theme configuration remains the same...
+
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <Login />,
-        errorElement: <ErrorPage isLogin={true} />,
+        element: wrapWithSuspense(Login),
+        errorElement: wrapWithSuspense(ErrorPage),
     },
     {
         path: 'ethical-line',
-        element: <EthicalLine />,
+        element: wrapWithSuspense(EthicalLine),
     },
     {
         path: 'test',
-        element: <InactivityDetector />,
+        element: wrapWithSuspense(InactivityDetector),
     },
     {
         path: '/logged',
-        element: <Root />,
-        errorElement: <ErrorPage />,
+        element: wrapWithSuspense(Root),
+        errorElement: wrapWithSuspense(ErrorPage),
         children: [
             {
                 path: 'home',
-                element: <Home />,
-            },
-            {
-                path: 'about-us',
-                element: <About />,
-            },
-            {
-                path: 'sgc',
-                element: <Sgc />,
+                element: wrapWithSuspense(Home),
             },
             {
                 path: 'blog',
-                element: <Blog />,
+                element: wrapWithSuspense(Blog),
             },
             {
                 path: 'blog/article/:articleId',
-                element: <Article />,
+                element: wrapWithSuspense(Article),
             },
             {
-                path: 'vacancies',
-                element: <Vacancies />,
-            },
-            {
-                path: 'upload-files',
-                element: <UploadFiles />,
+                path: 'about',
+                element: wrapWithSuspense(About),
             },
             {
                 path: 'goals-stats',
-                element: <GoalsStats />,
+                element: wrapWithSuspense(GoalsStats),
+            },
+            {
+                path: 'sgc',
+                element: wrapWithSuspense(Sgc),
+            },
+            {
+                path: 'upload-files',
+                element: wrapWithSuspense(UploadFiles),
+            },
+            {
+                path: 'ethical-line',
+                element: wrapWithSuspense(EthicalLine),
             },
             {
                 path: 'quality',
-                element: <Quality />,
+                element: wrapWithSuspense(Quality),
             },
             {
                 path: 'legal',
-                element: <Legal />,
+                element: wrapWithSuspense(Legal),
+            },
+            {
+                path: 'vacancies',
+                element: wrapWithSuspense(Vacancies),
             },
             {
                 path: 'vacancies-referred',
-                element: <VacanciesReferred />,
+                element: wrapWithSuspense(VacanciesReferred),
             },
             {
                 path: 'risk-events',
-                element: <RiskEvents />,
-            },
-            {
-                path: 'promotions',
-                element: <Promotions />,
-            },
-            {
-                path: 'my-payslips',
-                element: <MyPayslips />,
+                element: wrapWithSuspense(RiskEvents),
             },
             {
                 path: 'payslips',
-                element: <Payslips />,
+                element: wrapWithSuspense(Payslips),
             },
             {
-                path: 'certifications',
-                element: <EmploymentCertification />,
+                path: 'my-payslips',
+                element: wrapWithSuspense(MyPayslips),
+            },
+            {
+                path: 'employment-certification',
+                element: wrapWithSuspense(EmploymentCertification),
             },
             {
                 path: 'vacations',
-                element: <Vacations />,
+                element: wrapWithSuspense(Vacations),
+            },
+            {
+                path: 'power-bi',
+                element: wrapWithSuspense(PowerBI),
             },
             {
                 path: 'pqrs',
-                element: <Pqrs />,
-            },
-            {
-                path: 'points',
-                element: <Points />,
+                element: wrapWithSuspense(Pqrs),
             },
             {
                 path: 'coexistence-committee',
-                element: <CoexistenceCommittee />,
+                element: wrapWithSuspense(CoexistenceCommittee),
             },
             {
-                path: 'test',
-                element: <PowerBI />,
+                path: 'assistance',
+                element: wrapWithSuspense(Assistance),
             },
             {
-                path: 'demo-assistance',
-                element: <Assistance />,
+                path: 'points',
+                element: wrapWithSuspense(Points),
             },
         ],
     },

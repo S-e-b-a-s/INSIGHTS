@@ -459,12 +459,7 @@ const AnalisisMetas = () => {
     };
 
     return (
-        <Container
-            maxWidth="xl"
-            sx={{
-                mt: '6rem',
-            }}
-        >
+        <Container maxWidth="xl" sx={{ mt: '2rem' }}>
             <Typography
                 sx={{ textAlign: 'center', pb: '15px', color: 'primary.main' }}
                 variant={'h4'}

@@ -598,16 +598,13 @@ export const Sgc = () => {
 
     return (
         <>
-            <Container
-                sx={{
-                    marginTop: '6rem',
-                }}
-            >
+            <Container>
                 <Typography
                     sx={{
                         textAlign: 'center',
                         pb: '15px',
                         color: 'primary.main',
+                        mt: '2rem',
                     }}
                     variant={'h4'}
                 >

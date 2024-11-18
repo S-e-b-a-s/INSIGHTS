@@ -727,7 +727,7 @@ export const RiskEvent = () => {
         <>
             <Container
                 sx={{
-                    marginTop: '6rem',
+                    marginTop: '2rem',
                 }}
             >
                 <Typography

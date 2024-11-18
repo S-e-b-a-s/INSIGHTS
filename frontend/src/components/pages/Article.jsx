@@ -558,8 +558,6 @@ const ArticlePage = () => {
             img: carteraPropia,
             content: (
                 <div>
-                    <h1></h1>
-
                     <p>
                         A lo largo del tiempo, C&C se ha destacado como una
                         empresa especializada en la recuperación de cartera de
@@ -600,7 +598,6 @@ const ArticlePage = () => {
             title: 'Tips de salud financiera',
             subtitle:
                 '¡Hola, lectores jóvenes y emprendedores de la comunidad C&C! Bienvenidos a Finanzas Jóvenes, el espacio donde exploraremos juntos el fascinante mundo de las finanzas personales y las estrategias para construir un futuro financiero sólido. Soy Adriana Páez, y estoy emocionada de comenzar este viaje contigo.',
-            // img: article1,
             imgAuthor: '',
             nameAuthor: 'Sebastian',
             tags: ['Customer Experience', 'Call Center', 'BPO'],
@@ -612,7 +609,7 @@ const ArticlePage = () => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             textAlign: 'center',
-                            padding: '1rem',
+                            padding: 0,
                         }}
                     >
                         <img
@@ -665,8 +662,7 @@ const ArticlePage = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     px: '5rem',
-                    pt: '7rem',
-                    pb: '2rem',
+                    pt: '2rem',
                     gap: '2rem',
                 }}
             >
@@ -678,18 +674,24 @@ const ArticlePage = () => {
                 </Typography>
                 <Typography
                     variant="subtitle1"
-                    sx={{ textAlign: 'center', fontFamily: 'Poppins' }}
+                    sx={{
+                        textAlign: 'center',
+                        mb: '2rem',
+                        fontFamily: 'Poppins',
+                    }}
                 >
                     {article.subtitle}
                 </Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <img
-                    style={{ borderRadius: '0.5rem' }}
-                    width={1000}
-                    src={article.img}
-                    alt=""
-                />
+                {article.img && (
+                    <img
+                        style={{ borderRadius: '0.5rem' }}
+                        width={1000}
+                        src={article.img}
+                        alt="article-image"
+                    />
+                )}
             </Box>
             <Box
                 sx={{
@@ -699,9 +701,7 @@ const ArticlePage = () => {
                     gap: '2rem',
                 }}
             >
-                <Box sx={{ textAlign: 'justify', pt: '2rem' }}>
-                    {article.content}
-                </Box>
+                <Box sx={{ textAlign: 'justify' }}>{article.content}</Box>
             </Box>
         </Container>
     );

@@ -177,7 +177,7 @@ const Blog = () => {
     };
 
     return (
-        <Box sx={{ minHeight: '100vh', height: '100%', mt: '5rem' }}>
+        <Box sx={{ minHeight: '100vh', height: '100%', mt: '2rem' }}>
             <Typography
                 sx={{ textAlign: 'center', pb: '15px', color: 'primary.main' }}
                 variant={'h4'}

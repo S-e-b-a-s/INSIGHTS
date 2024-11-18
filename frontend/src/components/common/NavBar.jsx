@@ -452,12 +452,13 @@ const Navbar = () => {
             <Box
                 className="navbar"
                 sx={{
-                    position: 'fixed',
+                    position: 'sticky',
                     top: 0,
                     left: 0,
                     width: '100vw',
                     backdropFilter: 'blur(10px)',
                     zIndex: 1001,
+                    backgroundColor: 'red',
                 }}
                 onMouseEnter={handleCloseUtils}
             >
@@ -466,7 +467,6 @@ const Navbar = () => {
                         display: 'flex',
                         justifyContent: 'space-evenly',
                         alignItems: 'center',
-                        // padding: "1rem 2rem",
                         backgroundColor: 'rgba(255,255,255, 0.9)',
                         backdropFilter: 'blur(10px)',
                     }}
@@ -481,7 +481,7 @@ const Navbar = () => {
                             onClick={() => navigate('/logged/home')}
                         />
                     </Button>
-                    <CustomNavLink to="/logged/about-us">
+                    <CustomNavLink to="/logged/about">
                         Sobre Nosotros
                     </CustomNavLink>
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>

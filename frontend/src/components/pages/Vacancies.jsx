@@ -281,7 +281,7 @@ const Vacancies = () => {
                     justifyContent: 'start',
                     alignItems: 'center',
                     flexDirection: 'column',
-                    marginY: '6rem',
+                    mt: '2rem',
                 }}
             >
                 <Typography

@@ -108,14 +108,15 @@ const About = () => {
     const yearsOfExperience = currentYear - 2005;
 
     return (
-        <Box
+        <Container
             sx={{
                 display: 'flex',
                 gap: '5rem',
                 flexDirection: 'column',
                 width: '100%',
-                marginTop: '6rem',
+                marginTop: '2rem',
             }}
+            maxWidth="xl"
         >
             <Typography
                 variant="h3"
@@ -599,7 +600,7 @@ const About = () => {
                 {/* <CardSlider /> */}
                 <SwiperSlider />
             </Box>
-        </Box>
+        </Container>
     );
 };
 
