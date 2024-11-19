@@ -452,12 +452,7 @@ const Navbar = () => {
             <Box
                 className="navbar"
                 sx={{
-                    position: 'sticky',
-                    top: 0,
-                    left: 0,
-                    width: '100vw',
                     backdropFilter: 'blur(10px)',
-                    zIndex: 1001,
                     backgroundColor: 'red',
                 }}
                 onMouseEnter={handleCloseUtils}

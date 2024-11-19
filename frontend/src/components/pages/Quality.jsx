@@ -154,160 +154,139 @@ const Quality = () => {
     };
 
     return (
-        <>
-            <Box
-                className="waveWrapper"
+        <Container
+            sx={{
+                display: 'flex',
+                justifyContent: 'start',
+                alignItems: 'center',
+                flexDirection: 'column',
+                height: '70vh',
+            }}
+        >
+            <Typography
+                variant={'h1'}
                 sx={{
-                    width: '100%',
-                    height: '49vh',
-                    backgroundImage: `url(${quality})`,
-                    backgroundSize: 'cover',
-                    backgroundColor: '#f0f0f0',
-                    padding: '20px',
+                    textAlign: 'center',
+                    pb: '15px',
+                    pt: '6rem',
                 }}
             >
-                <Typography
-                    variant={'h1'}
-                    sx={{
-                        textAlign: 'center',
-                        pb: '15px',
-                        color: 'white',
-                        pt: '6rem',
-                    }}
-                >
-                    Trasladar Archivos
-                </Typography>
-                <Box className="wave wave1"></Box>
-                <Box className="wave wave2"></Box>
-                <Box className="wave wave3"></Box>
-                <Box className="wave wave4"></Box>
-            </Box>
-
-            <Container
+                Trasladar Archivos
+            </Typography>
+            <Box
                 sx={{
                     display: 'flex',
-                    justifyContent: 'start',
-                    alignItems: 'center',
+                    gap: '1rem',
                     flexDirection: 'column',
-                    height: '100%',
-                    minHeight: '51vh',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    mt: '2rem',
                 }}
             >
+                <TextField
+                    sx={{ width: '600px' }}
+                    value={selectedCampaign.value}
+                    onChange={handleCampaignChange}
+                    label="Campaña"
+                    select
+                >
+                    {campaigns.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <TextField
+                    sx={{ width: '600px' }}
+                    inputRef={callType}
+                    label="Tipo de Llamadas"
+                    select
+                    defaultValue=""
+                >
+                    <MenuItem key="inbound" value="in">
+                        Inbound
+                    </MenuItem>
+                    <MenuItem key="outbound" value="out">
+                        Outbound
+                    </MenuItem>
+                </TextField>
+                <TextField
+                    sx={{ width: '600px' }}
+                    label="ruta-origen"
+                    value={selectedCampaign.routeOrigin}
+                    disabled
+                ></TextField>
+                <ArrowDownwardIcon color="primary" />
+                <TextField
+                    sx={{ width: '600px' }}
+                    label="ruta-destino"
+                    value={selectedCampaign.routeDestination}
+                    disabled
+                ></TextField>
+                {selectedCampaign.value === 'falabella' ||
+                selectedCampaign.value === 'banco_agrario' ? (
+                    <Collapse in={openCollapse}>
+                        <Button
+                            component="label"
+                            variant="contained"
+                            startIcon={<CloudUploadIcon />}
+                        >
+                            SUBIR ARCHIVO
+                            <VisuallyHiddenInput
+                                accept=".csv"
+                                type="file"
+                                onChange={handleFileInputChange}
+                            />
+                        </Button>
+                    </Collapse>
+                ) : null}
+            </Box>
+            <Collapse in={!openCollapse}>
                 <Box
                     sx={{
                         display: 'flex',
-                        gap: '1rem',
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        mt: '2rem',
+                        gap: '1rem',
                     }}
                 >
-                    <TextField
-                        sx={{ width: '600px' }}
-                        value={selectedCampaign.value}
-                        onChange={handleCampaignChange}
-                        label="Campaña"
-                        select
-                    >
-                        {campaigns.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <TextField
-                        sx={{ width: '600px' }}
-                        inputRef={callType}
-                        label="Tipo de Llamadas"
-                        select
-                        defaultValue=""
-                    >
-                        <MenuItem key="inbound" value="in">
-                            Inbound
-                        </MenuItem>
-                        <MenuItem key="outbound" value="out">
-                            Outbound
-                        </MenuItem>
-                    </TextField>
-                    <TextField
-                        sx={{ width: '600px' }}
-                        label="ruta-origen"
-                        value={selectedCampaign.routeOrigin}
-                        disabled
-                    ></TextField>
-                    <ArrowDownwardIcon color="primary" />
-                    <TextField
-                        sx={{ width: '600px' }}
-                        label="ruta-destino"
-                        value={selectedCampaign.routeDestination}
-                        disabled
-                    ></TextField>
                     {selectedCampaign.value === 'falabella' ||
                     selectedCampaign.value === 'banco_agrario' ? (
-                        <Collapse in={openCollapse}>
-                            <Button
-                                component="label"
-                                variant="contained"
-                                startIcon={<CloudUploadIcon />}
+                        <>
+                            <Typography
+     /Collapse></>                           color="primary.main"
+                                variant="subtitle2"
                             >
-                                SUBIR ARCHIVO
-                                <VisuallyHiddenInput
-                                    accept=".csv"
-                                    type="file"
-                                    onChange={handleFileInputChange}
-                                />
-                            </Button>
-                        </Collapse>
+                                {fileName}
+                            </Typography>
+                            <Box sx={{ display: 'flex', gap: '1rem' }}>
+                                <Button
+                                    component="label"
+                                    variant="contained"
+                                    startIcon={<CloudUploadIcon />}
+                                >
+                                    REMPLAZAR ARCHIVO
+                                    <VisuallyHiddenInput
+                                        accept=".csv"
+                                        type="file"
+                                        onChange={handleFileInputChange}
+                                    />
+                                </Button>
+                                <LoadingButton
+                                    onClick={handleUpload}
+                                    startIcon={<SaveIcon />}
+                                    variant="contained"
+                                    loading={loading}
+                                >
+                                    Trasladar
+                                </LoadingButton>
+                            </Box>
+                        </>
                     ) : null}
                 </Box>
-                <Collapse in={!openCollapse}>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: '1rem',
-                        }}
-                    >
-                        {selectedCampaign.value === 'falabella' ||
-                        selectedCampaign.value === 'banco_agrario' ? (
-                            <>
-                                <Typography
-                                    color="primary.main"
-                                    variant="subtitle2"
-                                >
-                                    {fileName}
-                                </Typography>
-                                <Box sx={{ display: 'flex', gap: '1rem' }}>
-                                    <Button
-                                        component="label"
-                                        variant="contained"
-                                        startIcon={<CloudUploadIcon />}
-                                    >
-                                        REMPLAZAR ARCHIVO
-                                        <VisuallyHiddenInput
-                                            accept=".csv"
-                                            type="file"
-                                            onChange={handleFileInputChange}
-                                        />
-                                    </Button>
-                                    <LoadingButton
-                                        onClick={handleUpload}
-                                        startIcon={<SaveIcon />}
-                                        variant="contained"
-                                        loading={loading}
-                                    >
-                                        Trasladar
-                                    </LoadingButton>
-                                </Box>
-                            </>
-                        ) : null}
-                    </Box>
-                </Collapse>
-            </Container>
-        </>
+            </Collapse>
+        </Container>
     );
 };
 
