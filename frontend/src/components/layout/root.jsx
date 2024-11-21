@@ -13,7 +13,7 @@ const Root = () => {
         <Box
             style={{
                 display: 'grid',
-                minHeight: '100dvh',
+                minHeight: '    ',
                 gridTemplateRows: 'auto 1fr auto',
             }}
         >

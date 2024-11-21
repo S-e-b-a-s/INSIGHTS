@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
 
 // Custom Hooks
-import { useProgressbar } from '../context/ProgressbarContext'; // Adjust the path
-import { useSnackbar } from '../context/SnackbarContext';
+import { useProgressbar } from '../../contexts/ProgressbarContext'; // Adjust the path
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 // Custom Components/Functions
 import Goals from '../shared/Goals';
@@ -453,7 +453,6 @@ const Navbar = () => {
                 className="navbar"
                 sx={{
                     backdropFilter: 'blur(10px)',
-                    backgroundColor: 'red',
                 }}
                 onMouseEnter={handleCloseUtils}
             >
@@ -786,7 +785,9 @@ const Navbar = () => {
                     'employment_management.view_employmentcertification'
                 ) ? (
                     <MenuItem
-                        onClick={() => navigate('/logged/certifications')}
+                        onClick={() =>
+                            navigate('/logged/employment-certifications')
+                        }
                     >
                         <ListItemIcon>
                             <TopicIcon fontSize="small" />

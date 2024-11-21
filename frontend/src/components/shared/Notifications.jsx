@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 // Custom Components
 import { getApiUrl } from '../../assets/getApi';

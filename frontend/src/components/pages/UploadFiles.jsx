@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 // Custom Components
 import { getApiUrl } from '../../assets/getApi';
@@ -142,6 +142,7 @@ const UploadFiles = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 height: '80vh',
+                minHeight: 'max-content',
             }}
         >
             <Typography
@@ -158,6 +159,7 @@ const UploadFiles = () => {
                     cursor: 'pointer',
                     width: '70%',
                     height: '50vh',
+                    minHeight: 'max-content',
                     border: isDragActive
                         ? '2px dashed #0076A8'
                         : '2px dashed #ccc',

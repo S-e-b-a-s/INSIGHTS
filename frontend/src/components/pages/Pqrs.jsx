@@ -21,8 +21,8 @@ import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
-import { useProgressbar } from '../context/ProgressbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
+import { useProgressbar } from '../../contexts/ProgressbarContext';
 
 // Media
 import PqrsImage from '../../images/pqrs/pqrs.png';
@@ -137,7 +137,7 @@ const Pqrs = () => {
     };
 
     return (
-        <Container sx={{ my: '5rem' }}>
+        <Container sx={{ my: '2rem' }}>
             <img
                 src={PqrsImage}
                 alt="Coexistence Committee"

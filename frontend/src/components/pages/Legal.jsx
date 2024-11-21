@@ -5,7 +5,7 @@ import { Formik, Form, useField } from 'formik';
 import { useNavigate } from 'react-router-dom';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 // Custom Components
 import { getApiUrl } from '../../assets/getApi';
@@ -726,7 +726,7 @@ export const Legal = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     flexDirection: 'column',
-                    marginTop: '6rem',
+                    marginTop: '2rem',
                 }}
             >
                 <Typography

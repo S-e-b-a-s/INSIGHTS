@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { getApiUrl } from '../../assets/getApi.js';
 import CarouselComponent from '../shared/Carousel';
 import { handleError } from '../../assets/handleError';
-import { EmblaCarousel } from '../shared/EmblaCarousel.jsx';
+import { EmblaCarousel } from '../shared/embla-carousel/EmblaCarousel';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext.jsx';
 
 // Material-UI
 import { Typography, Box, Container, Card } from '@mui/material';

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 // Custom Components
 import { getApiUrl } from '../../assets/getApi';
@@ -133,7 +133,7 @@ export const Points = () => {
         <>
             <Container
                 sx={{
-                    marginTop: '6rem',
+                    marginTop: '2rem',
                 }}
             >
                 <Typography

@@ -24,16 +24,16 @@ import { LoadingButton } from '@mui/lab';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
-import { useProgressbar } from '../context/ProgressbarContext';
+import { useSnackbar } from '../../../contexts/SnackbarContext';
+import { useProgressbar } from '../../../contexts/ProgressbarContext';
 
 //Custom Components/Functions
-import { handleError } from '../../assets/handleError';
-import { getApiUrl } from '../../assets/getApi';
+import { handleError } from '../../../assets/handleError';
+import { getApiUrl } from '../../../assets/getApi';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,
-} from '../../assets/CustomDataGridOverlays';
+} from '../../../assets/CustomDataGridOverlays';
 
 export const MyPayslips = () => {
     const [rows, setRows] = useState([]);
@@ -281,7 +281,7 @@ export const MyPayslips = () => {
 
             <Container
                 sx={{
-                    marginTop: '6rem',
+                    marginTop: '2rem',
                 }}
             >
                 <Typography

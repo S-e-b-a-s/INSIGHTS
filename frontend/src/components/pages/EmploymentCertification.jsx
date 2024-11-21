@@ -16,7 +16,7 @@ import { Container, Typography, Box } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 // Custom hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 export const EmploymentCertification = () => {
     const [rows, setRows] = useState([]);
@@ -127,7 +127,7 @@ export const EmploymentCertification = () => {
         <>
             <Container
                 sx={{
-                    marginTop: '6rem',
+                    marginTop: '2rem',
                 }}
             >
                 <Typography

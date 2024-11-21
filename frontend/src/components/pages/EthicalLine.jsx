@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 // Custom Components
 import { getApiUrl } from '../../assets/getApi';

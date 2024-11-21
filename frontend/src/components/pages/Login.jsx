@@ -8,8 +8,8 @@ import * as Sentry from '@sentry/react';
 // import { Toaster, toast } from 'sonner';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
-import { useProgressbar } from '../context/ProgressbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
+import { useProgressbar } from '../../contexts/ProgressbarContext';
 
 // Custom Components/Functions
 import { getApiUrl } from '../../assets/getApi.js';

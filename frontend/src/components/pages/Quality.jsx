@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 // Custom Components
 import { getApiUrl } from '../../assets/getApi';
@@ -161,6 +161,7 @@ const Quality = () => {
                 alignItems: 'center',
                 flexDirection: 'column',
                 height: '70vh',
+                minHeight: 'max-content',
             }}
         >
             <Typography
@@ -169,6 +170,7 @@ const Quality = () => {
                     textAlign: 'center',
                     pb: '15px',
                     pt: '6rem',
+                    color: '#263238',
                 }}
             >
                 Trasladar Archivos
@@ -255,7 +257,7 @@ const Quality = () => {
                     selectedCampaign.value === 'banco_agrario' ? (
                         <>
                             <Typography
-     /Collapse></>                           color="primary.main"
+                                color="primary.main"
                                 variant="subtitle2"
                             >
                                 {fileName}

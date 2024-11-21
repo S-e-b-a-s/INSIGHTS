@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { Formik, Form, useField } from 'formik';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '../../contexts/SnackbarContext';
 
 // Custom Components
 import { getApiUrl } from '../../assets/getApi';
