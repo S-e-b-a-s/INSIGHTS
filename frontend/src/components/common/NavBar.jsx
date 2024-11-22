@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 // Libraries
 import { useNavigate, useMatch } from 'react-router-dom';
 
 // Custom Hooks
-import { useProgressbar } from '../../contexts/ProgressbarContext'; // Adjust the path
 import { useSnackbar } from '../../contexts/SnackbarContext';
 
 // Custom Components/Functions
@@ -14,12 +13,13 @@ import InactivityDetector from '../shared/InactivityDetector';
 import Notifications from '../shared/Notifications';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
+import EmploymentCertificationRequest from './EmploymentCertificationRequest';
+import MenuAccount from './MenuAccount';
 
 // Material-UI
 import {
     Box,
     Button,
-    Typography,
     MenuItem,
     Menu,
     Tooltip,
@@ -27,23 +27,9 @@ import {
     Avatar,
     ListItemIcon,
     ListItemText,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    DialogContentText,
-    FormGroup,
-    FormControlLabel,
-    Checkbox,
-    Collapse,
-    TextField,
     Divider,
     Badge,
-    Alert,
 } from '@mui/material';
-
-// MUI Lab
-import { LoadingButton } from '@mui/lab';
 
 // Icons
 import Logout from '@mui/icons-material/Logout';
@@ -69,7 +55,6 @@ import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import logotipo from '../../images/cyc-logos/logo-navbar.webp';
 
 const Navbar = () => {
-    const [openCollapseEmail, setOpenCollapseEmail] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorElUtils, setAnchorElUtils] = useState(null);
     const open = Boolean(anchorEl);
@@ -77,22 +62,16 @@ const Navbar = () => {
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
     const [openAccountDialog, setOpenAccountDialog] = useState(false);
-    const [openCertification, setOpenCertification] = useState(false);
-    const [openCollapseBonuses, setOpenCollapseBonuses] = useState(false);
-    const [checked, setChecked] = useState(false);
     const cargoItem = localStorage.getItem('cargo');
     const isAdvisor = cargoItem && JSON.parse(cargoItem).includes('ASESOR');
     const permissions = JSON.parse(localStorage.getItem('permissions'));
-    const currentEmail = JSON.parse(localStorage.getItem('email'));
-    const bonusesInput = useRef(null);
     const [anchorNotification, setAnchorNotification] = useState(null);
     const openNotification = Boolean(anchorNotification);
     const [notifications, setNotifications] = useState([]);
     const operationalRiskPermission =
         permissions && permissions.includes('operational_risk.view_events');
     const rank = JSON.parse(localStorage.getItem('rango'));
-    const { isProgressVisible, showProgressbar, hideProgressbar } =
-        useProgressbar();
+    const [openCertification, setOpenCertification] = useState(false);
     const { showSnack } = useSnackbar();
 
     const servicesPermission =
@@ -163,8 +142,6 @@ const Navbar = () => {
         }
     }, []);
 
-    const handleOpenDialog = () => setOpenDialog(true);
-
     const handleUtilitariosMenuOpen = (event) => {
         setAnchorElUtils(event.currentTarget);
     };
@@ -221,18 +198,6 @@ const Navbar = () => {
         getNotifications();
     }, [openNotification]);
 
-    const handleOpenCertification = () => setOpenCertification(true);
-
-    const handleCloseCertification = () => {
-        setOpenCertification(false);
-        setOpenCollapseBonuses(false);
-        setChecked(false);
-        setOpenCollapseEmail(false);
-    };
-
-    const handleOpenCollapseBonuses = () =>
-        setOpenCollapseBonuses(!openCollapseBonuses);
-
     const handleCloseUtils = () => {
         setAnchorElUtils(null);
     };
@@ -245,20 +210,8 @@ const Navbar = () => {
         setAnchorNotification(event.currentTarget);
     };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleOpenAccountDialog = () => {
-        setOpenAccountDialog(true);
-    };
-
     const handleCloseAccountDialog = () => {
         setOpenAccountDialog(false);
-    };
-
-    const handleOpenCollapseEmail = () => {
-        setOpenCollapseEmail(!openCollapseEmail);
     };
 
     const handleLogout = async (inactivity) => {
@@ -295,55 +248,6 @@ const Navbar = () => {
         }
     };
 
-    const sendCertification = async () => {
-        showProgressbar();
-        let body = {};
-
-        if (checked) {
-            body = {
-                months: bonusesInput.current.value,
-            };
-        }
-
-        try {
-            const response = await fetch(
-                `${getApiUrl().apiUrl}employment-management/send-employment-certification/`,
-                {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(body),
-                }
-            );
-
-            await handleError(response, showSnack);
-
-            if (response.status === 200) {
-                const data = await response.json();
-                setOpenCertification(false);
-                showSnack(
-                    'success',
-                    data.message +
-                        ' correctamente al correo ' +
-                        data.email.toLowerCase()
-                );
-            }
-        } catch (error) {
-            if (getApiUrl().environment === 'development') {
-                console.error(error);
-            }
-        } finally {
-            hideProgressbar();
-        }
-    };
-
-    const handleChangeCheck = (event) => {
-        setChecked(event.target.checked);
-        handleOpenCollapseBonuses();
-    };
-
     return (
         <>
             {isAdvisor ? (
@@ -367,88 +271,22 @@ const Navbar = () => {
             {getApiUrl().environment === 'production' ? (
                 <InactivityDetector handleLogout={handleLogout} />
             ) : null}
-            <Dialog
-                open={openCertification}
-                onClose={handleCloseCertification}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {'¿Enviar Certificación Laboral?'}
-                </DialogTitle>
-                <DialogContent sx={{ paddingBottom: 0 }}>
-                    <DialogContentText id="alert-dialog-description">
-                        Selecciona si deseas que la certificación se envíe a tu
-                        correo, ya sea con o sin bonificaciones, y especifica
-                        los meses promediados de estas, si las hubiera.
-                    </DialogContentText>
-                    <FormGroup sx={{ mt: '.5rem' }}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={checked}
-                                    onChange={handleChangeCheck}
-                                    inputProps={{ 'aria-label': 'controlled' }}
-                                />
-                            }
-                            label="Incluir bonificaciones"
-                        />
-                    </FormGroup>
-                    <Collapse sx={{ py: '1rem' }} in={openCollapseBonuses}>
-                        <TextField
-                            inputRef={bonusesInput}
-                            sx={{ width: '100%' }}
-                            defaultValue="3"
-                            label="Seleccione los meses promediados de bonificaciones"
-                            select
-                        >
-                            <MenuItem value={3}>Últimos 3 meses</MenuItem>
-                            <MenuItem value={6}>Últimos 6 meses</MenuItem>
-                        </TextField>
-                    </Collapse>
-                    <Typography color="text.secondary">
-                        La certificación laboral sera enviada al correo
-                        electrónico:{' '}
-                        <span
-                            style={{ fontWeight: 500, color: 'rgb(0,0,0,0.8)' }}
-                        >
-                            {currentEmail?.toLowerCase()}
-                        </span>
-                    </Typography>
-                    <Collapse in={!openCollapseEmail}>
-                        <Button
-                            sx={{ mt: '1rem' }}
-                            onClick={handleOpenCollapseEmail}
-                        >
-                            Ese no es mi correo
-                        </Button>
-                    </Collapse>
-                    <Collapse in={openCollapseEmail}>
-                        <Alert sx={{ mt: '1rem' }} severity="info">
-                            Si este no es tu correo electrónico, por favor,
-                            ingresa al modulo de mi cuenta y actualiza tu correo
-                            electrónico. Recuerda cerrar sesión y volver a
-                            iniciar sesión para que los cambios surtan efecto.
-                        </Alert>
-                    </Collapse>
-                </DialogContent>
-                <DialogActions
-                    sx={{ display: 'flex', justifyContent: 'space-between' }}
-                >
-                    <Button
-                        disabled={isProgressVisible}
-                        onClick={handleCloseCertification}
-                    >
-                        Cancelar
-                    </Button>
-                    <LoadingButton
-                        loading={isProgressVisible}
-                        onClick={sendCertification}
-                    >
-                        Enviar
-                    </LoadingButton>
-                </DialogActions>
-            </Dialog>
+            <EmploymentCertificationRequest
+                openCertification={openCertification}
+                setOpenCertification={setOpenCertification}
+            />
+            <MenuAccount
+                open={open}
+                setAnchorEl={setAnchorEl}
+                anchorEl={anchorEl}
+                setOpenAccountDialog={setOpenAccountDialog}
+                isAdvisor={isAdvisor}
+                setOpenCertification={setOpenCertification}
+                rank={rank}
+                handleLogout={handleLogout}
+                setOpenDialog={setOpenDialog}
+            />
+
             <Box
                 className="navbar"
                 sx={{
@@ -581,103 +419,7 @@ const Navbar = () => {
                     </Box>
                 </Box>
             </Box>
-            <Menu
-                anchorEl={anchorEl}
-                id="account-menu"
-                open={open}
-                onClose={handleClose}
-                onClick={handleClose}
-                PaperProps={{
-                    elevation: 0,
-                    sx: {
-                        overflow: 'visible',
-                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                        mt: 1.5,
-                        '& .MuiAvatar-root': {
-                            width: 32,
-                            height: 32,
-                            ml: -0.5,
-                            mr: 1,
-                        },
-                        '&:before': {
-                            content: '""',
-                            display: 'block',
-                            position: 'absolute',
-                            top: 0,
-                            right: 14,
-                            width: 10,
-                            height: 10,
-                            bgcolor: 'background.paper',
-                            transform: 'translateY(-50%) rotate(45deg)',
-                            zIndex: 0,
-                        },
-                    },
-                }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            >
-                <MenuItem onClick={handleOpenAccountDialog}>
-                    <ListItemIcon>
-                        <Avatar />
-                    </ListItemIcon>
-                    <ListItemText primary="Mi Cuenta" />
-                    <Divider />
-                </MenuItem>
-                {isAdvisor ? (
-                    <MenuItem onClick={handleOpenDialog}>
-                        <ListItemIcon>
-                            <FlagIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Mis Metas" />
-                    </MenuItem>
-                ) : null}
-                <MenuItem onClick={() => navigate('/logged/my-payslips')}>
-                    <ListItemIcon>
-                        <ReceiptIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Mis desprendibles de nomina" />
-                </MenuItem>
-                <MenuItem onClick={handleOpenCertification}>
-                    <ListItemIcon>
-                        <DescriptionIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Certificación Laboral" />
-                </MenuItem>
-                {rank === 1 ? (
-                    <MenuItem onClick={() => navigate('/logged/vacations')}>
-                        <ListItemIcon>
-                            <BeachAccessIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Mis Vacaciones" />
-                    </MenuItem>
-                ) : null}
-                <MenuItem onClick={() => navigate('/logged/points')}>
-                    <ListItemIcon>
-                        <SportsScoreIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Puntos C&C" />
-                </MenuItem>
-                <MenuItem onClick={() => navigate('/logged/pqrs')}>
-                    <ListItemIcon>
-                        <EmailIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="PQRS" />
-                </MenuItem>
-                <MenuItem
-                    onClick={() => navigate('/logged/coexistence-committee')}
-                >
-                    <ListItemIcon>
-                        <VolunteerActivismIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Comité de convivencia" />
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>
-                    <ListItemIcon>
-                        <Logout fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Cerrar sesión" />
-                </MenuItem>
-            </Menu>
+
             <Menu
                 anchorEl={anchorElUtils}
                 open={openUtils}
