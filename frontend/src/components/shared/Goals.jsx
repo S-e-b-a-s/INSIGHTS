@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 // Material-UI
 import {

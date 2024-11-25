@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,
-} from '../../assets/CustomDataGridOverlays';
+} from '@assets/CustomDataGridOverlays';
 
 const columns = [
     { field: 'employeeId', headerName: 'Cedula', width: 100 },

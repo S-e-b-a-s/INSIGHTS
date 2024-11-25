@@ -3,9 +3,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import theme from './theme/theme';
-import routes from './routes/routes';
-import './sentry/sentry';
+import theme from '@theme/theme';
+import routes from '@routes/routes';
+import '@sentry-d/sentry';
 import { ProgressbarProvider } from './contexts/ProgressbarContext';
 import { SnackbarProvider } from './contexts/SnackbarContext';
 

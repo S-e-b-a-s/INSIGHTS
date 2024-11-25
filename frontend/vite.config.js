@@ -3,16 +3,30 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { configDefaults } from 'vitest/config';
-
-// import mkcert from 'vite-plugin-mkcert'
+import path from 'path';
 
 export default defineConfig({
+    resolve: {
+        alias: {
+            '@src': path.resolve(__dirname, './src'),
+            '@assets': path.resolve(__dirname, './src/assets'),
+            '@components': path.resolve(__dirname, './src/components'),
+            '@contexts': path.resolve(__dirname, './src/contexts'),
+            '@images': path.resolve(__dirname, './src/images'),
+            '@routes': path.resolve(__dirname, './src/routes'),
+            '@sentry-d': path.resolve(__dirname, './src/sentry'),
+            '@theme': path.resolve(__dirname, './src/theme'),
+            '@videos': path.resolve(__dirname, './src/videos'),
+        },
+    },
+
     test: {
         globals: true, // Use global test functions like describe, test, etc.
         environment: 'jsdom', // Simulates a browser environment for React components
         setupFiles: './src/setupTests.js', // Optional, for setup files
         exclude: [...configDefaults.exclude, 'node_modules/'], // Exclude node_modules
     },
+
     server: {
         watch: {
             ignored: [

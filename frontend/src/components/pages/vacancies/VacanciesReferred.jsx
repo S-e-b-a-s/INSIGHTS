@@ -4,15 +4,15 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Custom Hooks
-import { useSnackbar } from '../../../contexts/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components
-import { getApiUrl } from '../../../assets/getApi';
-import { handleError } from '../../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,
-} from '../../../assets/CustomDataGridOverlays';
+} from '@assets/CustomDataGridOverlays';
 
 // Material-UI
 import { Container, Box, Typography } from '@mui/material';

@@ -1,11 +1,11 @@
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import AddImagesCarouselDialog from '../components/shared/AddImagesCarouselDialog';
-import { getApiUrl } from '../assets/getApi';
-import { handleError } from '../assets/handleError';
+import AddImagesCarouselDialog from '@components/shared/AddImagesCarouselDialog';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 import { vi } from 'vitest';
 
-vi.mock('../assets/getApi');
-vi.mock('../assets/handleError');
+vi.mock('@assets/getApi');
+vi.mock('@assets/handleError');
 vi.mock('react-filepond', () => {
     return {
         __esModule: true,

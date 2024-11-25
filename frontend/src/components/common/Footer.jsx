@@ -10,7 +10,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import WebIcon from '@mui/icons-material/Web';
 
 // Media
-import logo_CYC from '../../images/cyc-logos/logo-footer.webp';
+import logo_CYC from '@images/cyc-logos/logo-footer.webp';
 
 const Footer = () => {
     const navigate = useNavigate();

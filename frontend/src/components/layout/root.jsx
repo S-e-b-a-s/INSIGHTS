@@ -2,8 +2,8 @@
 import { Outlet } from 'react-router-dom';
 
 // Custom Components
-import NavBar from '../common/NavBar';
-import Footer from '../common/Footer';
+import NavBar from '@components/common/NavBar';
+import Footer from '@components/common/Footer';
 
 // MUI
 import Box from '@mui/material/Box';

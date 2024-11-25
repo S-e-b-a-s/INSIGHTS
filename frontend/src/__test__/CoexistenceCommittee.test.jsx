@@ -1,8 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import CoexistenceCommittee from '../components/pages/CoexistenceCommittee';
-import { SnackbarProvider } from '../components/context/SnackbarContext';
-import { ProgressbarProvider } from '../components/context/ProgressbarContext';
+import CoexistenceCommittee from '@components/pages/CoexistenceCommittee';
+import { SnackbarProvider } from '@components/context/SnackbarContext';
+import { ProgressbarProvider } from '@components/context/ProgressbarContext';
 
 // Mock the fetch function and the custom hooks
 global.fetch = vi.fn(() =>
@@ -16,11 +16,11 @@ const mockShowSnack = vi.fn();
 const mockShowProgressbar = vi.fn();
 const mockHideProgressbar = vi.fn();
 
-vi.mock('../components/context/SnackbarContext', () => ({
+vi.mock('@components/context/SnackbarContext', () => ({
     useSnackbar: () => ({ showSnack: mockShowSnack }),
 }));
 
-vi.mock('../components/context/ProgressbarContext', () => ({
+vi.mock('@components/context/ProgressbarContext', () => ({
     useProgressbar: () => ({
         isProgressVisible: false,
         showProgressbar: mockShowProgressbar,

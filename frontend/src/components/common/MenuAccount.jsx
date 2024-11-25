@@ -24,13 +24,14 @@ const MenuAccount = ({
     anchorEl,
     setAnchorEl,
     setOpenAccountDialog,
-    isAdvisor,
     setOpenCertification,
-    rank,
     handleLogout,
     setOpenDialog,
 }) => {
     const navigate = useNavigate();
+    const rank = JSON.parse(localStorage.getItem('rango'));
+    const cargoItem = localStorage.getItem('cargo');
+    const isAdvisor = cargoItem && JSON.parse(cargoItem).includes('ASESOR');
 
     const handleClose = () => {
         setAnchorEl(null);

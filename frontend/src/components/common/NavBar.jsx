@@ -4,55 +4,29 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
 
 // Custom Hooks
-import { useSnackbar } from '../../contexts/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components/Functions
-import Goals from '../shared/Goals';
-import MyAccountDialog from '../shared/MyAccount';
-import InactivityDetector from '../shared/InactivityDetector';
-import Notifications from '../shared/Notifications';
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import Goals from '@components/shared/Goals';
+import MyAccountDialog from '@components/shared/MyAccount';
+import InactivityDetector from '@components/shared/InactivityDetector';
+import Notifications from '@components/shared/Notifications';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 import EmploymentCertificationRequest from './EmploymentCertificationRequest';
 import MenuAccount from './MenuAccount';
+import MenuServices from './MenuServices';
 
 // Material-UI
-import {
-    Box,
-    Button,
-    MenuItem,
-    Menu,
-    Tooltip,
-    IconButton,
-    Avatar,
-    ListItemIcon,
-    ListItemText,
-    Divider,
-    Badge,
-} from '@mui/material';
+import { Box, Button, Tooltip, IconButton, Avatar, Badge } from '@mui/material';
 
 // Icons
-import Logout from '@mui/icons-material/Logout';
-import FlagIcon from '@mui/icons-material/Flag';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
-import PolicyIcon from '@mui/icons-material/Policy';
-import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
-import FmdBadIcon from '@mui/icons-material/FmdBad';
-import ReceiptIcon from '@mui/icons-material/Receipt';
-import PaymentsIcon from '@mui/icons-material/Payments';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import DescriptionIcon from '@mui/icons-material/Description';
-import TopicIcon from '@mui/icons-material/Topic';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
-import SportsScoreIcon from '@mui/icons-material/SportsScore';
-import EmailIcon from '@mui/icons-material/Email';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 
 // Media
-import logotipo from '../../images/cyc-logos/logo-navbar.webp';
+import logotipo from '@images/cyc-logos/logo-navbar.webp';
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -198,10 +172,6 @@ const Navbar = () => {
         getNotifications();
     }, [openNotification]);
 
-    const handleCloseUtils = () => {
-        setAnchorElUtils(null);
-    };
-
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -257,10 +227,12 @@ const Navbar = () => {
                     showSnack={showSnack}
                 />
             ) : null}
+
             <MyAccountDialog
                 open={openAccountDialog}
                 onClose={handleCloseAccountDialog}
             />
+
             <Notifications
                 notifications={notifications}
                 setAnchorNotification={setAnchorNotification}
@@ -268,6 +240,7 @@ const Navbar = () => {
                 openNotification={openNotification}
                 getNotifications={getNotifications}
             />
+
             {getApiUrl().environment === 'production' ? (
                 <InactivityDetector handleLogout={handleLogout} />
             ) : null}
@@ -275,6 +248,7 @@ const Navbar = () => {
                 openCertification={openCertification}
                 setOpenCertification={setOpenCertification}
             />
+
             <MenuAccount
                 open={open}
                 setAnchorEl={setAnchorEl}
@@ -287,12 +261,16 @@ const Navbar = () => {
                 setOpenDialog={setOpenDialog}
             />
 
+            <MenuServices
+                openUtils={openUtils}
+                anchorElUtils={anchorElUtils}
+                setAnchorElUtils={setAnchorElUtils}
+            />
             <Box
                 className="navbar"
                 sx={{
                     backdropFilter: 'blur(10px)',
                 }}
-                onMouseEnter={handleCloseUtils}
             >
                 <Box
                     sx={{
@@ -419,133 +397,6 @@ const Navbar = () => {
                     </Box>
                 </Box>
             </Box>
-
-            <Menu
-                anchorEl={anchorElUtils}
-                open={openUtils}
-                onClick={handleCloseUtils}
-                onClose={handleCloseUtils}
-                id="account-menu-utils"
-                MenuListProps={{
-                    'aria-labelledby': 'button-utils',
-                }}
-                PaperProps={{
-                    elevation: 0,
-                    sx: {
-                        overflow: 'visible',
-                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                        '& .MuiAvatar-root': {
-                            width: 32,
-                            height: 32,
-                            ml: -0.5,
-                            mr: 1,
-                        },
-                        '&:before': {
-                            content: '""',
-                            display: 'block',
-                            position: 'absolute',
-                            top: 0,
-                            right: 14,
-                            width: 10,
-                            height: 10,
-                            bgcolor: 'background.paper',
-                            transform: 'translateY(-50%) rotate(45deg)',
-                            zIndex: 0,
-                        },
-                    },
-                }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            >
-                {permissions && permissions.includes('goals.view_goals') ? (
-                    <MenuItem onClick={() => navigate('/logged/goals-stats')}>
-                        <ListItemIcon>
-                            <FlagIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Análisis de Metas" />
-                    </MenuItem>
-                ) : null}
-                {permissions &&
-                (permissions.includes('users.upload_robinson_list') ||
-                    permissions.includes('goals.add_goals') ||
-                    permissions.includes('users.upload_points')) ? (
-                    <MenuItem onClick={() => navigate('/logged/upload-files')}>
-                        <ListItemIcon>
-                            <UploadFileIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Cargue de Archivos" />
-                    </MenuItem>
-                ) : null}
-                {permissions &&
-                permissions.includes('excels_processing.call_transfer') ? (
-                    <MenuItem onClick={() => navigate('/logged/quality')}>
-                        <ListItemIcon>
-                            <DriveFileMoveIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Trasladar Archivos" />
-                    </MenuItem>
-                ) : null}
-                {permissions &&
-                permissions.includes('contracts.view_contract') ? (
-                    <MenuItem onClick={() => navigate('/logged/legal')}>
-                        <ListItemIcon>
-                            <PolicyIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Contratos y Pólizas Legales" />
-                    </MenuItem>
-                ) : null}
-                {permissions &&
-                permissions.includes('vacancy.view_reference') ? (
-                    <MenuItem
-                        onClick={() => navigate('/logged/vacancies-referred')}
-                    >
-                        <ListItemIcon>
-                            <ForwardToInboxIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Vacantes Referidas" />
-                    </MenuItem>
-                ) : null}
-                {permissions &&
-                permissions.includes('operational_risk.view_events') ? (
-                    <MenuItem onClick={() => navigate('/logged/risk-events')}>
-                        <ListItemIcon>
-                            <FmdBadIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Eventos de Riesgo Operativo" />
-                    </MenuItem>
-                ) : null}
-                {permissions && permissions.includes('payslip.add_payslip') ? (
-                    <MenuItem onClick={() => navigate('/logged/payslips')}>
-                        <ListItemIcon>
-                            <PaymentsIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Registros de Desprendibles de Nomina" />
-                    </MenuItem>
-                ) : null}
-                {permissions &&
-                permissions.includes(
-                    'employment_management.view_employmentcertification'
-                ) ? (
-                    <MenuItem
-                        onClick={() =>
-                            navigate('/logged/employment-certifications')
-                        }
-                    >
-                        <ListItemIcon>
-                            <TopicIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Certificados Laborales" />
-                    </MenuItem>
-                ) : null}
-                {rank > 1 ? (
-                    <MenuItem onClick={() => navigate('/logged/vacations')}>
-                        <ListItemIcon>
-                            <BeachAccessIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Registros de vacaciones" />
-                    </MenuItem>
-                ) : null}
-            </Menu>
         </>
     );
 };

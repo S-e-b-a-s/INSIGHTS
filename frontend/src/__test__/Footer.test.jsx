@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
-import Footer from '../components/common/Footer';
+import Footer from '@components/common/Footer';
 
 describe('Footer Component', () => {
     test('renders company address and current year', () => {

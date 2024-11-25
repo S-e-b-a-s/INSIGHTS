@@ -17,15 +17,15 @@ import { LoadingButton } from '@mui/lab';
 import SendIcon from '@mui/icons-material/Send';
 
 // Custom Components/Functions
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 // Custom Hooks
-import { useSnackbar } from '../../contexts/SnackbarContext';
-import { useProgressbar } from '../../contexts/ProgressbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
+import { useProgressbar } from '@contexts/ProgressbarContext';
 
 // Media
-import PqrsImage from '../../images/pqrs/pqrs.png';
+import PqrsImage from '@images/pqrs/pqrs.png';
 
 const reasons = [
     { value: 'PETICIÓN', label: 'Petición' },

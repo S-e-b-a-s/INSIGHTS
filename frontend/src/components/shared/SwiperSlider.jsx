@@ -6,16 +6,16 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import '../../index.css';
+import '@src/index.css';
 
 // Media
-import managersJr1 from '../../images/managers-jr/52716114.webp';
-import managersJr2 from '../../images/managers-jr/53069726.webp';
-import managersJr4 from '../../images/managers-jr/1016002011.webp';
-import managersJr5 from '../../images/managers-jr/1016033764.webp';
-import managersJr6 from '../../images/managers-jr/91498957.webp';
-import managersJr8 from '../../images/managers-jr/28553156.webp';
-import managersJr9 from '../../images/managers-jr/1010178143.webp';
+import managersJr1 from '@images/managers-jr/52716114.webp';
+import managersJr2 from '@images/managers-jr/53069726.webp';
+import managersJr4 from '@images/managers-jr/1016002011.webp';
+import managersJr5 from '@images/managers-jr/1016033764.webp';
+import managersJr6 from '@images/managers-jr/91498957.webp';
+import managersJr8 from '@images/managers-jr/28553156.webp';
+import managersJr9 from '@images/managers-jr/1010178143.webp';
 
 const managersJr = [
     {

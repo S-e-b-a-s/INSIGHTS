@@ -2,37 +2,37 @@
 import { lazy, Suspense } from 'react';
 
 // Lazy load components
-const ErrorPage = lazy(() => import('../components/pages/ErrorPage'));
-const Login = lazy(() => import('../components/pages/Login'));
-const Home = lazy(() => import('../components/pages/Home'));
-const Blog = lazy(() => import('../components/pages/Blog'));
-const Article = lazy(() => import('../components/pages/Article'));
-const Root = lazy(() => import('../components/layout/root'));
-const About = lazy(() => import('../components/pages/About'));
-const GoalsStats = lazy(() => import('../components/pages/GoalsStats'));
-const Sgc = lazy(() => import('../components/pages/Sgc'));
-const UploadFiles = lazy(() => import('../components/pages/UploadFiles'));
-const EthicalLine = lazy(() => import('../components/pages/EthicalLine'));
-const Quality = lazy(() => import('../components/pages/Quality'));
-const Legal = lazy(() => import('../components/pages/Legal'));
-const Vacancies = lazy(() => import('../components/pages/vacancies/Vacancies'));
+const ErrorPage = lazy(() => import('@components/pages/ErrorPage'));
+const Login = lazy(() => import('@components/pages/Login'));
+const Home = lazy(() => import('@components/pages/Home'));
+const Blog = lazy(() => import('@components/pages/Blog'));
+const Article = lazy(() => import('@components/pages/Article'));
+const Root = lazy(() => import('@components/layout/root'));
+const About = lazy(() => import('@components/pages/About'));
+const GoalsStats = lazy(() => import('@components/pages/GoalsStats'));
+const Sgc = lazy(() => import('@components/pages/Sgc'));
+const UploadFiles = lazy(() => import('@components/pages/UploadFiles'));
+const EthicalLine = lazy(() => import('@components/pages/EthicalLine'));
+const Quality = lazy(() => import('@components/pages/Quality'));
+const Legal = lazy(() => import('@components/pages/Legal'));
+const Vacancies = lazy(() => import('@components/pages/vacancies/Vacancies'));
 const VacanciesReferred = lazy(
-    () => import('../components/pages/vacancies/VacanciesReferred')
+    () => import('@components/pages/vacancies/VacanciesReferred')
 );
-const RiskEvents = lazy(() => import('../components/pages/RiskEvents'));
-const Payslips = lazy(() => import('../components/pages/payslips/Payslips'));
-const MyPayslips = lazy(() => import('../components/pages/payslips/MyPayslips'));
+const RiskEvents = lazy(() => import('@components/pages/RiskEvents'));
+const Payslips = lazy(() => import('@components/pages/payslips/Payslips'));
+const MyPayslips = lazy(() => import('@components/pages/payslips/MyPayslips'));
 const EmploymentCertification = lazy(
-    () => import('../components/pages/EmploymentCertification')
+    () => import('@components/pages/EmploymentCertification')
 );
-const Vacations = lazy(() => import('../components/pages/vacations/Vacations'));
-const PowerBI = lazy(() => import('../components/pages/PowerBI'));
-const Pqrs = lazy(() => import('../components/pages/Pqrs'));
+const Vacations = lazy(() => import('@components/pages/vacations/Vacations'));
+const PowerBI = lazy(() => import('@components/pages/PowerBI'));
+const Pqrs = lazy(() => import('@components/pages/Pqrs'));
 const CoexistenceCommittee = lazy(
-    () => import('../components/pages/CoexistenceCommittee')
+    () => import('@components/pages/CoexistenceCommittee')
 );
-const Assistance = lazy(() => import('../components/pages/Assistance'));
-const Points = lazy(() => import('../components/pages/Points'));
+const Assistance = lazy(() => import('@components/pages/Assistance'));
+const Points = lazy(() => import('@components/pages/Points'));
 
 const wrapWithSuspense = (Component) => (
     <Suspense>

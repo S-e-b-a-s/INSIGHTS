@@ -8,11 +8,11 @@ import * as Sentry from '@sentry/react';
 // import { Toaster, toast } from 'sonner';
 
 // Custom Hooks
-import { useSnackbar } from '../../contexts/SnackbarContext';
-import { useProgressbar } from '../../contexts/ProgressbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
+import { useProgressbar } from '@contexts/ProgressbarContext';
 
 // Custom Components/Functions
-import { getApiUrl } from '../../assets/getApi.js';
+import { getApiUrl } from '@assets/getApi.js';
 
 // MUI Components
 import {
@@ -31,7 +31,7 @@ import { LoadingButton } from '@mui/lab';
 // Icons
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
-import login_image from '../../images/login/login-image.webp';
+import login_image from '@images/login/login-image.webp';
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required('Campo requerido'),

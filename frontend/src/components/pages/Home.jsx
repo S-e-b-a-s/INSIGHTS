@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi.js';
-import CarouselComponent from '../shared/Carousel';
-import { handleError } from '../../assets/handleError';
-import { EmblaCarousel } from '../shared/embla-carousel/EmblaCarousel';
+import { getApiUrl } from '@assets/getApi.js';
+import CarouselComponent from '@components/shared/Carousel';
+import { handleError } from '@assets/handleError';
+import { EmblaCarousel } from '@components/shared/embla-carousel/EmblaCarousel';
 
 // Custom Hooks
-import { useSnackbar } from '../../contexts/SnackbarContext.jsx';
+import { useSnackbar } from '@contexts/SnackbarContext.jsx';
 
 // Material-UI
 import { Typography, Box, Container, Card } from '@mui/material';
 
 // Media
-import realBenefit2 from '../../images/benefits/benefit-1.webp';
-import video from '../../videos/futbol.mp4';
-import cake from '../../images/birthdays/cake.webp';
-import AvatarImage from '../../images/home-carousel/avatar.jpg';
+import realBenefit2 from '@images/benefits/benefit-1.webp';
+import video from '@videos/futbol.mp4';
+import cake from '@images/birthdays/cake.webp';
+import AvatarImage from '@images/home-carousel/avatar.jpg';
 
 const benefits = [{ image: realBenefit2, title: 'Beneficio 2' }];
 

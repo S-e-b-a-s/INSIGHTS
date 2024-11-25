@@ -10,8 +10,8 @@ import { Typography, Box, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Custom Components
-import Navbar from '../common/NavBar';
-import Footer from '../common/Footer';
+import Navbar from '@components/common/NavBar';
+import Footer from '@components/common/Footer';
 
 function ErrorContent({ error }) {
     const navigate = useNavigate();

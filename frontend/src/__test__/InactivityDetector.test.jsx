@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { vi } from 'vitest';
-import InactivityDetector from '../components/shared/InactivityDetector';
+import InactivityDetector from '@components/shared/InactivityDetector';
 
 describe('InactivityDetector Component', () => {
     beforeEach(() => {

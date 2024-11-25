@@ -5,11 +5,11 @@ import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 
 // Custom Hooks
-import { useSnackbar } from '../../contexts/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 // Material-UI
 import { Typography, Box, Collapse } from '@mui/material';

@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Media
-import article1 from '../../images/articles/article1.jpg';
-import cybersecurity from '../../images/blog/cybersecurity.jpg';
-import bienestar from '../../images/blog/bienestar.jpg';
-import article5 from '../../images/blog/article5.jpg';
-import sstManagement from '../../images/blog/sst-environment-management.jpg';
-import carteraPropia from '../../images/blog/cartera-propia.jpg';
-import youthFinances from '../../images/blog/youth-finances.jpg';
+import article1 from '@images/articles/article1.jpg';
+import cybersecurity from '@images/blog/cybersecurity.jpg';
+import bienestar from '@images/blog/bienestar.jpg';
+import article5 from '@images/blog/article5.jpg';
+import sstManagement from '@images/blog/sst-environment-management.jpg';
+import carteraPropia from '@images/blog/cartera-propia.jpg';
+import youthFinances from '@images/blog/youth-finances.jpg';
 
 // Material-UI
 import {

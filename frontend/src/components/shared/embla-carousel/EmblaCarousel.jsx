@@ -5,11 +5,11 @@ import { useState, useEffect } from 'react';
 import { DotButton, useDotButton } from './EmblaCarouselDotButton';
 
 // Custom Hooks
-import { useSnackbar } from '../../../contexts/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Functions and Components
-import { getApiUrl } from '../../../assets/getApi';
-import { handleError } from '../../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 import AddImagesCarouselDialog from './AddImagesCarouselDialog';
 
 // Icons

@@ -6,15 +6,15 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
 // Custom Hooks
-import { useSnackbar } from '../../contexts/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 // Media
-import ethicalLineBackground from '../../images/ethical-line/ethical-line-background.jpg';
-import logoCYC from '../../images/cyc-logos/logo-navbar.webp';
+import ethicalLineBackground from '@images/ethical-line/ethical-line-background.jpg';
+import logoCYC from '@images/cyc-logos/logo-navbar.webp';
 
 // Material-UI
 import {

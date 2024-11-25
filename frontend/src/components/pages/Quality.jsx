@@ -4,11 +4,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Custom Hooks
-import { useSnackbar } from '../../contexts/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 // Material-UI
 import {
@@ -28,12 +28,9 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SaveIcon from '@mui/icons-material/Save';
 
-// Media
-import quality from '../../images/quality/files.jpg';
-
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
+    clipPath: 'inset(5059%)',
     height: 1,
     overflow: 'hidden',
     position: 'absolute',

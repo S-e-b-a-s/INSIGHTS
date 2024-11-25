@@ -32,17 +32,17 @@ import {
 import { LoadingButton } from '@mui/lab';
 
 // Custom Hooks
-import { useSnackbar } from '../../../contexts/SnackbarContext.jsx';
-import { useProgressbar } from '../../../contexts/ProgressbarContext.jsx';
+import { useSnackbar } from '@contexts/SnackbarContext.jsx';
+import { useProgressbar } from '@contexts/ProgressbarContext.jsx';
 
 // Custom Components
-import { getApiUrl } from '../../../assets/getApi.js';
-import { handleError } from '../../../assets/handleError.js';
+import { getApiUrl } from '@assets/getApi.js';
+import { handleError } from '@assets/handleError.js';
 import VacationsRequest from './VacationsRequest.jsx';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,
-} from '../../../assets/CustomDataGridOverlays.jsx';
+} from '@assets/CustomDataGridOverlays.jsx';
 
 // Icons
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';

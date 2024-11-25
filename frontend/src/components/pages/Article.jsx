@@ -7,24 +7,24 @@ import { useParams } from 'react-router-dom';
 import { Typography, Container, Box } from '@mui/material';
 
 // Media
-import article1 from '../../images/articles/article1.jpg';
-import cybersecurity from '../../images/blog/cybersecurity.jpg';
-import bienestar from '../../images/blog/bienestar.jpg';
-import article5 from '../../images/blog/article5.jpg';
-import sstManagement from '../../images/blog/sst-environment-management.jpg';
-import sstManagement2 from '../../images/blog/sst-environment-management-2.jpg';
-import sstManagement3 from '../../images/blog/sst-environment-management-3.jpg';
-import carteraPropia from '../../images/blog/cartera-propia.jpg';
-import carteraPropia2 from '../../images/blog/cartera-propia-2.jpg';
-import racc from '../../images/blog/racc.jpg';
-import financialHealth1 from '../../images/blog/Salud_financiera_1.png';
-import financialHealth2 from '../../images/blog/Salud_financiera_2.png';
-import elLibertador from '../../images/blog/el-libertador.png';
-import bancoSantander from '../../images/blog/banco-santander.png';
-import cooperativaMinutoDeDios from '../../images/blog/cooperativa-minuto-de-dios.png';
-import nuBank from '../../images/blog/nubank.png';
-import carteraPropiaLogo from '../../images/blog/cartera-propia-logo.png';
-import ciberseguridad2 from '../../images/blog/ciberseguridad-2.jpg';
+import article1 from '@images/articles/article1.jpg';
+import cybersecurity from '@images/blog/cybersecurity.jpg';
+import bienestar from '@images/blog/bienestar.jpg';
+import article5 from '@images/blog/article5.jpg';
+import sstManagement from '@images/blog/sst-environment-management.jpg';
+import sstManagement2 from '@images/blog/sst-environment-management-2.jpg';
+import sstManagement3 from '@images/blog/sst-environment-management-3.jpg';
+import carteraPropia from '@images/blog/cartera-propia.jpg';
+import carteraPropia2 from '@images/blog/cartera-propia-2.jpg';
+import racc from '@images/blog/racc.jpg';
+import financialHealth1 from '@images/blog/Salud_financiera_1.png';
+import financialHealth2 from '@images/blog/Salud_financiera_2.png';
+import elLibertador from '@images/blog/el-libertador.png';
+import bancoSantander from '@images/blog/banco-santander.png';
+import cooperativaMinutoDeDios from '@images/blog/cooperativa-minuto-de-dios.png';
+import nuBank from '@images/blog/nubank.png';
+import carteraPropiaLogo from '@images/blog/cartera-propia-logo.png';
+import ciberseguridad2 from '@images/blog/ciberseguridad-2.jpg';
 
 const ArticlePage = () => {
     useEffect(() => {

@@ -28,12 +28,12 @@ import {
 import { LoadingButton } from '@mui/lab';
 
 // Custom Hooks
-import { useSnackbar } from '../../../contexts/SnackbarContext';
-import { useProgressbar } from '../../../contexts/ProgressbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
+import { useProgressbar } from '@contexts/ProgressbarContext';
 
 // Custom Components
-import { getApiUrl } from '../../../assets/getApi';
-import { handleError } from '../../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 const useListener = (ref, event, listener) => {
     useEffect(() => {

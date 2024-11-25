@@ -19,12 +19,12 @@ import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
 
 // Custom Hooks
-import { useSnackbar } from '../../contexts/SnackbarContext';
-import { useProgressbar } from '../../contexts/ProgressbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
+import { useProgressbar } from '@contexts/ProgressbarContext';
 
 // Custom components and assets
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 const personalFields = [
     {

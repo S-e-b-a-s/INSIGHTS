@@ -17,12 +17,12 @@ import {
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
-import { useProgressbar } from '../../contexts/ProgressbarContext';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
+import { useProgressbar } from '@contexts/ProgressbarContext';
 
 // Custom Hooks
-import { useSnackbar } from '../../contexts/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 const EmploymentCertificationRequest = ({
     openCertification,
