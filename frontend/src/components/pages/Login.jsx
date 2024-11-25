@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // Libraries
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 import * as Sentry from '@sentry/react';

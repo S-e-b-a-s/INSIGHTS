@@ -1,5 +1,5 @@
 import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Icons
 import FlagIcon from '@mui/icons-material/Flag';

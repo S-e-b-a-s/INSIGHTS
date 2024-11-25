@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 // Libraries
 import Carousel from 'react-material-ui-carousel';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Material-UI
 import { Box, Typography } from '@mui/material';

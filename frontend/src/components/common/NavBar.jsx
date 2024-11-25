@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 
 // Libraries
-import { useNavigate, useMatch } from 'react-router-dom';
+import { useNavigate, useMatch } from 'react-router';
 
 // Custom Hooks
 import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components/Functions
 import Goals from '@components/shared/Goals';
-import MyAccountDialog from '@components/shared/MyAccount';
 import InactivityDetector from '@components/shared/InactivityDetector';
 import Notifications from '@components/shared/Notifications';
 import { getApiUrl } from '@assets/getApi';
@@ -35,7 +34,6 @@ const Navbar = () => {
     const navigate = useNavigate();
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
-    const [openAccountDialog, setOpenAccountDialog] = useState(false);
     const cargoItem = localStorage.getItem('cargo');
     const isAdvisor = cargoItem && JSON.parse(cargoItem).includes('ASESOR');
     const permissions = JSON.parse(localStorage.getItem('permissions'));
@@ -180,10 +178,6 @@ const Navbar = () => {
         setAnchorNotification(event.currentTarget);
     };
 
-    const handleCloseAccountDialog = () => {
-        setOpenAccountDialog(false);
-    };
-
     const handleLogout = async (inactivity) => {
         try {
             const response = await fetch(
@@ -228,11 +222,6 @@ const Navbar = () => {
                 />
             ) : null}
 
-            <MyAccountDialog
-                open={openAccountDialog}
-                onClose={handleCloseAccountDialog}
-            />
-
             <Notifications
                 notifications={notifications}
                 setAnchorNotification={setAnchorNotification}
@@ -253,7 +242,6 @@ const Navbar = () => {
                 open={open}
                 setAnchorEl={setAnchorEl}
                 anchorEl={anchorEl}
-                setOpenAccountDialog={setOpenAccountDialog}
                 isAdvisor={isAdvisor}
                 setOpenCertification={setOpenCertification}
                 rank={rank}

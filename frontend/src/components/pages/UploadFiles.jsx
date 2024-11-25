@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 // Libraries
 import { useDropzone } from 'react-dropzone';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Custom Hooks
 import { useSnackbar } from '@contexts/SnackbarContext';

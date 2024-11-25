@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 // Libraries
 import * as Yup from 'yup';
 import { Formik, Form, useField } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Custom Hooks
 import { useSnackbar } from '@contexts/SnackbarContext';

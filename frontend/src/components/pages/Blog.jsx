@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // Libraries
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Media
 import article1 from '@images/articles/article1.jpg';

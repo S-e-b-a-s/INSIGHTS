@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
 // Libraries
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Custom Hooks
 import { useSnackbar } from '@contexts/SnackbarContext';

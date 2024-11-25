@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 // Libraries
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
 // Material-UI
 import { Typography, Container, Box } from '@mui/material';

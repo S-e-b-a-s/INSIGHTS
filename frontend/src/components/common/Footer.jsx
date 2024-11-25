@@ -1,5 +1,5 @@
 // Libraries
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Material-UI
 import { Typography, Box } from '@mui/material';

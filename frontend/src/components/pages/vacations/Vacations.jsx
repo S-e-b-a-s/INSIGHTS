@@ -554,26 +554,22 @@ export const Vacations = () => {
             cellClassName: 'actions',
             getActions: ({ row }) => {
                 return [
-                    <Tooltip key={`tooltip-${row.id}`} arrow>
-                        <span>
-                            <GridActionsCellItem
-                                title="Ver carta de respuesta de vacaciones"
-                                key={`open-response-letter-${row.id}`}
-                                icon={<FileOpenIcon />}
-                                disabled={row.status === 'PENDIENTE'}
-                                label="open-response-letter"
-                                sx={{
-                                    color: 'primary.main',
-                                }}
-                                onClick={() => {
-                                    window.open(
-                                        `${getApiUrl().apiUrl}vacation/${row.id}/get-response`,
-                                        '_blank'
-                                    );
-                                }}
-                            />
-                        </span>
-                    </Tooltip>,
+                    <GridActionsCellItem
+                        title="Ver carta de respuesta de vacaciones"
+                        key={`open-response-letter-${row.id}`}
+                        icon={<FileOpenIcon />}
+                        disabled={row.status === 'PENDIENTE'}
+                        label="open-response-letter"
+                        sx={{
+                            color: 'primary.main',
+                        }}
+                        onClick={() => {
+                            window.open(
+                                `${getApiUrl().apiUrl}vacation/${row.id}/get-response`,
+                                '_blank'
+                            );
+                        }}
+                    />,
                 ];
             },
         },

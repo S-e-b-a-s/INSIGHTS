@@ -163,7 +163,7 @@ const MyAccountDialog = ({ open, onClose }) => {
 
     useState(() => {
         getInitialValues();
-    }, [open]);
+    }, []);
 
     const MyTextFields = () => {
         return personalFields.map((myField) => {

@@ -6,7 +6,7 @@ import {
     useNavigationType,
     createRoutesFromChildren,
     matchRoutes,
-} from 'react-router-dom';
+} from 'react-router';
 
 Sentry.init({
     dsn: 'https://5c6491f1c851a0f106e61adad4c4d46c@o4507664328359936.ingest.us.sentry.io/4507664339107840',

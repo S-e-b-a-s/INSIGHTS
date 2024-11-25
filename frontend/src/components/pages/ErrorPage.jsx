@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 // Libraries
-import { useRouteError, useNavigate } from 'react-router-dom';
+import { useRouteError, useNavigate } from 'react-router';
 
 // Material-UI
 import { Typography, Box, Button } from '@mui/material';

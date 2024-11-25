@@ -8,7 +8,7 @@ import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components
 import { getApiUrl } from '@assets/getApi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { handleError } from '@assets/handleError';
 import {
     CustomNoResultsOverlay,

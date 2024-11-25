@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 // Libraries
 import { read, utils } from 'xlsx';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // MUI
 import {

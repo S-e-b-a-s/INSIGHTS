@@ -1,5 +1,5 @@
 // Libraries
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 
 // Custom Components
 import NavBar from '@components/common/NavBar';
