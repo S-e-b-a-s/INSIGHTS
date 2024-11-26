@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Material-UI
 import {
@@ -161,7 +161,7 @@ const MyAccountDialog = ({ open, onClose }) => {
         }
     };
 
-    useState(() => {
+    useEffect(() => {
         getInitialValues();
     }, []);
 
