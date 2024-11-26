@@ -38,7 +38,7 @@ import { useProgressbar } from '@contexts/ProgressbarContext.jsx';
 // Custom Components
 import { getApiUrl } from '@assets/getApi.js';
 import { handleError } from '@assets/handleError.js';
-import VacationsRequest from './VacationsRequest.jsx';
+import VacationsRequest from '@components/pages/vacations/VacationsRequest.jsx';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,

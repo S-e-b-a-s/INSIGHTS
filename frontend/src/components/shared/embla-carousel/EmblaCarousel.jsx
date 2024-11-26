@@ -2,7 +2,10 @@
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { useState, useEffect } from 'react';
-import { DotButton, useDotButton } from './EmblaCarouselDotButton';
+import {
+    DotButton,
+    useDotButton,
+} from '@components/shared/embla-carousel/EmblaCarouselDotButton';
 
 // Custom Hooks
 import { useSnackbar } from '@contexts/SnackbarContext';
@@ -10,7 +13,7 @@ import { useSnackbar } from '@contexts/SnackbarContext';
 // Custom Functions and Components
 import { getApiUrl } from '@assets/getApi';
 import { handleError } from '@assets/handleError';
-import AddImagesCarouselDialog from './AddImagesCarouselDialog';
+import AddImagesCarouselDialog from '@components/shared/embla-carousel/AddImagesCarouselDialog';
 
 // Icons
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -85,7 +88,7 @@ export function EmblaCarousel() {
     const { showSnack } = useSnackbar();
     const [images, setImages] = useState([]);
     const [openAddDialog, setOpenAddDialog] = useState(false);
-    const permissions = JSON.parse(localStorage.getItem('permissions'));
+    const permissions = JSON.parse(localStorage.getItem('permissions')) || [];
 
     useEffect(() => {
         getCarouselImages(setImages);
@@ -121,65 +124,68 @@ export function EmblaCarousel() {
                         width: '1280px',
                     }}
                 >
-                    {images.map((image, index) => (
-                        <Box
-                            key={index}
-                            style={{
-                                flex: '0 0 100%',
-                                minWidth: 0,
-                                maxWidth: '100%',
-                                margin: '20px 20px 0 0',
-                                position: 'relative',
-                            }}
-                            className="embla__slide"
-                        >
+                    {images.length > 0 &&
+                        images.map((image, index) => (
                             <Box
-                                sx={{
-                                    display: 'flex',
-                                    gap: '.5rem',
-                                    position: 'absolute',
-                                    top: '1rem',
-                                    right: '1rem',
+                                key={index}
+                                style={{
+                                    flex: '0 0 100%',
+                                    minWidth: 0,
+                                    maxWidth: '100%',
+                                    margin: '20px 20px 0 0',
+                                    position: 'relative',
                                 }}
+                                className="embla__slide"
                             >
-                                {permissions &&
-                                permissions.includes(
-                                    'carousel_image.add_banner'
-                                ) ? (
-                                    <IconButton
-                                        onClick={() => setOpenAddDialog(true)}
-                                        sx={IconButtonsStyle}
-                                    >
-                                        <AddIcon />
-                                    </IconButton>
-                                ) : null}
-                                {permissions &&
-                                permissions.includes(
-                                    'carousel_image.delete_banner'
-                                ) ? (
-                                    <IconButton
-                                        onClick={() =>
-                                            deleteCarouselImage(
-                                                image.id,
-                                                showSnack,
-                                                setImages
-                                            )
-                                        }
-                                        sx={IconButtonsStyle}
-                                    >
-                                        <DeleteForeverIcon />
-                                    </IconButton>
-                                ) : null}
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        gap: '.5rem',
+                                        position: 'absolute',
+                                        top: '1rem',
+                                        right: '1rem',
+                                    }}
+                                >
+                                    {permissions &&
+                                    permissions.includes(
+                                        'carousel_image.add_banner'
+                                    ) ? (
+                                        <IconButton
+                                            onClick={() =>
+                                                setOpenAddDialog(true)
+                                            }
+                                            sx={IconButtonsStyle}
+                                        >
+                                            <AddIcon />
+                                        </IconButton>
+                                    ) : null}
+                                    {permissions &&
+                                    permissions.includes(
+                                        'carousel_image.delete_banner'
+                                    ) ? (
+                                        <IconButton
+                                            onClick={() =>
+                                                deleteCarouselImage(
+                                                    image.id,
+                                                    showSnack,
+                                                    setImages
+                                                )
+                                            }
+                                            sx={IconButtonsStyle}
+                                        >
+                                            <DeleteForeverIcon />
+                                        </IconButton>
+                                    ) : null}
+                                </Box>
+                                <img
+                                    width={'100%'}
+                                    height={'720px'}
+                                    style={{ borderRadius: '1.8rem' }}
+                                    src={image.image}
+                                    alt={image.title}
+                                />
                             </Box>
-                            <img
-                                width={'100%'}
-                                height={'720px'}
-                                style={{ borderRadius: '1.8rem' }}
-                                src={image.image}
-                                alt={image.title}
-                            />
-                        </Box>
-                    ))}
+                        ))}
                 </div>
                 <div className="embla__dots">
                     {scrollSnaps.map((_, index) => (

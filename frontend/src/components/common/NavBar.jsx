@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 
 // Libraries
 import { useNavigate, useMatch } from 'react-router';
@@ -7,14 +7,19 @@ import { useNavigate, useMatch } from 'react-router';
 import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components/Functions
-import Goals from '@components/shared/Goals';
-import InactivityDetector from '@components/shared/InactivityDetector';
-import Notifications from '@components/shared/Notifications';
+const Goals = lazy(() => import('@components/shared/Goals'));
+const InactivityDetector = lazy(
+    () => import('@components/shared/InactivityDetector')
+);
+const Notifications = lazy(() => import('@components/shared/Notifications'));
+const EmploymentCertificationRequest = lazy(
+    () => import('./EmploymentCertificationRequest')
+);
+const MenuAccount = lazy(() => import('./MenuAccount'));
+const MenuServices = lazy(() => import('./MenuServices'));
+
 import { getApiUrl } from '@assets/getApi';
 import { handleError } from '@assets/handleError';
-import EmploymentCertificationRequest from './EmploymentCertificationRequest';
-import MenuAccount from './MenuAccount';
-import MenuServices from './MenuServices';
 
 // Material-UI
 import { Box, Button, Tooltip, IconButton, Avatar, Badge } from '@mui/material';
@@ -214,46 +219,49 @@ const Navbar = () => {
 
     return (
         <>
-            {isAdvisor ? (
-                <Goals
-                    openDialog={openDialog}
-                    setOpenDialog={setOpenDialog}
-                    showSnack={showSnack}
+            <Suspense>
+                {isAdvisor ? (
+                    <Goals
+                        openDialog={openDialog}
+                        setOpenDialog={setOpenDialog}
+                        showSnack={showSnack}
+                    />
+                ) : null}
+
+                <Notifications
+                    notifications={notifications}
+                    setAnchorNotification={setAnchorNotification}
+                    anchorNotification={anchorNotification}
+                    openNotification={openNotification}
+                    getNotifications={getNotifications}
                 />
-            ) : null}
 
-            <Notifications
-                notifications={notifications}
-                setAnchorNotification={setAnchorNotification}
-                anchorNotification={anchorNotification}
-                openNotification={openNotification}
-                getNotifications={getNotifications}
-            />
+                {getApiUrl().environment === 'production' ? (
+                    <InactivityDetector handleLogout={handleLogout} />
+                ) : null}
 
-            {getApiUrl().environment === 'production' ? (
-                <InactivityDetector handleLogout={handleLogout} />
-            ) : null}
-            <EmploymentCertificationRequest
-                openCertification={openCertification}
-                setOpenCertification={setOpenCertification}
-            />
+                <EmploymentCertificationRequest
+                    openCertification={openCertification}
+                    setOpenCertification={setOpenCertification}
+                />
 
-            <MenuAccount
-                open={open}
-                setAnchorEl={setAnchorEl}
-                anchorEl={anchorEl}
-                isAdvisor={isAdvisor}
-                setOpenCertification={setOpenCertification}
-                rank={rank}
-                handleLogout={handleLogout}
-                setOpenDialog={setOpenDialog}
-            />
+                <MenuAccount
+                    open={open}
+                    setAnchorEl={setAnchorEl}
+                    anchorEl={anchorEl}
+                    isAdvisor={isAdvisor}
+                    setOpenCertification={setOpenCertification}
+                    rank={rank}
+                    handleLogout={handleLogout}
+                    setOpenDialog={setOpenDialog}
+                />
 
-            <MenuServices
-                openUtils={openUtils}
-                anchorElUtils={anchorElUtils}
-                setAnchorElUtils={setAnchorElUtils}
-            />
+                <MenuServices
+                    openUtils={openUtils}
+                    anchorElUtils={anchorElUtils}
+                    setAnchorElUtils={setAnchorElUtils}
+                />
+            </Suspense>
             <Box
                 className="navbar"
                 sx={{

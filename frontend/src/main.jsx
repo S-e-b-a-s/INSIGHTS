@@ -1,4 +1,4 @@
-import './index.css';
+import '@src/index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router/dom';
@@ -6,9 +6,8 @@ import { createBrowserRouter } from 'react-router';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import theme from '@theme/theme';
 import routes from '@routes/routes';
-import '@sentry-d/sentry';
-import { ProgressbarProvider } from './contexts/ProgressbarContext';
-import { SnackbarProvider } from './contexts/SnackbarContext';
+import { ProgressbarProvider } from '@contexts/ProgressbarContext';
+import { SnackbarProvider } from '@contexts/SnackbarContext';
 
 const router = createBrowserRouter(routes, {
     future: {
@@ -19,6 +18,11 @@ const router = createBrowserRouter(routes, {
         v7_partialHydration: true,
         v7_skipActionErrorRevalidation: true,
     },
+});
+
+// Dynamically import and initialize Sentry
+import('@sentry-d/sentry').then(({ initSentry }) => {
+    initSentry();
 });
 
 if ('scrollRestoration' in history) {

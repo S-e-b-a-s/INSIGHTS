@@ -39,7 +39,7 @@ import { useSnackbar } from '@contexts/SnackbarContext';
 import { useProgressbar } from '@contexts/ProgressbarContext';
 
 // Custom Components
-import PayslipsPreview from './PayslipsPreview.jsx';
+import PayslipsPreview from '@components/pages/payslips/PayslipsPreview.jsx';
 import { getApiUrl } from '@assets/getApi';
 import { handleError } from '@assets/handleError';
 import {

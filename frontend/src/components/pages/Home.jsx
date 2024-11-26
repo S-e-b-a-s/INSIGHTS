@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 
 // Custom Components
+const CarouselComponent = lazy(() => import('@components/shared/Carousel'));
+import { EmblaCarousel } from '../shared/embla-carousel/EmblaCarousel';
 import { getApiUrl } from '@assets/getApi.js';
-import CarouselComponent from '@components/shared/Carousel';
 import { handleError } from '@assets/handleError';
-import { EmblaCarousel } from '@components/shared/embla-carousel/EmblaCarousel';
 
 // Custom Hooks
 import { useSnackbar } from '@contexts/SnackbarContext.jsx';
@@ -226,131 +226,136 @@ const Home = () => {
                     llenan de alegría y éxito! 🎉🎂{' '}
                 </Typography>
             </Box>
-            <Box
-                sx={{
-                    display: 'flex',
-                    width: '100%',
-                    justifyContent: 'center',
-                    gap: '1rem',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                }}
-            >
-                <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
-                    {yesterdayBirthdays.length === 0 ? (
-                        <>
-                            <img
-                                style={{ borderRadius: '15px' }}
-                                width={350}
-                                height={465}
-                                alt="imagen-pastel-cumpleaños"
-                                src={cake}
-                            ></img>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    textAlign: 'center',
-                                    pt: '2rem',
-                                }}
-                            >
-                                <Typography variant="h6" color="gray">
-                                    Ayer no hubo cumpleaños
-                                </Typography>
-                                <Typography variant="body" color="gray">
-                                    ¡Pero siempre hay espacio para una sonrisa!
-                                </Typography>
-                            </Box>
-                        </>
-                    ) : (
-                        <CarouselComponent
-                            contain={true}
-                            items={yesterdayBirthdays}
-                            day={'Ayer'}
-                            height={'465px'}
-                            width={'100%'}
-                        />
-                    )}
-                </Card>
-                <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
-                    {todayBirthdays.length === 0 ? (
-                        <>
-                            <img
-                                style={{ borderRadius: '15px' }}
-                                width={350}
-                                height={465}
-                                alt="imagen-pastel-cumpleaños"
-                                src={cake}
-                            ></img>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    textAlign: 'center',
-                                    pt: '2rem',
-                                }}
-                            >
-                                <Typography variant="h6" color="gray">
-                                    Hoy no hay cumpleaños
-                                </Typography>
-                                <Typography variant="body" color="gray">
-                                    ¡Pero siempre hay espacio para una sonrisa!
-                                </Typography>
-                            </Box>
-                        </>
-                    ) : (
-                        <CarouselComponent
-                            contain={true}
-                            items={todayBirthdays}
-                            day={'Hoy'}
-                            height={'465px'}
-                            width={'100%'}
-                        />
-                    )}
-                </Card>{' '}
-                <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
-                    {tomorrowBirthdays.length === 0 ? (
-                        <>
-                            <img
-                                style={{ borderRadius: '15px' }}
-                                width={350}
-                                height={465}
-                                alt="imagen-pastel-cumpleaños"
-                                src={cake}
-                            ></img>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    textAlign: 'center',
-                                    pt: '2rem',
-                                }}
-                            >
-                                <Typography variant="h6" color="gray">
-                                    Mañana no hay cumpleaños
-                                </Typography>
-                                <Typography variant="body" color="gray">
-                                    ¡Pero siempre hay espacio para una sonrisa!
-                                </Typography>
-                            </Box>
-                        </>
-                    ) : (
-                        <CarouselComponent
-                            contain={true}
-                            items={tomorrowBirthdays}
-                            day={'Mañana'}
-                            height={'465px'}
-                            width={'100%'}
-                        />
-                    )}
-                </Card>{' '}
-            </Box>
+            <Suspense>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        width: '100%',
+                        justifyContent: 'center',
+                        gap: '1rem',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                    }}
+                >
+                    <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
+                        {yesterdayBirthdays.length === 0 ? (
+                            <>
+                                <img
+                                    style={{ borderRadius: '15px' }}
+                                    width={350}
+                                    height={465}
+                                    alt="imagen-pastel-cumpleaños"
+                                    src={cake}
+                                ></img>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        textAlign: 'center',
+                                        pt: '2rem',
+                                    }}
+                                >
+                                    <Typography variant="h6" color="gray">
+                                        Ayer no hubo cumpleaños
+                                    </Typography>
+                                    <Typography variant="body" color="gray">
+                                        ¡Pero siempre hay espacio para una
+                                        sonrisa!
+                                    </Typography>
+                                </Box>
+                            </>
+                        ) : (
+                            <CarouselComponent
+                                contain={true}
+                                items={yesterdayBirthdays}
+                                day={'Ayer'}
+                                height={'465px'}
+                                width={'100%'}
+                            />
+                        )}
+                    </Card>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
+                        {todayBirthdays.length === 0 ? (
+                            <>
+                                <img
+                                    style={{ borderRadius: '15px' }}
+                                    width={350}
+                                    height={465}
+                                    alt="imagen-pastel-cumpleaños"
+                                    src={cake}
+                                ></img>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        textAlign: 'center',
+                                        pt: '2rem',
+                                    }}
+                                >
+                                    <Typography variant="h6" color="gray">
+                                        Hoy no hay cumpleaños
+                                    </Typography>
+                                    <Typography variant="body" color="gray">
+                                        ¡Pero siempre hay espacio para una
+                                        sonrisa!
+                                    </Typography>
+                                </Box>
+                            </>
+                        ) : (
+                            <CarouselComponent
+                                contain={true}
+                                items={todayBirthdays}
+                                day={'Hoy'}
+                                height={'465px'}
+                                width={'100%'}
+                            />
+                        )}
+                    </Card>{' '}
+                    <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
+                        {tomorrowBirthdays.length === 0 ? (
+                            <>
+                                <img
+                                    style={{ borderRadius: '15px' }}
+                                    width={350}
+                                    height={465}
+                                    alt="imagen-pastel-cumpleaños"
+                                    src={cake}
+                                ></img>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        textAlign: 'center',
+                                        pt: '2rem',
+                                    }}
+                                >
+                                    <Typography variant="h6" color="gray">
+                                        Mañana no hay cumpleaños
+                                    </Typography>
+                                    <Typography variant="body" color="gray">
+                                        ¡Pero siempre hay espacio para una
+                                        sonrisa!
+                                    </Typography>
+                                </Box>
+                            </>
+                        ) : (
+                            <CarouselComponent
+                                contain={true}
+                                items={tomorrowBirthdays}
+                                day={'Mañana'}
+                                height={'465px'}
+                                width={'100%'}
+                            />
+                        )}
+                    </Card>{' '}
+                </Box>
+            </Suspense>
             <Container
                 sx={{
                     display: 'flex',

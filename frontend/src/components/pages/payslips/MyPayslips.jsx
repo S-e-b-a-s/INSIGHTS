@@ -118,7 +118,7 @@ export const MyPayslips = () => {
 
             await handleError(response, showSnack);
 
-            if (response.status === 201) {
+            if (response.status === 200) {
                 showSnack('success', 'Desprendible reenviado correctamente');
                 setPaySlipId(null);
                 setOpenDialog(false);
