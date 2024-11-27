@@ -1,11 +1,6 @@
-// Libraries
 import { Outlet } from 'react-router';
-
-// Custom Components
 import NavBar from '@components/common/NavBar';
 import Footer from '@components/common/Footer';
-
-// MUI
 import Box from '@mui/material/Box';
 
 const Root = () => {
@@ -13,12 +8,19 @@ const Root = () => {
         <Box
             style={{
                 display: 'grid',
-                minHeight: '    ',
+                minHeight: '100dvh',
                 gridTemplateRows: 'auto 1fr auto',
             }}
         >
             <NavBar />
-            <Outlet />
+            {/* Ensure the Outlet occupies at least the available space */}
+            <Box
+                style={{
+                    minHeight: '100vh',
+                }}
+            >
+                <Outlet />
+            </Box>
             <Footer />
         </Box>
     );
