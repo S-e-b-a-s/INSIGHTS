@@ -120,7 +120,7 @@ export function EmblaCarousel() {
                     className="embla__container"
                     style={{
                         display: 'flex',
-                        height: '100%',
+                        height: '750px',
                         width: '1280px',
                     }}
                 >
@@ -128,7 +128,7 @@ export function EmblaCarousel() {
                         images.map((image, index) => (
                             <Box
                                 key={index}
-                                style={{
+                                sx={{
                                     flex: '0 0 100%',
                                     minWidth: 0,
                                     maxWidth: '100%',
@@ -179,7 +179,6 @@ export function EmblaCarousel() {
                                 </Box>
                                 <img
                                     width={'100%'}
-                                    height={'720px'}
                                     style={{ borderRadius: '1.8rem' }}
                                     src={image.image}
                                     alt={image.title}

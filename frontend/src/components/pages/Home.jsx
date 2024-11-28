@@ -18,6 +18,9 @@ import video from '@videos/futbol.mp4';
 import cake from '@images/birthdays/cake.webp';
 import AvatarImage from '@images/home-carousel/avatar.jpg';
 
+// Libraries
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 const benefits = [{ image: realBenefit2, title: 'Beneficio 2' }];
 
 const Home = () => {
@@ -25,6 +28,7 @@ const Home = () => {
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
     const { showSnack } = useSnackbar();
+    const queryClient = new QueryClient();
 
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
@@ -125,7 +129,9 @@ const Home = () => {
                     justifyContent: 'center',
                 }}
             >
-                <EmblaCarousel />
+                <QueryClientProvider client={queryClient}>
+                    <EmblaCarousel />
+                </QueryClientProvider>
             </Box>
             <Container
                 sx={{
