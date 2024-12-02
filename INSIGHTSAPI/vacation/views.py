@@ -32,11 +32,11 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
 
         # If the user is a manager of HR
         if user.job_position.name == "GERENTE DE GESTION HUMANA":
-            return self.queryset
+            return self.queryset.all()
 
         # If the user has payroll approval permissions
         elif user.has_perm("vacation.payroll_approval"):
-            return self.queryset
+            return self.queryset.all()
 
         # If the user has a management position with rank >= 2
         elif user.job_position.rank >= 2:

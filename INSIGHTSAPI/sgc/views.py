@@ -3,9 +3,7 @@
 import logging
 from django.core.cache import cache
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page, cache_control
-from django.utils.cache import get_cache_key
-from rest_framework import renderers
+from django.views.decorators.cache import cache_page
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework import viewsets
 from services.views import FileDownloadMixin
@@ -23,7 +21,6 @@ class SGCFileViewSet(viewsets.ModelViewSet):
 
     queryset = SGCFile.objects.all().select_related("area")
     serializer_class = SGCFileSerializer
-    # renderer_classes = [renderers.BrowsableAPIRenderer]
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
     @method_decorator(cache_page(CACHE_DURATION, key_prefix="sgc"))
