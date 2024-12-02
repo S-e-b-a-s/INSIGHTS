@@ -16,6 +16,7 @@ import cesarGarzon from '@images/managers/cesar-garzon.jpg';
 import yannethPinzon from '@images/managers/yanneth-pinzon.webp';
 import angelaDuran from '@images/managers/angela-duran.jpeg';
 import adrianaPaez from '@images/managers/adriana-paez.jpg';
+import manager1 from '@images/managers/52716114.webp';
 import diegoGonzales from '@images/managers/diego-gonzales.jpg';
 import riskInterControl from '@images/managers/risk-internal-control.jfif';
 import melidaSandoval from '@images/managers/melida-sandoval.jpg';
@@ -62,15 +63,22 @@ const managements = [
             'Planificar, coordinar, dirigir y controlar las actividades que impactan el óptimo funcionamiento de la organización, garantizando un cumplimiento de los procesos establecidos con los más altos estándares de calidad.',
     },
     {
-        name: 'Adriana Páez',
+        name: 'Adriana Barrera',
         management: 'Gerente de Operaciones',
+        image: manager1,
+        description:
+            'Dirigir, organizar y supervisar las operaciones con equipos altamente productivos, promoviendo la excelencia en cada proceso para alcanzar resultados sobresalientes que superen las expectativas de nuestros clientes y garanticen la sostenibilidad del negocio.',
+    },
+    {
+        name: 'Adriana Páez',
+        management: 'Gerente de Operaciones de Ventas',
         image: adrianaPaez,
         description:
             'Liderar, planificar y controlar las operaciones de las campañas de Cobranzas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.',
     },
     {
         name: 'Héctor Gabriel Sotelo',
-        management: 'Gerente de Operaciones de Ventas',
+        management: 'Gerente de Operaciones de Servicio al Cliente',
         image: hectorSotelo,
         description:
             'Liderar, planificar y controlar las operaciones de las campañas de Servicios y Ventas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.',

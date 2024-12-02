@@ -273,13 +273,15 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent
-                                contain={true}
-                                items={yesterdayBirthdays}
-                                day={'Ayer'}
-                                height={'465px'}
-                                width={'100%'}
-                            />
+                            <Suspense>
+                                <CarouselComponent
+                                    contain={true}
+                                    items={yesterdayBirthdays}
+                                    day={'Ayer'}
+                                    height={'465px'}
+                                    width={'100%'}
+                                />
+                            </Suspense>
                         )}
                     </Card>
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
@@ -312,13 +314,15 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent
-                                contain={true}
-                                items={todayBirthdays}
-                                day={'Hoy'}
-                                height={'465px'}
-                                width={'100%'}
-                            />
+                            <Suspense>
+                                <CarouselComponent
+                                    contain={true}
+                                    items={todayBirthdays}
+                                    day={'Hoy'}
+                                    height={'465px'}
+                                    width={'100%'}
+                                />
+                            </Suspense>
                         )}
                     </Card>{' '}
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
@@ -351,13 +355,15 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent
-                                contain={true}
-                                items={tomorrowBirthdays}
-                                day={'Mañana'}
-                                height={'465px'}
-                                width={'100%'}
-                            />
+                            <Suspense>
+                                <CarouselComponent
+                                    contain={true}
+                                    items={tomorrowBirthdays}
+                                    day={'Mañana'}
+                                    height={'465px'}
+                                    width={'100%'}
+                                />
+                            </Suspense>
                         )}
                     </Card>{' '}
                 </Box>
