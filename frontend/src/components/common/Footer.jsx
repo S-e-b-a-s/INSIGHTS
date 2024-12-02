@@ -1,5 +1,5 @@
 // Libraries
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Material-UI
 import { Typography, Box } from '@mui/material';
@@ -10,8 +10,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import WebIcon from '@mui/icons-material/Web';
 
 // Media
-import logo_CYC from '../../images/cyc-logos/logo-footer.webp';
-import { Height } from '@mui/icons-material';
+import logo_CYC from '@images/cyc-logos/logo-footer.webp';
 
 const Footer = () => {
     const navigate = useNavigate();
@@ -90,7 +89,7 @@ const Footer = () => {
             >
                 <Typography
                     sx={{ cursor: 'pointer' }}
-                    onClick={() => navigate('/logged/about-us')}
+                    onClick={() => navigate('/logged/about')}
                     variant="subtitle2"
                     color="white"
                 >

@@ -32,17 +32,17 @@ import {
 import { LoadingButton } from '@mui/lab';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
-import { useProgressbar } from '../context/ProgressbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext.jsx';
+import { useProgressbar } from '@contexts/ProgressbarContext.jsx';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
-import VacationsRequest from '../shared/VacationsRequest.jsx';
+import { getApiUrl } from '@assets/getApi.js';
+import { handleError } from '@assets/handleError.js';
+import VacationsRequest from '@components/pages/vacations/VacationsRequest.jsx';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,
-} from '../../assets/CustomDataGridOverlays';
+} from '@assets/CustomDataGridOverlays.jsx';
 
 // Icons
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
@@ -554,26 +554,22 @@ export const Vacations = () => {
             cellClassName: 'actions',
             getActions: ({ row }) => {
                 return [
-                    <Tooltip key={`tooltip-${row.id}`} arrow>
-                        <span>
-                            <GridActionsCellItem
-                                title="Ver carta de respuesta de vacaciones"
-                                key={`open-response-letter-${row.id}`}
-                                icon={<FileOpenIcon />}
-                                disabled={row.status === 'PENDIENTE'}
-                                label="open-response-letter"
-                                sx={{
-                                    color: 'primary.main',
-                                }}
-                                onClick={() => {
-                                    window.open(
-                                        `${getApiUrl().apiUrl}vacation/${row.id}/get-response`,
-                                        '_blank'
-                                    );
-                                }}
-                            />
-                        </span>
-                    </Tooltip>,
+                    <GridActionsCellItem
+                        title="Ver carta de respuesta de vacaciones"
+                        key={`open-response-letter-${row.id}`}
+                        icon={<FileOpenIcon />}
+                        disabled={row.status === 'PENDIENTE'}
+                        label="open-response-letter"
+                        sx={{
+                            color: 'primary.main',
+                        }}
+                        onClick={() => {
+                            window.open(
+                                `${getApiUrl().apiUrl}vacation/${row.id}/get-response`,
+                                '_blank'
+                            );
+                        }}
+                    />,
                 ];
             },
         },
@@ -714,7 +710,7 @@ export const Vacations = () => {
             </Dialog>
             <Container
                 sx={{
-                    marginTop: '6rem',
+                    marginTop: '2rem',
                 }}
             >
                 <Typography

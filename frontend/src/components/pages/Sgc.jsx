@@ -5,15 +5,15 @@ import * as Yup from 'yup';
 import { Formik, Form, useField } from 'formik';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,
-} from '../../assets/CustomDataGridOverlays';
+} from '@assets/CustomDataGridOverlays';
 
 // Material-UI
 import {
@@ -598,16 +598,13 @@ export const Sgc = () => {
 
     return (
         <>
-            <Container
-                sx={{
-                    marginTop: '6rem',
-                }}
-            >
+            <Container>
                 <Typography
                     sx={{
                         textAlign: 'center',
                         pb: '15px',
                         color: 'primary.main',
+                        mt: '2rem',
                     }}
                     variant={'h4'}
                 >

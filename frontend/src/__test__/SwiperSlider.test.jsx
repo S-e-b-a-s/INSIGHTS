@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import SwiperSlider from '../components/shared/SwiperSlider';
+import SwiperSlider from '@components/shared/SwiperSlider';
 
 describe('SwiperSlider Component', () => {
     test('renders SwiperSlider with all managers', () => {

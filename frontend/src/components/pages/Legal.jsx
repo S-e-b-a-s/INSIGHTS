@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 // Libraries
 import * as Yup from 'yup';
 import { Formik, Form, useField } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,
-} from '../../assets/CustomDataGridOverlays';
+} from '@assets/CustomDataGridOverlays';
 
 // Material-UI
 import {
@@ -726,7 +726,7 @@ export const Legal = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     flexDirection: 'column',
-                    marginTop: '6rem',
+                    marginTop: '2rem',
                 }}
             >
                 <Typography

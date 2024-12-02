@@ -1,30 +1,30 @@
 import { useEffect } from 'react';
 
 // Libraries
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
 // Material-UI
 import { Typography, Container, Box } from '@mui/material';
 
 // Media
-import article1 from '../../images/articles/article1.jpg';
-import cybersecurity from '../../images/blog/cybersecurity.jpg';
-import bienestar from '../../images/blog/bienestar.jpg';
-import article5 from '../../images/blog/article5.jpg';
-import sstManagement from '../../images/blog/sst-environment-management.jpg';
-import sstManagement2 from '../../images/blog/sst-environment-management-2.jpg';
-import sstManagement3 from '../../images/blog/sst-environment-management-3.jpg';
-import carteraPropia from '../../images/blog/cartera-propia.jpg';
-import carteraPropia2 from '../../images/blog/cartera-propia-2.jpg';
-import racc from '../../images/blog/racc.jpg';
-import financialHealth1 from '../../images/blog/Salud_financiera_1.png';
-import financialHealth2 from '../../images/blog/Salud_financiera_2.png';
-import elLibertador from '../../images/blog/el-libertador.png';
-import bancoSantander from '../../images/blog/banco-santander.png';
-import cooperativaMinutoDeDios from '../../images/blog/cooperativa-minuto-de-dios.png';
-import nuBank from '../../images/blog/nubank.png';
-import carteraPropiaLogo from '../../images/blog/cartera-propia-logo.png';
-import ciberseguridad2 from '../../images/blog/ciberseguridad-2.jpg';
+import article1 from '@images/articles/article1.jpg';
+import cybersecurity from '@images/blog/cybersecurity.jpg';
+import bienestar from '@images/blog/bienestar.jpg';
+import article5 from '@images/blog/article5.jpg';
+import sstManagement from '@images/blog/sst-environment-management.jpg';
+import sstManagement2 from '@images/blog/sst-environment-management-2.jpg';
+import sstManagement3 from '@images/blog/sst-environment-management-3.jpg';
+import carteraPropia from '@images/blog/cartera-propia.jpg';
+import carteraPropia2 from '@images/blog/cartera-propia-2.jpg';
+import racc from '@images/blog/racc.jpg';
+import financialHealth1 from '@images/blog/Salud_financiera_1.png';
+import financialHealth2 from '@images/blog/Salud_financiera_2.png';
+import elLibertador from '@images/blog/el-libertador.png';
+import bancoSantander from '@images/blog/banco-santander.png';
+import cooperativaMinutoDeDios from '@images/blog/cooperativa-minuto-de-dios.png';
+import nuBank from '@images/blog/nubank.png';
+import carteraPropiaLogo from '@images/blog/cartera-propia-logo.png';
+import ciberseguridad2 from '@images/blog/ciberseguridad-2.jpg';
 
 const ArticlePage = () => {
     useEffect(() => {
@@ -558,8 +558,6 @@ const ArticlePage = () => {
             img: carteraPropia,
             content: (
                 <div>
-                    <h1></h1>
-
                     <p>
                         A lo largo del tiempo, C&C se ha destacado como una
                         empresa especializada en la recuperación de cartera de
@@ -600,7 +598,6 @@ const ArticlePage = () => {
             title: 'Tips de salud financiera',
             subtitle:
                 '¡Hola, lectores jóvenes y emprendedores de la comunidad C&C! Bienvenidos a Finanzas Jóvenes, el espacio donde exploraremos juntos el fascinante mundo de las finanzas personales y las estrategias para construir un futuro financiero sólido. Soy Adriana Páez, y estoy emocionada de comenzar este viaje contigo.',
-            // img: article1,
             imgAuthor: '',
             nameAuthor: 'Sebastian',
             tags: ['Customer Experience', 'Call Center', 'BPO'],
@@ -612,7 +609,7 @@ const ArticlePage = () => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             textAlign: 'center',
-                            padding: '1rem',
+                            padding: 0,
                         }}
                     >
                         <img
@@ -665,8 +662,7 @@ const ArticlePage = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     px: '5rem',
-                    pt: '7rem',
-                    pb: '2rem',
+                    pt: '2rem',
                     gap: '2rem',
                 }}
             >
@@ -678,18 +674,24 @@ const ArticlePage = () => {
                 </Typography>
                 <Typography
                     variant="subtitle1"
-                    sx={{ textAlign: 'center', fontFamily: 'Poppins' }}
+                    sx={{
+                        textAlign: 'center',
+                        mb: '2rem',
+                        fontFamily: 'Poppins',
+                    }}
                 >
                     {article.subtitle}
                 </Typography>
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <img
-                    style={{ borderRadius: '0.5rem' }}
-                    width={1000}
-                    src={article.img}
-                    alt=""
-                />
+                {article.img && (
+                    <img
+                        style={{ borderRadius: '0.5rem' }}
+                        width={1000}
+                        src={article.img}
+                        alt="article-image"
+                    />
+                )}
             </Box>
             <Box
                 sx={{
@@ -699,9 +701,7 @@ const ArticlePage = () => {
                     gap: '2rem',
                 }}
             >
-                <Box sx={{ textAlign: 'justify', pt: '2rem' }}>
-                    {article.content}
-                </Box>
+                <Box sx={{ textAlign: 'justify' }}>{article.content}</Box>
             </Box>
         </Container>
     );

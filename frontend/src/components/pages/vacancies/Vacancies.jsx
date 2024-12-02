@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Material-UI
 import {
@@ -281,7 +281,7 @@ const Vacancies = () => {
                     justifyContent: 'start',
                     alignItems: 'center',
                     flexDirection: 'column',
-                    marginY: '6rem',
+                    mt: '2rem',
                 }}
             >
                 <Typography
@@ -326,6 +326,7 @@ const Vacancies = () => {
                                 key={index}
                                 sx={{
                                     width: 500,
+                                    position: 'relative',
                                     maxWidth: 500,
                                     textAlign: 'left',
                                     cursor: 'pointer',

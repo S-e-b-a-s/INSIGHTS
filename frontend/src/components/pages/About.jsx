@@ -12,25 +12,25 @@ import {
 } from '@mui/material';
 
 // Media
-import cesarGarzon from '../../images/managers/cesar-garzon.jpg';
-import yannethPinzon from '../../images/managers/yanneth-pinzon.webp';
-import angelaDuran from '../../images/managers/angela-duran.jpeg';
-import adrianaPaez from '../../images/managers/adriana-paez.jpg';
-import diegoGonzales from '../../images/managers/diego-gonzales.jpg';
-import riskInterControl from '../../images/managers/risk-internal-control.jfif';
-import melidaSandoval from '../../images/managers/melida-sandoval.jpg';
-import hectorSotelo from '../../images/managers/hector-sotelo.png';
-import pablo from '../../images/managers/pablo.jpeg';
-import aboutUs from '../../images/about/img-about-2.jpg';
-import organigrama from '../../images/about/organigrama.png';
-import imgVision from '../../images/about/image-vision.jpg';
-import mission2 from '../../images/about/image-mission-2.jpg';
-import value1 from '../../images/about/corporative-values.jpg';
-import qualityObjectives from '../../images/about/quality-objectives.jpg';
-import qualityPolicies from '../../images/about/quality-policies.jpg';
+import cesarGarzon from '@images/managers/cesar-garzon.jpg';
+import yannethPinzon from '@images/managers/yanneth-pinzon.webp';
+import angelaDuran from '@images/managers/angela-duran.jpeg';
+import adrianaPaez from '@images/managers/adriana-paez.jpg';
+import diegoGonzales from '@images/managers/diego-gonzales.jpg';
+import riskInterControl from '@images/managers/risk-internal-control.jfif';
+import melidaSandoval from '@images/managers/melida-sandoval.jpg';
+import hectorSotelo from '@images/managers/hector-sotelo.png';
+import pablo from '@images/managers/pablo.jpeg';
+import aboutUs from '@images/about/img-about-2.jpg';
+import organigrama from '@images/about/organigrama.png';
+import imgVision from '@images/about/image-vision.jpg';
+import mission2 from '@images/about/image-mission-2.jpg';
+import value1 from '@images/about/corporative-values.jpg';
+import qualityObjectives from '@images/about/quality-objectives.jpg';
+import qualityPolicies from '@images/about/quality-policies.jpg';
 
 // Custom components
-import SwiperSlider from '../shared/SwiperSlider';
+import SwiperSlider from '@components/shared/SwiperSlider';
 
 const managements = [
     {
@@ -108,14 +108,15 @@ const About = () => {
     const yearsOfExperience = currentYear - 2005;
 
     return (
-        <Box
+        <Container
             sx={{
                 display: 'flex',
                 gap: '5rem',
                 flexDirection: 'column',
                 width: '100%',
-                marginTop: '6rem',
+                marginTop: '2rem',
             }}
+            maxWidth="xl"
         >
             <Typography
                 variant="h3"
@@ -599,7 +600,7 @@ const About = () => {
                 {/* <CardSlider /> */}
                 <SwiperSlider />
             </Box>
-        </Box>
+        </Container>
     );
 };
 

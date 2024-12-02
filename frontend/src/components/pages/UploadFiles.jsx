@@ -2,14 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 
 // Libraries
 import { useDropzone } from 'react-dropzone';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 // Material-UI
 import { Typography, Box, Collapse } from '@mui/material';
@@ -141,7 +141,8 @@ const UploadFiles = () => {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '100vh',
+                height: '80vh',
+                minHeight: 'max-content',
             }}
         >
             <Typography
@@ -158,6 +159,7 @@ const UploadFiles = () => {
                     cursor: 'pointer',
                     width: '70%',
                     height: '50vh',
+                    minHeight: 'max-content',
                     border: isDragActive
                         ? '2px dashed #0076A8'
                         : '2px dashed #ccc',

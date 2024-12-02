@@ -19,15 +19,15 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 
 // Custom components and assets
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 
 // Media
-import CoexistenceCommitteeSVG from '../../images/coexistence-committee/coexistence-committee.svg';
+import CoexistenceCommitteeSVG from '@images/coexistence-committee/coexistence-committee.svg';
 
 // Custom hooks
-import { useSnackbar } from '../context/SnackbarContext';
-import { useProgressbar } from '../context/ProgressbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
+import { useProgressbar } from '@contexts/ProgressbarContext';
 
 // Opciones de motivos de la denuncia
 const motivos = [
@@ -112,7 +112,7 @@ const CoexistenceCommittee = () => {
     };
 
     return (
-        <Container sx={{ my: '5rem' }}>
+        <Container sx={{ my: '2rem' }}>
             <Box sx={{ padding: 3 }}>
                 <img
                     src={CoexistenceCommitteeSVG}

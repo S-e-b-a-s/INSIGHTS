@@ -4,16 +4,16 @@ import { useState, useEffect } from 'react';
 import { Formik, Form, useField } from 'formik';
 import * as Yup from 'yup';
 // Custom Hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { useNavigate } from 'react-router-dom';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { useNavigate } from 'react-router';
+import { handleError } from '@assets/handleError';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,
-} from '../../assets/CustomDataGridOverlays';
+} from '@assets/CustomDataGridOverlays';
 
 // Material-UI
 import {
@@ -459,12 +459,7 @@ const AnalisisMetas = () => {
     };
 
     return (
-        <Container
-            maxWidth="xl"
-            sx={{
-                mt: '6rem',
-            }}
-        >
+        <Container maxWidth="xl" sx={{ mt: '2rem' }}>
             <Typography
                 sx={{ textAlign: 'center', pb: '15px', color: 'primary.main' }}
                 variant={'h4'}

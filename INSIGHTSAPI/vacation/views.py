@@ -22,9 +22,7 @@ from .serializers import VacationRequestSerializer
 
 
 class VacationRequestViewSet(viewsets.ModelViewSet):
-    queryset = (
-        VacationRequest.objects.all().select_related("user").order_by("-created_at")
-    )
+    queryset = VacationRequest.objects.all().select_related("user").order_by("-pk")
     serializer_class = VacationRequestSerializer
     permission_classes = [IsAuthenticated]
 
@@ -163,44 +161,6 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             )
         return response
 
-    # def list(self, request, *args, **kwargs):
-    # if request.user.job_position.name == "GERENTE DE GESTION HUMANA":
-    #     queryset = self.queryset.all()
-    # # Check if the user is in payroll
-    # elif request.user.has_perm("vacation.payroll_approval"):
-    #     queryset = self.queryset.all()
-    # # Check if the user has employee management permissions
-    # elif request.user.job_position.rank >= 2:
-    #     children = self.request.user.area.get_children()
-    #     # Check if the user is a manager
-    #     if children and request.user.area.manager == request.user:
-    #         queryset = self.queryset.filter(
-    #             # Check if the user is the owner
-    #             (Q(user=request.user))
-    #             # Check if the user is a manager of the area
-    #             | (Q(user__area__manager=request.user))
-    #             # Check if the user is a manager of a child area
-    #             | (Q(user__area__in=children))
-    #             | (
-    #                 Q(user__job_position__rank__lt=request.user.job_position.rank)
-    #                 & Q(user__area=request.user.area)
-    #             )
-    #         )
-    #     else:
-    #         queryset = self.queryset.filter(
-    #             Q(user=request.user)
-    #             | (Q(user__area__manager=request.user))
-    #             | (
-    #                 Q(user__job_position__rank__lt=request.user.job_position.rank)
-    #                 & Q(user__area=request.user.area)
-    #             )
-    #         )
-    # # The user is a regular employee
-    # else:
-    #     queryset = self.queryset.filter(Q(user=request.user))
-    # serializer = self.serializer_class(queryset, many=True)
-    # return Response(serializer.data)
-
     def partial_update(self, request, *args, **kwargs):
 
         if isinstance(request.user, AnonymousUser):
@@ -287,12 +247,12 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         [str(hr_user.company_email)],
                     )
                     payroll_user = User.objects.filter(
-                        user_permissions__codename="payroll_is_approved"
+                        user_permissions__codename="payroll_approval"
                     ).first()
                     if not payroll_user:
                         mail_admins(
-                            "No hay usuarios con el permiso de payroll_is_approved",
-                            "No hay usuarios con el permiso de payroll_is_approved",
+                            "No hay usuarios con el permiso de payroll_approval",
+                            "No hay usuarios con el permiso de payroll_approval",
                         )
                         return response
                     create_notification(
@@ -443,7 +403,9 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 open(str(settings.STATIC_ROOT) + "/images/just_logo.png", "rb").read()
             ).decode("utf-8"),
             "company_logo_vertical": base64.b64encode(
-                open(str(settings.STATIC_ROOT) + "/images/vertical_logo.png", "rb").read()
+                open(
+                    str(settings.STATIC_ROOT) + "/images/vertical_logo.png", "rb"
+                ).read()
             ).decode("utf-8"),
         }
         # Import the html template

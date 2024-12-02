@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
 
 // Libraries
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 // Custom Components
-import { getApiUrl } from '../../assets/getApi';
-import { handleError } from '../../assets/handleError';
+import { getApiUrl } from '@assets/getApi';
+import { handleError } from '@assets/handleError';
 import {
     CustomNoResultsOverlay,
     CustomNoRowsOverlay,
-} from '../../assets/CustomDataGridOverlays';
+} from '@assets/CustomDataGridOverlays';
 
 // Material-UI
 import { Container, Typography, Box } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 // Custom hooks
-import { useSnackbar } from '../context/SnackbarContext';
+import { useSnackbar } from '@contexts/SnackbarContext';
 
 export const EmploymentCertification = () => {
     const [rows, setRows] = useState([]);
@@ -127,7 +127,7 @@ export const EmploymentCertification = () => {
         <>
             <Container
                 sx={{
-                    marginTop: '6rem',
+                    marginTop: '2rem',
                 }}
             >
                 <Typography
