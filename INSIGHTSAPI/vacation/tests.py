@@ -81,7 +81,6 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_vacation_create(self):
         """Test creating a vacation endpoint."""
-
         self.vacation_request["hr_is_approved"] = True  # This is just a check
         self.vacation_request["sat_is_working"] = False
         response = self.client.post(
