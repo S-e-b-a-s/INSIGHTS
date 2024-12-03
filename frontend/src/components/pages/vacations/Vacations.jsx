@@ -606,7 +606,7 @@ export const Vacations = () => {
     };
 
     const handleCloseDialogPayslip = () => {
-        setOpenDialogPayslip(false);
+        setOpenDialogPayslip(false);    
         setOpenObservationsInput(false);
         setButtonType('button');
     };
