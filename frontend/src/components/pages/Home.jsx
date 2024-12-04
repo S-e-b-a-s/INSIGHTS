@@ -14,9 +14,10 @@ import { Typography, Box, Container, Card } from '@mui/material';
 
 // Media
 import realBenefit2 from '@images/benefits/benefit-1.webp';
-import video from '@videos/futbol.mp4';
 import cake from '@images/birthdays/cake.webp';
 import AvatarImage from '@images/home-carousel/avatar.jpg';
+const fultbolVideo = `${getApiUrl().apiUrl}static/videos/futbol.mp4`;
+const pointsVideo = `${getApiUrl().apiUrl}static/videos/points.mp4`;
 
 // Libraries
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -182,12 +183,7 @@ const Home = () => {
                         }}
                         controls
                     >
-                        <source
-                            src={
-                                'https://insights-api-dev.cyc-bpo.com/static/videos/points.mp4'
-                            }
-                            type="video/mp4"
-                        />
+                        <source src={pointsVideo} type="video/mp4" />
                     </video>
                 </Box>
             </Container>
@@ -419,7 +415,7 @@ const Home = () => {
                         }}
                         controls
                     >
-                        <source src={video} type="video/mp4" />
+                        <source src={fultbolVideo} type="video/mp4" />
                     </video>
                 </Box>
             </Container>
