@@ -23,7 +23,7 @@ import { getApiUrl } from '@assets/getApi';
 import { handleError } from '@assets/handleError';
 
 // Media
-import CoexistenceCommitteeSVG from '@images/coexistence-committee/coexistence-committee.svg';
+const CoexistenceCommitteeSVG = `${getApiUrl().apiUrl}static/images/coexistence-committee/coexistence-committee.svg`;
 
 // Custom hooks
 import { useSnackbar } from '@contexts/SnackbarContext';

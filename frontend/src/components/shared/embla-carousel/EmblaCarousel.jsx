@@ -22,7 +22,7 @@ export function EmblaCarousel() {
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [slidesInView, setSlidesInView] = useState([]);
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-        Autoplay({ delay: 4000, stopOnInteraction: false }),
+        Autoplay({ delay: 4000 }),
     ]);
 
     const getCarouselImages = async () => {

@@ -409,7 +409,7 @@ const Vacancies = () => {
                                 id="file"
                                 name="file"
                                 type="file"
-                                accept=".jpg, .png, .jpeg, .webp"
+                                accept=".webp, .webp, .webp, .webp"
                                 onChange={
                                     handleFileInputChange
                                     // Formik doesn't automatically handle file inputs, so we need to manually

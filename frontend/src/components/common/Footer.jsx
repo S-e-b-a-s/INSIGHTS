@@ -10,7 +10,10 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import WebIcon from '@mui/icons-material/Web';
 
 // Media
-import logo_CYC from '@images/cyc-logos/logo-footer.webp';
+const companyLogo = `${getApiUrl().apiUrl}/static/images/company-logos/logo-footer.webp`;
+
+// components and assets
+import { getApiUrl } from '@assets/getApi';
 
 const Footer = () => {
     const navigate = useNavigate();
@@ -33,7 +36,7 @@ const Footer = () => {
                     onClick={() =>
                         window.open('https://cyc-bpo.com/', '_blank')
                     }
-                    src={logo_CYC}
+                    src={companyLogo}
                     style={{ width: 200, height: 100, cursor: 'pointer' }}
                 />
                 <Typography variant="body2" color="white">

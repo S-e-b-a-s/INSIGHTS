@@ -13,8 +13,8 @@ import { getApiUrl } from '@assets/getApi';
 import { handleError } from '@assets/handleError';
 
 // Media
-import ethicalLineBackground from '@images/ethical-line/ethical-line-background.jpg';
-import logoCYC from '@images/cyc-logos/logo-navbar.webp';
+const ethicalLineBackground = `${getApiUrl().apiUrl}/static/images/ethical-line/ethical-line-background.webp`;
+const companyLogo = `${getApiUrl().apiUrl}/static/images/company-logos/logo-navbar.webp`;
 
 // Material-UI
 import {
@@ -193,7 +193,6 @@ const EthicalLine = () => {
     return (
         <>
             <Box
-                className="waveWrapper"
                 sx={{
                     width: '100%',
                     height: '50vh',
@@ -214,10 +213,6 @@ const EthicalLine = () => {
                 >
                     Linea Ética
                 </Typography>
-                <Box className="wave wave1"></Box>
-                <Box className="wave wave2"></Box>
-                <Box className="wave wave3"></Box>
-                <Box className="wave wave4"></Box>
             </Box>
             <Container sx={{ height: 'max-content', py: '5rem' }}>
                 <Box sx={{ color: 'primary.main' }}>
@@ -236,7 +231,7 @@ const EthicalLine = () => {
                         p: '2rem',
                     }}
                 >
-                    <img src={logoCYC} alt="imagen-logo-cyc" width={200} />
+                    <img src={companyLogo} alt="imagen-logo-cyc" width={200} />
                 </Box>
                 <Box
                     sx={{

@@ -7,24 +7,27 @@ import { useParams } from 'react-router';
 import { Typography, Container, Box } from '@mui/material';
 
 // Media
-import article1 from '@images/articles/article1.jpg';
-import cybersecurity from '@images/blog/cybersecurity.jpg';
-import bienestar from '@images/blog/bienestar.jpg';
-import article5 from '@images/blog/article5.jpg';
-import sstManagement from '@images/blog/sst-environment-management.jpg';
-import sstManagement2 from '@images/blog/sst-environment-management-2.jpg';
-import sstManagement3 from '@images/blog/sst-environment-management-3.jpg';
-import carteraPropia from '@images/blog/cartera-propia.jpg';
-import carteraPropia2 from '@images/blog/cartera-propia-2.jpg';
-import racc from '@images/blog/racc.jpg';
-import financialHealth1 from '@images/blog/Salud_financiera_1.png';
-import financialHealth2 from '@images/blog/Salud_financiera_2.png';
-import elLibertador from '@images/blog/el-libertador.png';
-import bancoSantander from '@images/blog/banco-santander.png';
-import cooperativaMinutoDeDios from '@images/blog/cooperativa-minuto-de-dios.png';
-import nuBank from '@images/blog/nubank.png';
-import carteraPropiaLogo from '@images/blog/cartera-propia-logo.png';
-import ciberseguridad2 from '@images/blog/ciberseguridad-2.jpg';
+const financeGuide = `${getApiUrl().apiUrl}static/images/blog/finance-guide/finance-guide-2.webp`;
+const financeGuide2 = `${getApiUrl().apiUrl}static/images/blog/finance-guide/finance-guide-3.webp`;
+const ownPortfolio = `${getApiUrl().apiUrl}static/images/blog/own-portfolio/own-portfolio-1.webp`;
+const ownPortfolio2 = `${getApiUrl().apiUrl}static/images/blog/own-portfolio/own-portfolio-2.webp`;
+const certification_14001_45001 = `${getApiUrl().apiUrl}static/images/blog/certification-14001-45001/certification-14001-45001-1.webp`;
+const certification_14001_45001_2 = `${getApiUrl().apiUrl}static/images/blog/certification-14001-45001/certification-14001-45001-2.webp`;
+const certification_14001_45001_3 = `${getApiUrl().apiUrl}static/images/blog/certification-14001-45001/certification-14001-45001-3.webp`;
+const newCertificationProccess = `${getApiUrl().apiUrl}static/images/blog/new-certification-proccess/new-certification-proccess-1.webp`;
+const newCertificationProccess2 = `${getApiUrl().apiUrl}static/images/blog/new-certification-proccess/new-certification-proccess-2.webp`;
+const newCampaigns = `${getApiUrl().apiUrl}static/images/blog/new-campaigns/new-campaigns-1.webp`;
+const newCampaigns2 = `${getApiUrl().apiUrl}static/images/blog/new-campaigns/new-campaigns-2.webp`;
+const newCampaigns3 = `${getApiUrl().apiUrl}static/images/blog/new-campaigns/new-campaigns-3.webp`;
+const newCampaigns4 = `${getApiUrl().apiUrl}static/images/blog/new-campaigns/new-campaigns-4.webp`;
+const newCampaigns5 = `${getApiUrl().apiUrl}static/images/blog/new-campaigns/new-campaigns-5.webp`;
+const newCampaigns6 = `${getApiUrl().apiUrl}static/images/blog/new-campaigns/new-campaigns-6.webp`;
+const cybersecurity = `${getApiUrl().apiUrl}static/images/blog/cybersecurity/cybersecurity-1.webp`;
+const cybersecurity2 = `${getApiUrl().apiUrl}static/images/blog/cybersecurity/cybersecurity-2.webp`;
+const occupationalWelfare = `${getApiUrl().apiUrl}static/images/blog/occupational-welfare/occupational-welfare-1.webp`;
+
+// Custom components and functions
+import { getApiUrl } from '@assets/getApi';
 
 const ArticlePage = () => {
     useEffect(() => {
@@ -43,7 +46,7 @@ const ArticlePage = () => {
             title: 'Sumando Valor: Bienvenidos a las Nuevas Campañas en C&C Services',
             subtitle:
                 'Conoce Cómo las Nuevas Campañas Elevan los Estándares de Calidad y Compromiso Empresarial',
-            img: article1,
+            img: newCampaigns,
             imgAuthor: '',
             nameAuthor: 'Sebastian',
             tags: ['Customer Experience', 'Call Center', 'BPO'],
@@ -53,9 +56,9 @@ const ArticlePage = () => {
                         En un emocionante desarrollo, C&amp;C Services S.A.S se
                         complace en dar la bienvenida a varias campañas nuevas a
                         nuestra creciente familia. Estamos encantados de tener a
-                        bordo a El Libertador del grupo Seguros Bolívar, NuBank,
-                        Cooperativa Minuto de Dios, Banco Santander y nuestra
-                        propia campaña interna.
+                        bordo a El Libertador del grupo Seguros Bolívar,
+                        newCampaigns5, Cooperativa Minuto de Dios, Banco
+                        Santander y nuestra propia campaña interna.
                     </p>
                     <b>Cartera propia:</b> Nuestra cartera propia interna es un
                     testimonio de nuestro compromiso con la innovación y la
@@ -66,7 +69,7 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="300"
-                            src={carteraPropiaLogo}
+                            src={newCampaigns2}
                             alt=""
                         />
                     </div>
@@ -81,20 +84,20 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="400"
-                            src={elLibertador}
+                            src={newCampaigns4}
                             alt=""
                         />
                     </div>
                     <b>NuBank:</b> Como uno de los bancos digitales más grandes
-                    y de más rápido crecimiento, NuBank está revolucionando el
-                    sector financiero. Estamos ansiosos por apoyar su
-                    crecimiento y ayudarles a ofrecer una experiencia bancaria
-                    sin problemas a sus clientes.
+                    y de más rápido crecimiento, newCampaigns5 está
+                    revolucionando el sector financiero. Estamos ansiosos por
+                    apoyar su crecimiento y ayudarles a ofrecer una experiencia
+                    bancaria sin problemas a sus clientes.
                     <div style={{ textAlign: 'center', padding: '2rem' }}>
                         <img
                             style={{ borderRadius: '8px' }}
                             width="200"
-                            src={nuBank}
+                            src={newCampaigns5}
                             alt=""
                         />
                     </div>
@@ -109,7 +112,7 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="400"
-                            src={cooperativaMinutoDeDios}
+                            src={newCampaigns3}
                             alt=""
                         />
                     </div>
@@ -127,7 +130,7 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="300"
-                            src={bancoSantander}
+                            src={newCampaigns6}
                             alt=""
                         />
                     </div>
@@ -181,7 +184,7 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="700"
-                            src={ciberseguridad2}
+                            src={cybersecurity2}
                             alt=""
                         />
                     </div>
@@ -258,7 +261,7 @@ const ArticlePage = () => {
             title: 'C&C Services: Innovación en el Bienestar Laboral para Empleados Productivos',
             subtitle:
                 'Una Mirada Profunda a los Programas de Bienestar Integral y su Impacto en la Productividad y la Satisfacción Laboral',
-            img: bienestar,
+            img: occupationalWelfare,
             content: (
                 <article>
                     <h1>
@@ -294,8 +297,8 @@ const ArticlePage = () => {
             id: 5,
             title: 'C&C Services avanza en proceso de certificación para elevar estándares de calidad en la industria de la cobranza',
             subtitle:
-                'Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de RACC.',
-            img: article5,
+                'Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de newCertificationProccess2.',
+            img: newCertificationProccess,
             content: (
                 <article>
                     <h1>Proceso de Certificación de Empresa</h1>
@@ -303,7 +306,8 @@ const ArticlePage = () => {
                         Desde el año 2023, la empresa ha iniciado un relevante
                         proceso de certificación en el marco del Referencial de
                         Autorregulación Asociación Colombiana de la Industria de
-                        la Cobranza (RACC), liderado por COLCOB.
+                        la Cobranza (newCertificationProccess2), liderado por
+                        COLCOB.
                     </p>
                     <p>
                         Este proceso de certificación se desarrolla en dos
@@ -335,7 +339,7 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="700"
-                            src={racc}
+                            src={newCertificationProccess2}
                             alt=""
                         />
                     </div>
@@ -397,7 +401,7 @@ const ArticlePage = () => {
             title: 'Certificaciones ISO 14001 y 45001: Compromiso con el Entorno y la Seguridad en C&C',
             subtitle:
                 'Alcanzando la Excelencia Empresarial: La Trascendencia de las Certificaciones ISO 45001:2018 y 14001:2015, el Impacto en Nuestra Organización y el Compromiso Fundamental de Nuestros Colaboradores',
-            img: sstManagement,
+            img: certification_14001_45001,
             content: (
                 <>
                     <p>
@@ -441,7 +445,7 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="700"
-                            src={sstManagement3}
+                            src={certification_14001_45001_3}
                             alt=""
                         />
                     </div>
@@ -496,7 +500,7 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="700"
-                            src={sstManagement2}
+                            src={certification_14001_45001_2}
                             alt=""
                         />
                     </div>
@@ -555,7 +559,7 @@ const ArticlePage = () => {
             title: 'Cartera Propia en C&C: Innovación y Experiencia en Recuperación de Cartera',
             subtitle:
                 'Una Mirada Interna a Cómo la Gestión de la Cartera Eleva Nuestro Desempeño en el BPO',
-            img: carteraPropia,
+            img: ownPortfolio,
             content: (
                 <div>
                     <p>
@@ -578,7 +582,7 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="700"
-                            src={carteraPropia2}
+                            src={ownPortfolio2}
                         />
                     </div>
                     <h2>¿En qué consiste la cartera propia?</h2>
@@ -615,13 +619,13 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="600"
-                            src={financialHealth1}
+                            src={financeGuide}
                             alt=""
                         />
                         <img
                             style={{ borderRadius: '8px' }}
                             width="600"
-                            src={financialHealth2}
+                            src={financeGuide2}
                             alt=""
                         />
                     </div>

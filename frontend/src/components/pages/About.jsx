@@ -12,95 +12,96 @@ import {
 } from '@mui/material';
 
 // Media
-import cesarGarzon from '@images/managers/cesar-garzon.jpg';
-import yannethPinzon from '@images/managers/yanneth-pinzon.webp';
-import angelaDuran from '@images/managers/angela-duran.jpeg';
-import adrianaPaez from '@images/managers/adriana-paez.jpg';
-import manager1 from '@images/managers/52716114.webp';
-import diegoGonzales from '@images/managers/diego-gonzales.jpg';
-import riskInterControl from '@images/managers/risk-internal-control.jfif';
-import melidaSandoval from '@images/managers/melida-sandoval.jpg';
-import hectorSotelo from '@images/managers/hector-sotelo.png';
-import pablo from '@images/managers/pablo.jpeg';
-import aboutUs from '@images/about/img-about-2.jpg';
-import organigrama from '@images/about/organigrama.png';
-import imgVision from '@images/about/image-vision.jpg';
-import mission2 from '@images/about/image-mission-2.jpg';
-import value1 from '@images/about/corporative-values.jpg';
-import qualityObjectives from '@images/about/quality-objectives.jpg';
-import qualityPolicies from '@images/about/quality-policies.jpg';
+const generalManager = `${getApiUrl().apiUrl}static/images/managers/general-manager.webp`;
+const rhManager = `${getApiUrl().apiUrl}static/images/managers/rh-manager.webp`;
+const planningManager = `${getApiUrl().apiUrl}static/images/managers/planning-manager.webp`;
+const collectionsSalesOperationsManager = `${getApiUrl().apiUrl}static/images/managers/collections-sales-operations-manager.webp`;
+const operationsManager = `${getApiUrl().apiUrl}static/images/managers/operations-manager.webp`;
+const legalManager = `${getApiUrl().apiUrl}static/images/managers/legal-manager.webp`;
+const internalControlManager = `${getApiUrl().apiUrl}static/images/managers/internal-control-manager.webp`;
+const administrativeManager = `${getApiUrl().apiUrl}static/images/managers/administrative-manager.webp`;
+const serviceOperationsManager = `${getApiUrl().apiUrl}static/images/managers/service-operations-manager.webp`;
+const president = `${getApiUrl().apiUrl}static/images/managers/president.webp`;
+const about = `${getApiUrl().apiUrl}static/images/about/about.webp`;
+const vision = `${getApiUrl().apiUrl}static/images/about/vision.webp`;
+const mission = `${getApiUrl().apiUrl}static/images/about/mission.webp`;
+const corporativeValues = `${getApiUrl().apiUrl}static/images/about/corporative-values.webp`;
+const qualityObjectives = `${getApiUrl().apiUrl}static/images/about/quality-objectives.webp`;
+const qualityPolicies = `${getApiUrl().apiUrl}static/images/about/quality-policies.webp`;
+const organizationChart = `${getApiUrl().apiUrl}/static/images/about/organization-chart.webp`;
 
 // Custom components
 import SwiperSlider from '@components/shared/SwiperSlider';
+import { getApiUrl } from '@assets/getApi';
 
 const managements = [
     {
         name: 'Pablo Castañeda',
         management: 'Presidente',
-        image: pablo,
+        image: president,
         description:
             'Soy el fundador de C&C, desde muy joven soñaba con crear una empresa que pudiera impulsar el crecimiento económico de nuestro país y al mismo tiempo crear empleos de calidad para la gente que compartiera esta visión. Mis amigos más cercanos me definen como una persona emprendedora y visionaria.',
     },
     {
         name: 'César Garzón',
         management: 'Gerente General',
-        image: cesarGarzon,
+        image: generalManager,
         description:
             'Garantizar la sostenibilidad de la compañía a través de la planeación, liderazgo y control de las diferentes áreas que permitan alcanzar los objetivos establecidos con los clientes, el recurso humano y los accionistas.',
     },
     {
         name: 'Diego González',
         management: 'Gerente de Legal',
-        image: diegoGonzales,
+        image: legalManager,
         description:
             'LEGAL: Prestar asesorías y representación judicial de los clientes internos y externos. \n \nRIESGO: Ejecutar procesos de Investigación y análisis mediante la implementación y desarrollo de estrategias que garanticen la mitigación del riesgo.',
     },
     {
         name: 'Ángela Durán',
         management: 'Gerente de Planeación',
-        image: angelaDuran,
+        image: planningManager,
         description:
             'Planificar, coordinar, dirigir y controlar las actividades que impactan el óptimo funcionamiento de la organización, garantizando un cumplimiento de los procesos establecidos con los más altos estándares de calidad.',
     },
     {
         name: 'Adriana Barrera',
         management: 'Gerente de Operaciones',
-        image: manager1,
+        image: operationsManager,
         description:
             'Dirigir, organizar y supervisar las operaciones con equipos altamente productivos, promoviendo la excelencia en cada proceso para alcanzar resultados sobresalientes que superen las expectativas de nuestros clientes y garanticen la sostenibilidad del negocio.',
     },
     {
         name: 'Adriana Páez',
         management: 'Gerente de Operaciones de Ventas',
-        image: adrianaPaez,
+        image: collectionsSalesOperationsManager,
         description:
             'Liderar, planificar y controlar las operaciones de las campañas de Cobranzas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.',
     },
     {
         name: 'Héctor Gabriel Sotelo',
         management: 'Gerente de Operaciones de Servicio al Cliente',
-        image: hectorSotelo,
+        image: serviceOperationsManager,
         description:
             'Liderar, planificar y controlar las operaciones de las campañas de Servicios y Ventas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.',
     },
     {
         name: 'Jeanneth Pinzón ',
         management: 'Gerente de Gestión Humana',
-        image: yannethPinzon,
+        image: rhManager,
         description:
             'Proveer, mantener y desarrollar un recurso humano altamente calificado y motivado para alcanzar los objetivos de la organización a través de la aplicación de programas enfocados en conectar al Talento Humano con el propósito de la compañía desde sus habilidades, motivaciones, conocimientos y pasiones, para así apalancar efectivamente el éxito de los objetivos del negocio y a su vez velar por el cumplimiento de las normas y procedimientos vigentes',
     },
     {
         name: 'Angélica Rincón',
         management: 'Gerente de Riesgo y Control Interno',
-        image: riskInterControl,
+        image: internalControlManager,
         description:
             'Mantener un sistema integral de gestión de riesgos en un ambiente de control óptimo para organización, asegurar el cumplimiento del SGSI el cual permita fortalecer los controles y garantizar la confidencialidad, integridad y disponibilidad de la información de manera trasversal, para así reafirmar la confianza de nuestros clientes en nosotros.',
     },
     {
         name: 'Mélida Sandoval',
         management: 'Gerente Administrativa',
-        image: melidaSandoval,
+        image: administrativeManager,
         description:
             'Planear, controlar las políticas de administración de recursos financieros, garantizando el abastecimiento oportuno de bienes y servicios que permiten el adecuado funcionamiento de la organización,  manteniendo un  adecuado relacionamiento con los bancos para asegurar la disponibilidad y el control de los recursos financieros de la compañía y controlando la causación contable de manera oportuna.',
     },
@@ -147,14 +148,14 @@ const About = () => {
                         <img
                             width={300}
                             style={{ borderRadius: '8px' }}
-                            src={aboutUs}
+                            src={about}
                             alt="imagen-sobre-nosotros"
                         />
                     ) : (
                         <img
                             style={{ borderRadius: '8px' }}
                             width={500}
-                            src={aboutUs}
+                            src={about}
                             alt="imagen-sobre-nosotros"
                         />
                     )}
@@ -227,7 +228,7 @@ const About = () => {
                 >
                     <img
                         style={{ borderRadius: 5 }}
-                        src={mission2}
+                        src={mission}
                         height={300}
                         alt="imagen-misión-cyc"
                     />
@@ -276,7 +277,7 @@ const About = () => {
                     </Box>
                     <img
                         style={{ borderRadius: '8px' }}
-                        src={imgVision}
+                        src={vision}
                         height={300}
                         alt="imagen-vision-cyc"
                     />
@@ -291,7 +292,7 @@ const About = () => {
                 >
                     <img
                         style={{ borderRadius: '8px' }}
-                        src={value1}
+                        src={corporativeValues}
                         height={300}
                         alt="imagen-valores-corporativos-cyc"
                     />
@@ -503,8 +504,8 @@ const About = () => {
                     <img
                         style={{ borderRadius: '2rem' }}
                         height={600}
-                        src={pablo}
-                        alt="imagen-presidente-pablo"
+                        src={[president]}
+                        alt="imagen-presidente"
                     />
                     <Typography
                         sx={{
@@ -535,7 +536,7 @@ const About = () => {
                     Organigrama de la empresa
                 </Typography>
                 <img
-                    src={organigrama}
+                    src={organizationChart}
                     alt="imagen-organigrama"
                     width={'100%'}
                 />
