@@ -237,7 +237,6 @@ export const Sgc = () => {
         formData.append('sub_type', newRow.sub_type);
         formData.append('name', newRow.name);
         formData.append('version', newRow.version);
-        console.log(selectedFileUpdate);
         if (selectedFileUpdate) {
             formData.append('file', selectedFileUpdate);
         }

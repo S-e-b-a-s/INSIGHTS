@@ -1,17 +1,16 @@
-// Material-UI
+import React, { useEffect, useState, useCallback } from 'react';
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 import { Box, Typography } from '@mui/material';
-
-// Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Autoplay } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
+import {
+    DotButton,
+    useDotButton,
+} from '@components/shared/embla-carousel/EmblaCarouselDotButton';
 import '@src/index.css';
 
 // Media
-import managersJr1 from '@images/managers-jr/52716114.webp';
 import managersJr2 from '@images/managers-jr/53069726.webp';
-import managersJr4 from '@images/managers-jr/1016002011.webp';
+import managersJr4 from '@images/managers-jr/1010198435.jpg';
 import managersJr5 from '@images/managers-jr/1016033764.webp';
 import managersJr6 from '@images/managers-jr/91498957.webp';
 import managersJr8 from '@images/managers-jr/28553156.webp';
@@ -31,20 +30,14 @@ const managersJr = [
         description: '',
     },
     {
-        name: 'Adriana Barrera',
-        management: 'GERENTE DE CUENTAS',
-        image: managersJr1,
-        description: '',
-    },
-    {
         name: 'Katterene Castrillon',
         management: 'GERENTE DE CUENTAS',
         image: managersJr2,
         description: '',
     },
     {
-        name: 'Luis Pachon',
-        management: 'GERENTE DE CUENTAS',
+        name: 'Luis Peña',
+        management: 'GERENTE JR. INFRAESTRUCTURA Y REDES',
         image: managersJr4,
         description: '',
     },
@@ -63,59 +56,84 @@ const managersJr = [
 ];
 
 const SwiperSlider = () => {
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
+        Autoplay({ delay: 4000, stopOnInteraction: false }),
+    ]);
+
+    const { selectedIndex, scrollSnaps, onDotButtonClick } =
+        useDotButton(emblaApi);
+
     return (
-        <Swiper
-            style={{
-                width: '100%',
-                height: 'max-content',
-                padding: '2rem',
-                userSelect: 'none',
-            }}
-            autoplay={{
-                delay: 2500,
-                disableOnInteraction: false,
-            }}
-            slidesPerView={3}
-            spaceBetween={30}
-            pagination={{
-                clickable: true,
-            }}
-            modules={[Pagination, Autoplay]}
-            className="mySwiper"
-        >
-            {managersJr.map((manager, index) => (
-                <SwiperSlide role="listitem" key={index}>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'white',
-                            borderRadius: '10px',
-                            padding: '3rem',
-                        }}
-                    >
-                        <img
-                            src={manager.image}
-                            alt={manager.name}
+        <div className="embla" style={{ margin: 'auto', maxWidth: '80rem' }}>
+            <div
+                className="embla__viewport"
+                ref={emblaRef}
+                style={{ overflow: 'hidden' }}
+            >
+                <div
+                    className="embla__container"
+                    style={{
+                        backfaceVisibility: 'hidden',
+                        display: 'flex',
+                        touchAction: 'pan-y pinch-zoom',
+                    }}
+                >
+                    {managersJr.map((manager, index) => (
+                        <div
+                            className="embla__slide"
+                            key={index}
                             style={{
-                                width: '100%',
-                                maxWidth: '350px',
-                                borderRadius: '5%',
-                                objectFit: 'cover',
+                                flex: '0 0 35%',
+                                minWidth: 0,
                             }}
-                        />
-                        <Box sx={{ mt: '1rem', textAlign: 'center' }}>
-                            <Typography variant="h4">{manager.name}</Typography>
-                            <Typography variant="subtitle1">
-                                {manager.management}
-                            </Typography>
-                        </Box>
-                    </Box>
-                </SwiperSlide>
-            ))}
-        </Swiper>
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    textAlign: 'center',
+                                    justifyContent: 'center',
+                                    borderRadius: '10px',
+                                }}
+                            >
+                                <img
+                                    src={manager.image}
+                                    alt={manager.name}
+                                    style={{
+                                        width: '100%',
+                                        maxWidth: '350px',
+                                        borderRadius: '5%',
+                                        objectFit: 'cover',
+                                    }}
+                                />
+                                <Box sx={{ mt: '1rem', textAlign: 'center' }}>
+                                    <Typography variant="h4">
+                                        {manager.name}
+                                    </Typography>
+                                    <Typography variant="subtitle1">
+                                        {manager.management}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <div className="embla__dots">
+                {scrollSnaps.map((_, index) => (
+                    <DotButton
+                        key={index}
+                        onClick={() => onDotButtonClick(index)}
+                        className={'embla__dot'.concat(
+                            index === selectedIndex
+                                ? ' embla__dot--selected'
+                                : ''
+                        )}
+                    />
+                ))}
+            </div>
+        </div>
     );
 };
 

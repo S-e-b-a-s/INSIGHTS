@@ -140,14 +140,29 @@ calendar-month {
     }
 }
 
-.embla__container {
+/* .embla__container {
     max-width: 1280px;
-}
+} */
 
-@media (max-width: 1440px) {
+/* @media (max-width: 1440px) {
     .embla__container {
         max-width: 1024px;
     }
+} */
+
+.embla__slide {
+    transform: translate3d(0, 0, 0);
+    flex: 0 0 100%;
+    min-width: 0;
+    padding-left: 1rem;
+}
+
+.embla__slide__img {
+    border-radius: 1.8rem;
+    display: block;
+    height: auto;
+    width: 100%;
+    object-fit: cover;
 }
 
 .embla__dots {
@@ -156,6 +171,7 @@ calendar-month {
     justify-content: center;
     align-items: center;
 }
+
 .embla__dot {
     -webkit-tap-highlight-color: rgba(49, 49, 49, 0.5);
     -webkit-appearance: none;
@@ -175,6 +191,7 @@ calendar-month {
     justify-content: center;
     border-radius: 50%;
 }
+
 .embla__dot:after {
     box-shadow: inset 0 0 0 0.1rem rgb(187, 187, 187);
     width: 1.2rem;
@@ -184,6 +201,54 @@ calendar-month {
     align-items: center;
     content: '';
 }
+
 .embla__dot--selected:after {
     box-shadow: inset 0 0 0 0.1rem rgb(54, 49, 61);
+}
+
+.embla__lazy-load {
+    position: relative;
+    height: 100%;
+}
+
+.embla__lazy-load__spinner {
+    border: 0.4rem solid rgba(0, 0, 0, 0.1);
+    border-left: 0.4rem solid rgb(54, 49, 61);
+    font-size: 1rem;
+    display: inline-flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    text-indent: -9999em;
+    animation: loading 1.1s infinite linear;
+    border-radius: 50%;
+    width: 5rem;
+    height: 5rem;
+}
+
+.embla__lazy-load__spinner:after {
+    border-radius: inherit;
+    width: 5rem;
+    height: 5rem;
+}
+
+.embla__lazy-load__img {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.embla__lazy-load--has-loaded .embla__lazy-load__img {
+    opacity: 1;
+}
+
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

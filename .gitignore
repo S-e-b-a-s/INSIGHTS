@@ -18,6 +18,7 @@ dist-ssr
 __pycache__
 
 # Editor directories and files
+
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -66,3 +67,6 @@ backup*
 
 stats.html
 start.sh
+
+# Ignore the compiled static files
+INSIGHTSAPI/static/
