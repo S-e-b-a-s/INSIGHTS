@@ -70,3 +70,5 @@ start.sh
 
 # Ignore the compiled static files
 INSIGHTSAPI/static/
+
+*.sh

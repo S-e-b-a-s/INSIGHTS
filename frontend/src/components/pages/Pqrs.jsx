@@ -25,7 +25,7 @@ import { useSnackbar } from '@contexts/SnackbarContext';
 import { useProgressbar } from '@contexts/ProgressbarContext';
 
 // Media
-import PqrsImage from '@images/pqrs/pqrs.png';
+const PqrsImage = `${getApiUrl().apiUrl}static/images/pqrs/pqrs.webp`;
 
 const reasons = [
     { value: 'PETICIÓN', label: 'Petición' },

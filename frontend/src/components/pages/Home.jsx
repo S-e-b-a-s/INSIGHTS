@@ -13,16 +13,16 @@ import { useSnackbar } from '@contexts/SnackbarContext.jsx';
 import { Typography, Box, Container, Card } from '@mui/material';
 
 // Media
-import realBenefit2 from '@images/benefits/benefit-1.webp';
-import cake from '@images/birthdays/cake.webp';
-import AvatarImage from '@images/home-carousel/avatar.jpg';
+const benefit = `${getApiUrl().apiUrl}static/images/benefits/benefit-1.webp`;
+const cake = `${getApiUrl().apiUrl}static/images/birthdays/cake.webp`;
+const AvatarImage = `${getApiUrl().apiUrl}static/birthdays/avatar.webp`;
 const fultbolVideo = `${getApiUrl().apiUrl}static/videos/futbol.mp4`;
 const pointsVideo = `${getApiUrl().apiUrl}static/videos/points.mp4`;
 
 // Libraries
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const benefits = [{ image: realBenefit2, title: 'Beneficio 2' }];
+const benefits = [{ image: benefit, title: 'befenit' }];
 
 const Home = () => {
     const [todayBirthdays, setTodayBirthdays] = useState([]);

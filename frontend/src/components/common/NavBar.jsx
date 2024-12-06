@@ -30,7 +30,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 // Media
-import logotipo from '@images/cyc-logos/logo-navbar.webp';
+const companyLogo = `${getApiUrl().apiUrl}/static/images/company-logos/logo-navbar.webp`;
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -283,7 +283,7 @@ const Navbar = () => {
                             style={{ cursor: 'pointer' }}
                             width={110}
                             height={55}
-                            src={logotipo}
+                            src={companyLogo}
                             onClick={() => navigate('/logged/home')}
                         />
                     </Button>

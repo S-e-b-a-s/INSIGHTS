@@ -109,7 +109,7 @@ export const LazyLoadImage = (props) => {
                     src={inView ? image.image : PLACEHOLDER_SRC}
                     onLoad={setLoaded}
                     data-src={image.image}
-                    title={image.title}
+                    alt={image.title}
                     onClick={image.link ? () => window.open(image.link) : null}
                 />
             </div>

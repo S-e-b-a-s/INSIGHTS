@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 // Media
-import article1 from '@images/articles/article1.jpg';
-import cybersecurity from '@images/blog/cybersecurity.jpg';
-import bienestar from '@images/blog/bienestar.jpg';
-import article5 from '@images/blog/article5.jpg';
-import sstManagement from '@images/blog/sst-environment-management.jpg';
-import carteraPropia from '@images/blog/cartera-propia.jpg';
-import youthFinances from '@images/blog/youth-finances.jpg';
+const newCampaigns = `${getApiUrl().apiUrl}static/images/blog/new-campaigns/new-campaigns-1.webp`;
+const cybersecurity = `${getApiUrl().apiUrl}static/images/blog/cybersecurity/cybersecurity-1.webp`;
+const newCertificationProccess = `${getApiUrl().apiUrl}static/images/blog/new-certification-proccess/new-certification-proccess-1.webp`;
+const occupationalWelfare = `${getApiUrl().apiUrl}static/images/blog/occupational-welfare/occupational-welfare-1.webp`;
+const certification_14001_45001 = `${getApiUrl().apiUrl}static/images/blog/certification-14001-45001/certification-14001-45001-1.webp`;
+const ownPortfolio = `${getApiUrl().apiUrl}static/images/blog/own-portfolio/own-portfolio-1.webp`;
+const financeGuide = `${getApiUrl().apiUrl}static/images/blog/finance-guide/finance-guide-1.webp`;
 
 // Material-UI
 import {
@@ -32,6 +32,9 @@ import {
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import FolderIcon from '@mui/icons-material/Folder';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+
+// Custom components and functions
+import { getApiUrl } from '@assets/getApi';
 
 const MediaCard = ({ title, subtitle, img, articleId }) => {
     useEffect(() => {
@@ -84,7 +87,7 @@ const baseArticles = [
         title: 'Bienvenido a Finanzas Jóvenes: Tu Guía hacia el Éxito Financiero',
         subtitle:
             '¡Hola, lectores jóvenes y emprendedores de la comunidad C&C! Bienvenidos a Finanzas Jóvenes',
-        img: youthFinances,
+        img: financeGuide,
         articleId: 8,
         uploadDate: '02-2024',
     },
@@ -92,7 +95,7 @@ const baseArticles = [
         title: 'Desde Adentro: Cómo Nuestra Cartera Propia Define Nuestra Trayectoria en el BPO',
         subtitle:
             'Una Mirada Interna a Cómo la Gestión de la Cartera Eleva Nuestro Desempeño en el BPO',
-        img: carteraPropia,
+        img: ownPortfolio,
         articleId: 7,
         uploadDate: '01-2024',
     },
@@ -100,7 +103,7 @@ const baseArticles = [
         title: 'Elevando Nuestra Empresa: Certificaciones ISO 45001:2018 y 14001:2015',
         subtitle:
             'Alcanzando la Excelencia Empresarial: La Trascendencia de las Certificaciones ISO 45001:2018 y 14001:2015, el Impacto en Nuestra Organización y el Compromiso Fundamental de Nuestros Colaboradores',
-        img: sstManagement,
+        img: certification_14001_45001,
         articleId: 6,
         uploadDate: '01-2024',
     },
@@ -108,7 +111,7 @@ const baseArticles = [
         title: 'C&C Services SAS avanza en proceso de certificación para elevar estándares de calidad en la industria de la cobranza',
         subtitle:
             'Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de RACC.',
-        img: article5,
+        img: newCertificationProccess,
         articleId: 5,
         uploadDate: '01-2024',
     },
@@ -116,7 +119,7 @@ const baseArticles = [
         title: 'Sumando Valor: Bienvenidos a las Nuevas Campañas en C&C Services S.A.S.',
         subtitle:
             'Uniendo Fuerzas para Alcanzar Nuevos Horizontes de Éxito y Crecimiento',
-        img: article1,
+        img: newCampaigns,
         articleId: 1,
         uploadDate: '01-2024',
     },
@@ -131,7 +134,7 @@ const baseArticles = [
         title: 'C&C Services: Innovación en el Bienestar Laboral para Empleados Productivos',
         subtitle:
             'Una Mirada Profunda a los Programas de Bienestar Integral y su Impacto en la Productividad y la Satisfacción Laboral',
-        img: bienestar,
+        img: occupationalWelfare,
         articleId: 4,
         uploadDate: '01-2024',
     },

@@ -9,48 +9,51 @@ import {
 import '@src/index.css';
 
 // Media
-import managersJr2 from '@images/managers-jr/53069726.webp';
-import managersJr4 from '@images/managers-jr/1010198435.jpg';
-import managersJr5 from '@images/managers-jr/1016033764.webp';
-import managersJr6 from '@images/managers-jr/91498957.webp';
-import managersJr8 from '@images/managers-jr/28553156.webp';
-import managersJr9 from '@images/managers-jr/1010178143.webp';
+const juniorHelpdeskManager = `${getApiUrl().apiUrl}static/images/managers-jr/junior-helpdesk-manager.webp`;
+const juniorContactCenterApplicationsManager = `${getApiUrl().apiUrl}static/images/managers-jr/junior-contact-center-applications-manager.webp`;
+const juniorInfrastructureNetworkManager = `${getApiUrl().apiUrl}static/images/managers-jr/junior-infrastructure-network-manager.webp`;
+const juniorAccountManager1 = `${getApiUrl().apiUrl}static/images/managers-jr/junior-account-manager-1.webp`;
+const juniorAccountManager2 = `${getApiUrl().apiUrl}static/images/managers-jr/junior-account-manager-2.webp`;
+const juniorAccountManager3 = `${getApiUrl().apiUrl}static/images/managers-jr/junior-account-manager-3.webp`;
+
+// Custom components and functions
+import { getApiUrl } from '@assets/getApi';
 
 const managersJr = [
     {
         name: 'Marcela Osorio',
         management: 'GERENTE JR. DE MESA DE SERVICIO',
-        image: managersJr8,
+        image: juniorHelpdeskManager,
         description: '',
     },
     {
         name: 'Christian Moncaleano',
         management: 'GERENTE JR. DE APLICACIONES DE CONTACT CENTER',
-        image: managersJr9,
-        description: '',
-    },
-    {
-        name: 'Katterene Castrillon',
-        management: 'GERENTE DE CUENTAS',
-        image: managersJr2,
+        image: juniorContactCenterApplicationsManager,
         description: '',
     },
     {
         name: 'Luis Peña',
         management: 'GERENTE JR. INFRAESTRUCTURA Y REDES',
-        image: managersJr4,
-        description: '',
-    },
-    {
-        name: 'Luis Rodriguez',
-        management: 'GERENTE DE CUENTAS JR',
-        image: managersJr5,
+        image: juniorInfrastructureNetworkManager,
         description: '',
     },
     {
         name: 'Julio Cesar',
         management: 'GERENTE DE CUENTAS',
-        image: managersJr6,
+        image: juniorAccountManager1,
+        description: '',
+    },
+    {
+        name: 'Luis Rodriguez',
+        management: 'GERENTE DE CUENTAS JR',
+        image: juniorAccountManager2,
+        description: '',
+    },
+    {
+        name: 'Katterene Castrillon',
+        management: 'GERENTE DE CUENTAS',
+        image: juniorAccountManager3,
         description: '',
     },
 ];
