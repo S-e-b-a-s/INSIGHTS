@@ -231,103 +231,106 @@ class TestSGC(BaseTestCase):
         # Assert that the response status code is HTTP 403 Forbidden
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cache_file(self):
-        """Test caching a file"""
-        url = reverse("SGCFile-list")
-        self.file_data["area"] = SGCArea.objects.first()
-        SGCFile.objects.create(**self.file_data)
-        response = self.client.get(
-            url,
-            cookies=str(self.client.cookies),
-        )
-        # Assert that the response status code is HTTP 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        # Check that have the correct data
-        self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
-        # Check that the cache is working
-        request = self.client.get(url).wsgi_request
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        self.assertEqual(cache.get(cache_key).data, response.data)
 
-    def test_cache_refresh(self):
-        """Test refresh the cache"""
-        url = reverse("SGCFile-list")
-        self.file_data["area"] = SGCArea.objects.first()
-        SGCFile.objects.create(**self.file_data)
-        response = self.client.get(
-            url,
-            cookies=str(self.client.cookies),
-        )
-        # Assert that the response status code is HTTP 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        # Check that have the correct data
-        self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
-        # Check that the cache is working
-        request = self.client.get(url).wsgi_request
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        self.assertEqual(cache.get(cache_key).data, response.data)
-        self.assertEqual(len(response.data["objects"]), 1)
-        # Refresh the file_data to avoid conflicts using a docx encode
-        with open("utils/excels/Lista_Robinsón.xlsx", "rb") as file:
-            file_content = file.read()
-        self.file_data["file"] = SimpleUploadedFile(
-            "Test_SGC_Robinsón.xlsx", file_content
-        )
-        response = self.client.post(
-            reverse("SGCFile-list"),
-            self.file_data,
-            format="multipart",
-            cookies=str(self.client.cookies),
-        )
-        # Assert that the response status code is HTTP 201 Created
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        # Check that the cache was deleted
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        self.assertIsNone(cache.get(cache_key))
-        # Now check that the cache is working again
-        response = self.client.get(
-            url,
-            cookies=str(self.client.cookies),
-        )
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        self.assertEqual(cache.get(cache_key).data, response.data)
-        self.assertEqual(len(response.data["objects"]), 2)
+    # ! Wait until resume the cache views
 
-    def test_cache_refresh_on_update(self):
-        """Test refresh the cache on update"""
-        url = reverse("SGCFile-list")
-        self.file_data["area"] = SGCArea.objects.first()
-        file = SGCFile.objects.create(**self.file_data)
-        response = self.client.get(
-            url,
-            cookies=str(self.client.cookies),
-        )
-        # Assert that the response status code is HTTP 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        # Check that have the correct data
-        self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
-        # Check that the cache is working
-        request = self.client.patch(url).wsgi_request
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        self.assertEqual(cache.get(cache_key).data, response.data)
-        # Refresh the file_data to avoid conflicts using a docx encode
-        self.file_data["name"] = "Test File Updated"
-        response = self.client.patch(
-            reverse("SGCFile-detail", kwargs={"pk": file.id}),
-            {"name": "Test File Updated"},
-            format="json",
-            cookies=str(self.client.cookies),
-        )
-        # Assert that the response status code is HTTP 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        # Check that the cache was deleted
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        self.assertIsNone(cache.get(cache_key))
-        # Now check that the cache is working again
-        response = self.client.get(
-            url,
-            cookies=str(self.client.cookies),
-        )
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        self.assertEqual(cache.get(cache_key).data, response.data)
-        self.assertEqual(response.data["objects"][0].get("name"), "Test File Updated")
+    # def test_cache_file(self):
+    #     """Test caching a file"""
+    #     url = reverse("SGCFile-list")
+    #     self.file_data["area"] = SGCArea.objects.first()
+    #     SGCFile.objects.create(**self.file_data)
+    #     response = self.client.get(
+    #         url,
+    #         cookies=str(self.client.cookies),
+    #     )
+    #     # Assert that the response status code is HTTP 200 OK
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+    #     # Check that have the correct data
+    #     self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
+    #     # Check that the cache is working
+    #     request = self.client.get(url).wsgi_request
+    #     cache_key = get_cache_key(request, key_prefix="sgc")
+    #     self.assertEqual(cache.get(cache_key).data, response.data)
+
+    # def test_cache_refresh(self):
+    #     """Test refresh the cache"""
+    #     url = reverse("SGCFile-list")
+    #     self.file_data["area"] = SGCArea.objects.first()
+    #     SGCFile.objects.create(**self.file_data)
+    #     response = self.client.get(
+    #         url,
+    #         cookies=str(self.client.cookies),
+    #     )
+    #     # Assert that the response status code is HTTP 200 OK
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+    #     # Check that have the correct data
+    #     self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
+    #     # Check that the cache is working
+    #     request = self.client.get(url).wsgi_request
+    #     cache_key = get_cache_key(request, key_prefix="sgc")
+    #     self.assertEqual(cache.get(cache_key).data, response.data)
+    #     self.assertEqual(len(response.data["objects"]), 1)
+    #     # Refresh the file_data to avoid conflicts using a docx encode
+    #     with open("utils/excels/Lista_Robinsón.xlsx", "rb") as file:
+    #         file_content = file.read()
+    #     self.file_data["file"] = SimpleUploadedFile(
+    #         "Test_SGC_Robinsón.xlsx", file_content
+    #     )
+    #     response = self.client.post(
+    #         reverse("SGCFile-list"),
+    #         self.file_data,
+    #         format="multipart",
+    #         cookies=str(self.client.cookies),
+    #     )
+    #     # Assert that the response status code is HTTP 201 Created
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+    #     # Check that the cache was deleted
+    #     cache_key = get_cache_key(request, key_prefix="sgc")
+    #     self.assertIsNone(cache.get(cache_key))
+    #     # Now check that the cache is working again
+    #     response = self.client.get(
+    #         url,
+    #         cookies=str(self.client.cookies),
+    #     )
+    #     cache_key = get_cache_key(request, key_prefix="sgc")
+    #     self.assertEqual(cache.get(cache_key).data, response.data)
+    #     self.assertEqual(len(response.data["objects"]), 2)
+
+    # def test_cache_refresh_on_update(self):
+    #     """Test refresh the cache on update"""
+    #     url = reverse("SGCFile-list")
+    #     self.file_data["area"] = SGCArea.objects.first()
+    #     file = SGCFile.objects.create(**self.file_data)
+    #     response = self.client.get(
+    #         url,
+    #         cookies=str(self.client.cookies),
+    #     )
+    #     # Assert that the response status code is HTTP 200 OK
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+    #     # Check that have the correct data
+    #     self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
+    #     # Check that the cache is working
+    #     request = self.client.patch(url).wsgi_request
+    #     cache_key = get_cache_key(request, key_prefix="sgc")
+    #     self.assertEqual(cache.get(cache_key).data, response.data)
+    #     # Refresh the file_data to avoid conflicts using a docx encode
+    #     self.file_data["name"] = "Test File Updated"
+    #     response = self.client.patch(
+    #         reverse("SGCFile-detail", kwargs={"pk": file.id}),
+    #         {"name": "Test File Updated"},
+    #         format="json",
+    #         cookies=str(self.client.cookies),
+    #     )
+    #     # Assert that the response status code is HTTP 200 OK
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+    #     # Check that the cache was deleted
+    #     cache_key = get_cache_key(request, key_prefix="sgc")
+    #     self.assertIsNone(cache.get(cache_key))
+    #     # Now check that the cache is working again
+    #     response = self.client.get(
+    #         url,
+    #         cookies=str(self.client.cookies),
+    #     )
+    #     cache_key = get_cache_key(request, key_prefix="sgc")
+    #     self.assertEqual(cache.get(cache_key).data, response.data)
+    #     self.assertEqual(response.data["objects"][0].get("name"), "Test File Updated")
