@@ -32,6 +32,7 @@ const Footer = () => {
         >
             <Box sx={{ display: 'flex', flexDirection: 'Column', gap: '15px' }}>
                 <img
+                    loading="lazy"
                     alt="logo-cyc"
                     onClick={() =>
                         window.open('https://cyc-bpo.com/', '_blank')
