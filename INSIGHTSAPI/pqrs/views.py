@@ -5,6 +5,7 @@ import logging
 from django.core.mail import mail_admins, send_mail
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, ListAPIView
+
 from users.models import User
 
 from .models import PQRS, Management
@@ -59,7 +60,7 @@ class PQRSViewSet(CreateAPIView):
                 return response
             send_mail(
                 "Nueva PQRS",
-                f"Se ha creado una nueva PQRS: {request.data['description']}",
+                f"{request.user.get_full_name()}-({request.user.cedula}) ha creado una nueva PQRS: {request.data['description']}",
                 None,
                 mail,
             )
