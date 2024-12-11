@@ -22,8 +22,6 @@ const pointsVideo = `${getApiUrl().apiUrl}static/videos/points.mp4`;
 // Libraries
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const benefits = [{ image: benefit, title: 'befenit' }];
-
 const Home = () => {
     const [todayBirthdays, setTodayBirthdays] = useState([]);
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
@@ -450,10 +448,13 @@ const Home = () => {
                     >
                         Beneficios
                     </Typography>
-                    <CarouselComponent
-                        items={benefits}
-                        height={'960px'}
-                        width={'540px'}
+                    <img
+                        loading="lazy"
+                        style={{ borderRadius: '1rem' }}
+                        width={540}
+                        height={960}
+                        src={benefit}
+                        alt="beneficio"
                     />
                 </Box>
             </Box>

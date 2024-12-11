@@ -266,6 +266,9 @@ const Navbar = () => {
                 className="navbar"
                 sx={{
                     backdropFilter: 'blur(10px)',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1001,
                 }}
             >
                 <Box
@@ -282,7 +285,7 @@ const Navbar = () => {
                             alt="logo-cyc-navbar"
                             style={{ cursor: 'pointer' }}
                             width={110}
-                            height={55}
+                            height={56}
                             src={companyLogo}
                             onClick={() => navigate('/logged/home')}
                         />
