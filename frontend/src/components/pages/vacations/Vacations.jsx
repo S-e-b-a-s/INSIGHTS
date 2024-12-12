@@ -146,6 +146,12 @@ export const Vacations = () => {
 
     const columns = [
         {
+            field: 'cedula',
+            headerName: 'Cedula',
+            width: 110,
+            type: 'text',
+        },
+        {
             field: 'start_date',
             headerName: 'Fecha inicio',
             width: 110,
@@ -606,7 +612,7 @@ export const Vacations = () => {
     };
 
     const handleCloseDialogPayslip = () => {
-        setOpenDialogPayslip(false);    
+        setOpenDialogPayslip(false);
         setOpenObservationsInput(false);
         setButtonType('button');
     };

@@ -58,12 +58,16 @@ class VacationRequest(models.Model):
     @property
     def duration(self):
         """Return the duration of the vacation request."""
-        return get_working_days(self.start_date, self.end_date, self.sat_is_working)
+        if self.pk:
+            return get_working_days(self.start_date, self.end_date, self.sat_is_working)
+        return None
 
     @property
     def return_date(self):
         """Return the return date of the vacation request."""
-        return get_return_date(self.end_date, self.sat_is_working)
+        if self.pk:
+            return get_return_date(self.end_date, self.sat_is_working)
+        return None
 
     def __str__(self):
         return f"{self.user} - {self.start_date} - {self.end_date}"

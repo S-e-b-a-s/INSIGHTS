@@ -47,5 +47,5 @@ jobs:
       - name: Deploy to server
         run: |
           rm -rf /var/www/INSIGHTS/frontend/dist/*
-          cp -r ./frontend/dist/* /var/www/INSIGHTS/frontend/dist
+          cp -r ./dist/* /var/www/INSIGHTS/frontend/dist
           sudo systemctl restart nginx

@@ -15,14 +15,12 @@ import { Typography, Box, Container, Card } from '@mui/material';
 // Media
 const benefit = `${getApiUrl().apiUrl}static/images/benefits/benefit-1.webp`;
 const cake = `${getApiUrl().apiUrl}static/images/birthdays/cake.webp`;
-const AvatarImage = `${getApiUrl().apiUrl}static/birthdays/avatar.webp`;
+const AvatarImage = `${getApiUrl().apiUrl}static/images/birthdays/avatar.webp`;
 const fultbolVideo = `${getApiUrl().apiUrl}static/videos/futbol.mp4`;
 const pointsVideo = `${getApiUrl().apiUrl}static/videos/points.mp4`;
 
 // Libraries
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-const benefits = [{ image: benefit, title: 'befenit' }];
 
 const Home = () => {
     const [todayBirthdays, setTodayBirthdays] = useState([]);
@@ -450,10 +448,13 @@ const Home = () => {
                     >
                         Beneficios
                     </Typography>
-                    <CarouselComponent
-                        items={benefits}
-                        height={'960px'}
-                        width={'540px'}
+                    <img
+                        loading="lazy"
+                        style={{ borderRadius: '1rem' }}
+                        width={540}
+                        height={960}
+                        src={benefit}
+                        alt="beneficio"
                     />
                 </Box>
             </Box>
