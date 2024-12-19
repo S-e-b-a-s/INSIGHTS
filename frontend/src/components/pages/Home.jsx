@@ -5,6 +5,7 @@ const CarouselComponent = lazy(() => import('@components/shared/Carousel'));
 import { EmblaCarousel } from '../shared/embla-carousel/EmblaCarousel';
 import { getApiUrl } from '@assets/getApi.js';
 import { handleError } from '@assets/handleError';
+const BirthdaySlider = lazy(() => import('@components/shared/BirthdaySlider'));
 
 // Custom Hooks
 import { useSnackbar } from '@contexts/SnackbarContext.jsx';
@@ -185,6 +186,8 @@ const Home = () => {
                     </video>
                 </Box>
             </Container>
+
+            <BirthdaySlider />
 
             <Box
                 sx={{

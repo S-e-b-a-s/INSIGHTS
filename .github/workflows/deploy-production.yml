@@ -1,9 +1,9 @@
 name: Deploy React App to Production
 
 on:
-    push:
-        branches:
-            - Production-version # Adjust this to your main branch
+  push:
+    branches:
+      - Production-version # Adjust this to your main branch
 
 jobs:
     deploy:
@@ -16,7 +16,7 @@ jobs:
             - name: Set up Node.js
               uses: actions/setup-node@v2
               with:
-                  node-version: '18.17.1' # Adjust this to your required Node version
+                node-version: "18.17.1" # Adjust this to your required Node version
 
             - name: Install Pnpm
               run: npm install -g pnpm
@@ -32,7 +32,7 @@ jobs:
 
             - name: Build project
               env:
-                  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+                SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
               run: NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
 
             - name: Postbuild project
@@ -40,6 +40,6 @@ jobs:
 
             - name: Deploy to production server
               run: |
-                  rm -rf /var/www/INSIGHTS/dist/*
-                  cp -r ./dist/* /var/www/INSIGHTS/dist
-                  sudo systemctl restart apache2
+                rm -rf /var/www/INSIGHTS/dist/*
+                cp -r ./dist/* /var/www/INSIGHTS/dist
+                sudo systemctl restart apache2

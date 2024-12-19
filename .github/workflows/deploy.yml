@@ -1,51 +1,51 @@
 name: Deploy React App
 
 on:
-  push:
+    push:
     branches:
-      - dev # Adjust this to your main branch
+        - dev # Adjust this to your main branch
 
 jobs:
-  deploy:
-    runs-on: dev
-    defaults:
-      run:
-        working-directory: ./frontend
+    deploy:
+        runs-on: dev
+        defaults:
+            run:
+                working-directory: ./frontend
 
     steps:
-      - name: Checkout repository
+        - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+        - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "18.17.1" # Adjust this to your required Node version
+            node-version: "18.17.1" # Adjust this to your required Node version
 
       - name: Install Pnpm
         run: npm install -g pnpm
 
-      - name: Install dependencies
+        - name: Install dependencies
         run: pnpm install
 
-      - name: Format code
+        - name: Format code
         run: pnpm format
 
-      - name: Lint code
+        - name: Lint code
         run: pnpm oxlint
 
-      - name: Run tests
+        - name: Run tests
         run: pnpm run test
 
-      - name: Build project
+        - name: Build project
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+            SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
 
-      - name: Postbuild project
+        - name: Postbuild project
         run: pnpm run postbuild
 
-      - name: Deploy to server
+        - name: Deploy to server
         run: |
-          rm -rf /var/www/INSIGHTS/frontend/dist/*
-          cp -r ./dist/* /var/www/INSIGHTS/frontend/dist
-          sudo systemctl restart nginx
+            rm -rf /var/www/INSIGHTS/frontend/dist/*
+            cp -r ./dist/* /var/www/INSIGHTS/frontend/dist
+            sudo systemctl restart nginx

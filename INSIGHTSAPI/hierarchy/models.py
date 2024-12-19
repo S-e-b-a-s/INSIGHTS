@@ -13,6 +13,9 @@ class Area(models.Model):
     manager = models.ForeignKey(
         "users.User", on_delete=models.SET_NULL, null=True, related_name="managed_areas"
     )
+    vacation_managers = models.ManyToManyField(
+        "users.User", related_name="vacation_managed_areas"
+    )
 
     def get_children(self):
         """Get all the children of the area."""

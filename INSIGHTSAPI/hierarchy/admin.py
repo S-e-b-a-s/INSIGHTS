@@ -40,6 +40,7 @@ class AreaAdmin(admin.ModelAdmin):
     )
     ordering = ("name",)
     inlines = [ChildAreaInline]
+    filter_horizontal = ("vacation_managers",)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """Customize the queryset for the manager field."""

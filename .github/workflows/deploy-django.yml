@@ -1,81 +1,81 @@
 name: Deploy Django Project
 
 on:
-    push:
-        branches:
-            - Production-version # Trigger the workflow on push to the production branch
+  push:
+    branches:
+      - Production-version # Trigger the workflow on push to the production branch
 
 jobs:
-    deploy:
-        name: Deploy to Server
-        runs-on: production # This tells GitHub Actions to use the local runner
+  deploy:
+    name: Deploy to Server
+    runs-on: production # This tells GitHub Actions to use the local runner
 
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v3
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-            - name: Set up Python
-              uses: actions/setup-python@v4
-              with:
-                  python-version: '3.10.12' # Adjust the Python version according to your project
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10.12" # Adjust the Python version according to your project
 
-            - name: Install Dependencies
-              run: |
-                  mkdir -p ./INSIGHTSAPI/utils
-                  python -m venv ./INSIGHTSAPI/utils/venv
-                  source ./INSIGHTSAPI/utils/venv/bin/activate
-                  pip install -r ./INSIGHTSAPI/requirements.txt
+      - name: Install Dependencies
+        run: |
+          mkdir -p ./INSIGHTSAPI/utils
+          python -m venv ./INSIGHTSAPI/utils/venv
+          source ./INSIGHTSAPI/utils/venv/bin/activate
+          pip install -r ./INSIGHTSAPI/requirements.txt
 
-            - name: Sync "excels" Directory
-              run: |
-                  mkdir -p ./INSIGHTSAPI/utils/excels
-                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/utils/excels/ ./INSIGHTSAPI/utils/excels/
+      - name: Sync "excels" Directory
+        run: |
+          mkdir -p ./INSIGHTSAPI/utils/excels
+          rsync -av /var/www/INSIGHTS/INSIGHTSAPI/utils/excels/ ./INSIGHTSAPI/utils/excels/
 
-            - name: Sync "static" Directory
-              run: |
-                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/static/ ./INSIGHTSAPI/static/
+      - name: Sync "static" Directory
+        run: |
+          rsync -av /var/www/INSIGHTS/INSIGHTSAPI/static/ ./INSIGHTSAPI/static/
 
-            - name: Sync "secure/image" Directory
-              run: |
-                  mkdir -p ./INSIGHTSAPI/secure/images
-                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/secure/images/ ./INSIGHTSAPI/secure/images/
+      - name: Sync "secure/image" Directory
+        run: |
+          mkdir -p ./INSIGHTSAPI/secure/images
+          rsync -av /var/www/INSIGHTS/INSIGHTSAPI/secure/images/ ./INSIGHTSAPI/secure/images/
 
-            - name: Run Tests
-              run: |
-                  source ./INSIGHTSAPI/utils/venv/bin/activate
-                  cd INSIGHTSAPI
-                  python manage.py test
+      - name: Run Tests
+        run: |
+          source ./INSIGHTSAPI/utils/venv/bin/activate
+          cd INSIGHTSAPI
+          python manage.py test
 
-            - name: Run Migrations
-              run: |
-                  source ./INSIGHTSAPI/utils/venv/bin/activate
-                  python ./INSIGHTSAPI/manage.py migrate
+      - name: Run Migrations
+        run: |
+          source ./INSIGHTSAPI/utils/venv/bin/activate
+          python ./INSIGHTSAPI/manage.py migrate
 
-            - name: Deploy to production directory
-              run: |
-                  sudo rsync -av --delete --exclude 'media/' --exclude 'logs/' --exclude='venv/' ./INSIGHTSAPI/ /var/www/INSIGHTS/INSIGHTSAPI/
+      - name: Deploy to production directory
+        run: |
+          sudo rsync -av --delete --exclude 'media/' --exclude 'logs/' --exclude='venv/' ./INSIGHTSAPI/ /var/www/INSIGHTS/INSIGHTSAPI/
 
-            - name: Recreate Virtual Environment
-              run: |
-                  cd /var/www/INSIGHTS/INSIGHTSAPI/
-                  if [ -d "utils/venv" ]; then
-                    rm -rf utils/venv
-                  fi
-                  python3 -m venv utils/venv
+      - name: Recreate Virtual Environment
+        run: |
+          cd /var/www/INSIGHTS/INSIGHTSAPI/
+          if [ -d "utils/venv" ]; then
+            rm -rf utils/venv
+          fi
+          python3 -m venv utils/venv
 
-            - name: Install Dependencies
-              run: |
-                  cd /var/www/INSIGHTS/INSIGHTSAPI/
-                  source utils/venv/bin/activate
-                  pip install -r /home/ares/actions-runner/_work/INSIGHTS/INSIGHTS/INSIGHTSAPI/requirements.txt
+      - name: Install Dependencies
+        run: |
+          cd /var/www/INSIGHTS/INSIGHTSAPI/
+          source utils/venv/bin/activate
+          pip install -r /home/ares/actions-runner/_work/INSIGHTS/INSIGHTS/INSIGHTSAPI/requirements.txt
 
-                  # Step 3: Install Python dependencies using the tested `requirements.txt`
+          # Step 3: Install Python dependencies using the tested `requirements.txt`
 
-            - name: Grant Permissions to the Samba user to edit the files
-              run: |
-                  chgrp -R www-data /var/www/INSIGHTS/INSIGHTSAPI/
-                  chmod -R g+rwx /var/www/INSIGHTS/INSIGHTSAPI/
+      - name: Grant Permissions to the Samba user to edit the files
+        run: |
+          chgrp -R www-data /var/www/INSIGHTS/INSIGHTSAPI/
+          chmod -R g+rwx /var/www/INSIGHTS/INSIGHTSAPI/
 
-            - name: Restart Nginx Service
-              run: |
-                  sudo systemctl restart apache
+      - name: Restart Nginx Service
+        run: |
+          sudo systemctl restart apache

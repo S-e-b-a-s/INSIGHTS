@@ -94,8 +94,8 @@ export function EmblaCarousel() {
                         style={{
                             display: 'flex',
                             touchAction: 'pan-y pinch-zoom',
-                            height: '750px',
                             width: '1280px',
+                            height: '750px',
                         }}
                     >
                         {images.map((image, index) => (

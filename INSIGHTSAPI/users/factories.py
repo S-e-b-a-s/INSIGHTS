@@ -11,7 +11,7 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
-    factory.Faker._DEFAULT_LOCALE = "es_ES"
+    factory.Faker._DEFAULT_LOCALE = "es_CO"
     cedula = factory.Faker("random_int", min=1000000000, max=9999999999)
     first_name = factory.LazyFunction(lambda: "Fake " + fake_data.first_name())
     last_name = factory.Faker("last_name")

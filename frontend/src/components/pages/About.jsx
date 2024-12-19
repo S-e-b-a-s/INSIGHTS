@@ -13,6 +13,7 @@ import {
 
 // Media
 const generalManager = `${getApiUrl().apiUrl}static/images/managers/general-manager.webp`;
+const bidManager = `${getApiUrl().apiUrl}static/images/managers/bid-manager.webp`;
 const rhManager = `${getApiUrl().apiUrl}static/images/managers/rh-manager.webp`;
 const planningManager = `${getApiUrl().apiUrl}static/images/managers/planning-manager.webp`;
 const collectionsSalesOperationsManager = `${getApiUrl().apiUrl}static/images/managers/collections-sales-operations-manager.webp`;
@@ -48,6 +49,13 @@ const managements = [
         image: generalManager,
         description:
             'Garantizar la sostenibilidad de la compañía a través de la planeación, liderazgo y control de las diferentes áreas que permitan alcanzar los objetivos establecidos con los clientes, el recurso humano y los accionistas.',
+    },
+    {
+        name: 'Leidy Castillo',
+        management: 'Gerente de Licitaciones',
+        image: bidManager,
+        description:
+            'Desarrollar y ejecutar estrategias de licitación altamente competitivas y alineadas con los objetivos organizacionales, optimizando los procesos y recursos para asegurar la participación exitosa en proyectos clave. Impulsar la mejora continua en la gestión de riesgos, el cumplimiento de normativas y la calidad de las propuestas, con el fin de fortalecer nuestra posición en el mercado, maximizar las oportunidades de negocio y consolidar relaciones de confianza con nuestros clientes y aliados.',
     },
     {
         name: 'Diego González',
