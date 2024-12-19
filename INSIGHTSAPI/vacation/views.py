@@ -1,5 +1,6 @@
 import base64
 import datetime
+from typing import cast
 
 import pdfkit
 from django.conf import settings
@@ -11,9 +12,9 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from hierarchy.models import Area
 from notifications.utils import create_notification
 from users.models import User
 
@@ -24,11 +25,13 @@ from .serializers import VacationRequestSerializer
 class VacationRequestViewSet(viewsets.ModelViewSet):
     queryset = VacationRequest.objects.all().select_related("user").order_by("-pk")
     serializer_class = VacationRequestSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Restrict queryset based on user permissions
-        user = self.request.user
+        user = cast(User, self.request.user)
+
+        if not self.queryset:
+            return self.queryset
 
         # If the user is a manager of HR
         if user.job_position.name == "GERENTE DE GESTION HUMANA":
@@ -37,6 +40,16 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
         # If the user has payroll approval permissions
         elif user.has_perm("vacation.payroll_approval"):
             return self.queryset.all()
+
+        elif Area.objects.filter(vacation_managers=user).exists():
+            return self.queryset.filter(
+                Q(user=user)  # The user is the owner of the request
+                | Q(user__area__manager=user)  # The user is the manager of the area
+                | (
+                    Q(user__area__vacation_managers=user)
+                    & Q(user__job_position__rank__lt=user.job_position.rank)
+                )  # The user is a vacation manager of the area
+            )
 
         # If the user has a management position with rank >= 2
         elif user.job_position.rank >= 2:

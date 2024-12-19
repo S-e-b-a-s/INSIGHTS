@@ -36,6 +36,6 @@ export const ProgressbarProvider = ({ children }) => {
         </ProgressbarContext.Provider>
     );
 };
-
+ 
 // Custom hook to use the ProgressBar context
 export const useProgressbar = () => useContext(ProgressbarContext);

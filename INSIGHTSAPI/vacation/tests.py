@@ -198,6 +198,17 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
+    def test_vacation_list_vacation_manager(self):
+        """Test listing all vacations endpoint for a vacation manager."""
+        self.test_user.area.vacation_managers.add(self.user)
+        print(self.test_user.area)
+        print(self.user.area)
+        VacationRequest.objects.create(**self.vacation_request_user)
+        VacationRequest.objects.create(**self.vacation_request_user)
+        response = self.client.get(reverse("vacation-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+
     def test_vacation_list_hr(self):
         """Test listing all vacations endpoint for HR."""
         self.user.job_position.name = "GERENTE DE GESTION HUMANA"
