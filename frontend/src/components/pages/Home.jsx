@@ -187,8 +187,6 @@ const Home = () => {
                 </Box>
             </Container>
 
-            <BirthdaySlider />
-
             <Box
                 sx={{
                     display: 'flex',
