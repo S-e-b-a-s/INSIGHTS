@@ -87,7 +87,7 @@ export const CalendarRange = forwardRef(function CalendarRange(
             locale="es"
             show-outside-days={showOutsideDays || undefined}
             first-day-of-week={0}
-            // min={minDate.toISOString().split('T')[0]} // Format the date to YYYY-MM-DD
+            min={minDate.toISOString().split('T')[0]} // Format the date to YYYY-MM-DD
             max={new Date(currentYear + 1, 11, 31).toISOString().split('T')[0]} // December 31st of the next year
             {...props}
         />
