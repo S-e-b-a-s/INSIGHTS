@@ -33,12 +33,6 @@ const managersJr = [
         description: '',
     },
     {
-        name: 'Luis Peña',
-        management: 'GERENTE JR. INFRAESTRUCTURA Y REDES',
-        image: juniorInfrastructureNetworkManager,
-        description: '',
-    },
-    {
         name: 'Julio Cesar',
         management: 'GERENTE DE CUENTAS',
         image: juniorAccountManager1,
