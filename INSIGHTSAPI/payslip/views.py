@@ -116,19 +116,28 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     )
                     row = cursor.fetchone()
                     if cursor.description and row:
-                        columns = [col[0] for col in cursor.description]
-                        result_dict = dict(zip(columns, row))
-                        User.objects.create(
-                            username=result_dict["usuario_windows"],
-                            cedula=result_dict["cedula"],
-                            first_name=result_dict["nombres"],
-                            last_name=result_dict["apellidos"],
-                            email=result_dict["correo"],
-                        )
-                        user = User.objects.get(cedula=data[1])
-                        email = user.email
-                        name = user.get_full_name()
-                        identification = user.cedula
+                        try:
+                            columns = [col[0] for col in cursor.description]
+                            result_dict = dict(zip(columns, row))
+                            User.objects.create(
+                                username=result_dict["usuario_windows"],
+                                cedula=result_dict["cedula"],
+                                first_name=result_dict["nombres"],
+                                last_name=result_dict["apellidos"],
+                                email=result_dict["correo"],
+                            )
+                            user = User.objects.get(cedula=data[1])
+                            email = user.email
+                            name = user.get_full_name()
+                            identification = user.cedula
+                        except Exception as e:
+                            logger.error(e)
+                            return Response(
+                                {
+                                    "Error": f"Ocurrió un error al crear el usuario {data[2]} - ({data[1]})",
+                                },
+                                status=500,
+                            )
                     else:
                         return Response(
                             {

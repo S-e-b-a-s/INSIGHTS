@@ -187,7 +187,7 @@ const Home = () => {
                 </Box>
             </Container>
 
-            <BirthdaySlider />
+            {/* <BirthdaySlider /> */}
 
             <Box
                 sx={{
