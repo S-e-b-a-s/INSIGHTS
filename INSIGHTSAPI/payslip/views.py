@@ -89,36 +89,83 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 {"error": "Asegúrate de guardar el archivo en formato CSV UTF-8."},
                 status=400,
             )
+        row_header = file_content.split("\n")[0]
+        header_separated = row_header.split(";")
+        header = [column.strip() for column in header_separated]
         rows = file_content.split("\n")[1:]
         payslips = []
+
+        columns = [
+            "TITULO DESPRENDIBLE",
+            "CEDULA DESPRENDIBLE",
+            "NOMBRE DESPRENDIBLE",
+            "AREA DESPRENDIBLE",
+            "CARGO DESPRENDIBLE",
+            "SUELDO DESPRENDIBLE",
+            "DIASLAB DESPRENDIBLE",
+            "QUINCENA DESPRENDIBLE",
+            "SUBSIDIOTRANS DESPRENDIBLE",
+            "RODAMIENTO",
+            "HORAS LABORADAS RECARGO NOCTURNO 35%",
+            "RECARGO NOCTURNO 35%",
+            "HORAS LABORADAS RECARGO NOCTURNO FESTIVO 75%",
+            "RECARGO NOCTURNO FESTIVO 75%",
+            "HORAS LABORADAS RECARGO DOMINICAL O FESTIVO 110%",
+            "RECARGO DOMINICAL O FESTIVO 110%",
+            "INCENTIVO DESPRENDIBLE",  # Bonus paycheck
+            "PRIMA",
+            "CESANTIAS",
+            "TOTALDEV DESPRENDIBLE",
+            "healthcare_contribution",
+            "pension_contribution",
+            "tax_withholding",
+            "additional_deductions",
+            "apsalpen",
+            "solidarity_fund_percentage",
+            "solidarity_fund",
+            "total_deductions",
+            "net_pay",
+        ]
 
         for line in rows:
             if line.startswith(";;") or line == "":
                 continue
             data = line.split(";")
-            if len(data) != 29:
-                return Response(
-                    {
-                        "Error": f"El archivo debe tener 29 columnas, el subido tiene {len(data)}",
-                    },
-                    status=400,
-                )
-            user = User.objects.filter(cedula=data[1]).first()
+            for column in columns:
+                if column not in header:
+                    return Response(
+                        {
+                            "Error": f"El archivo no tiene la columna {column}",
+                        },
+                        status=400,
+                    )
+
+            # Map column names to their respective data values
+            data_dict = dict(zip(columns, data))
+
+            # Query using the cedula
+            user = User.objects.filter(cedula=data_dict["CEDULA DESPRENDIBLE"]).first()
+
             if user:
                 identification = user.cedula
                 email = user.email
-                name = user.get_full_name()
             else:
                 with connections["staffnet"].cursor() as cursor:
                     cursor.execute(
-                        "SELECT * FROM personal_information JOIN employment_information ON personal_information.cedula = employment_information.cedula WHERE personal_information.cedula = %s",
-                        [data[1]],
+                        """
+                        SELECT * 
+                        FROM personal_information 
+                        JOIN employment_information 
+                        ON personal_information.cedula = employment_information.cedula 
+                        WHERE personal_information.cedula = %s
+                        """,
+                        [data_dict["CEDULA DESPRENDIBLE"]],
                     )
                     row = cursor.fetchone()
                     if cursor.description and row:
                         try:
-                            columns = [col[0] for col in cursor.description]
-                            result_dict = dict(zip(columns, row))
+                            db_columns = [col[0] for col in cursor.description]
+                            result_dict = dict(zip(db_columns, row))
                             User.objects.create(
                                 username=result_dict["usuario_windows"],
                                 cedula=result_dict["cedula"],
@@ -126,64 +173,98 @@ class PayslipViewSet(viewsets.ModelViewSet):
                                 last_name=result_dict["apellidos"],
                                 email=result_dict["correo"],
                             )
-                            user = User.objects.get(cedula=data[1])
+                            user = User.objects.get(
+                                cedula=data_dict["CEDULA DESPRENDIBLE"]
+                            )
                             email = user.email
-                            name = user.get_full_name()
                             identification = user.cedula
                         except Exception as e:
                             logger.error(e)
                             return Response(
                                 {
-                                    "Error": f"Ocurrió un error al crear el usuario {data[2]} - ({data[1]})",
+                                    "Error": f"Ocurrió un error al crear el usuario {data_dict['NOMBRE DESPRENDIBLE']} - ({data_dict['CEDULA DESPRENDIBLE']})",
                                 },
                                 status=500,
                             )
                     else:
                         return Response(
                             {
-                                "Error": f"No se encontró el usuario {data[1]}, asegúrate de que esta registrado en StaffNet",
+                                "Error": f"No se encontró el usuario {data_dict['cedula']}, asegúrate de que esta registrado en StaffNet",
                             },
                             status=400,
                         )
+
             payslip = PayslipSerializer(
                 data={
                     # Basic information
-                    "title": data[0],
+                    "title": data_dict["TITULO DESPRENDIBLE"],
                     "identification": identification,
-                    "name": name,
-                    "area": data[3],
-                    "job_title": data[4],
-                    "salary": convert_numeric_value(data[5]),
-                    "days": data[6],
-                    "biweekly_period": convert_numeric_value(data[7]),
+                    "name": data_dict["NOMBRE DESPRENDIBLE"],
+                    "area": data_dict["AREA DESPRENDIBLE"],
+                    "job_title": data_dict["CARGO DESPRENDIBLE"],
+                    "salary": convert_numeric_value(data_dict["SUELDO DESPRENDIBLE"]),
+                    "days": data_dict["DIASLAB DESPRENDIBLE"],
+                    "biweekly_period": convert_numeric_value(
+                        data_dict[" QUINCENA DESPRENDIBLE "]
+                    ),
                     # Earnings
-                    "transport_allowance": convert_numeric_value(data[8]),
-                    "bearing": convert_numeric_value(data[9]),
-                    "surcharge_night_shift_hours": convert_numeric_value(data[10]),
-                    "surcharge_night_shift_allowance": convert_numeric_value(data[11]),
+                    "transport_allowance": convert_numeric_value(
+                        data_dict["SUBSIDIOTRANS DESPRENDIBLE"]
+                    ),
+                    "bearing": convert_numeric_value(data_dict["RODAMIENTO"]),
+                    "surcharge_night_shift_hours": convert_numeric_value(
+                        data_dict["HORAS LABORADAS RECARGO NOCTURNO 35%"]
+                    ),
+                    "surcharge_night_shift_allowance": convert_numeric_value(
+                        data_dict["RECARGO NOCTURNO 35%"]
+                    ),
                     "surcharge_night_shift_holiday_hours": convert_numeric_value(
-                        data[12]
+                        data_dict["HORAS LABORADAS RECARGO NOCTURNO FESTIVO 75%"]
                     ),
                     "surcharge_night_shift_holiday_allowance": convert_numeric_value(
-                        data[13]
+                        data_dict["RECARGO NOCTURNO FESTIVO 75%"]
                     ),
-                    "surcharge_holiday_hours": convert_numeric_value(data[14]),
-                    "surcharge_holiday_allowance": convert_numeric_value(data[15]),
-                    "bonus_paycheck": convert_numeric_value(data[16]),
-                    "biannual_bonus": convert_numeric_value(data[17]),
-                    "severance": convert_numeric_value(data[18]),
-                    "gross_earnings": convert_numeric_value(data[19]),
+                    "surcharge_holiday_hours": convert_numeric_value(
+                        data_dict["HORAS LABORADAS RECARGO DOMINICAL O FESTIVO 110%"]
+                    ),
+                    "surcharge_holiday_allowance": convert_numeric_value(
+                        data_dict["RECARGO DOMINICAL O FESTIVO 110%"]
+                    ),
+                    "bonus_paycheck": convert_numeric_value(
+                        data_dict["INCENTIVO DESPRENDIBLE"]
+                    ),
+                    "biannual_bonus": convert_numeric_value(data_dict["PRIMA"]),
+                    "severance": convert_numeric_value(data_dict["CESANTIAS"]),
+                    "gross_earnings": convert_numeric_value(
+                        data_dict["TOTALDEV DESPRENDIBLE"]
+                    ),
                     # Deductions
-                    "healthcare_contribution": convert_numeric_value(data[20]),
-                    "pension_contribution": convert_numeric_value(data[21]),
-                    "tax_withholding": convert_numeric_value(data[22]),
-                    "additional_deductions": convert_numeric_value(data[23]),
-                    "apsalpen": convert_numeric_value(data[24]),
-                    "solidarity_fund_percentage": convert_numeric_value(data[25]),
-                    "solidarity_fund": convert_numeric_value(data[26]),
-                    "total_deductions": convert_numeric_value(data[27]),
+                    "healthcare_contribution": convert_numeric_value(
+                        data_dict["APORTESALUD DESPRENDIBLE"]
+                    ),
+                    "pension_contribution": convert_numeric_value(
+                        data_dict["APORTEPENSION DESPRENDIBLE"]
+                    ),
+                    "tax_withholding": convert_numeric_value(
+                        data_dict["RETEFUENTE DESPRENDIBLE"]
+                    ),
+                    "additional_deductions": convert_numeric_value(
+                        data_dict["OTROSDESCUENTOS DESPRENDIBLE"]
+                    ),
+                    "apsalpen": convert_numeric_value(data_dict["APSALPEN INCENTIVO"]),
+                    "solidarity_fund_percentage": convert_numeric_value(
+                        data_dict["FONDO SOLIDARIDAD PORCENTAJE"]
+                    ),
+                    "solidarity_fund": convert_numeric_value(
+                        data_dict["FONDO SOLIDARIDAD"]
+                    ),
+                    "total_deductions": convert_numeric_value(
+                        data_dict["TOTALDEDUC DESPRENDIBLE"]
+                    ),
                     # Final pay and contact
-                    "net_pay": convert_numeric_value(data[28]),
+                    "net_pay": convert_numeric_value(
+                        data_dict["TOTALRECIB DESPRENDIBLE"]
+                    ),
                     "email": email,
                 }
             )
@@ -191,8 +272,9 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 payslips.append(Payslip(**payslip.validated_data))
             else:
                 return Response(
-                    {"Error": payslip.errors, "cedula": data[2]}, status=400
+                    {"Error": payslip.errors, "cedula": data_dict["cedula"]}, status=400
                 )
+
         Payslip.objects.bulk_create(payslips)
         # Make a pdf with the payslip and send it to the user
         return send_payslip(payslips)

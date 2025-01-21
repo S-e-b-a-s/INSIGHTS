@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import override_settings
 from django.urls import reverse
+
 from payslip.models import Payslip
 from services.tests import BaseTestCase
 
@@ -65,6 +66,7 @@ class EmploymentCertificationTest(BaseTestCase):
         """Tests that the user can get the employment certification with months."""
         self.user.cedula = self.payslip_data["identification"]
         self.user.save()
+        Payslip.objects.create(**self.payslip_data)
         Payslip.objects.create(**self.payslip_data)
         response = self.client.post(
             reverse("send-employment-certification"), {"months": 1}
