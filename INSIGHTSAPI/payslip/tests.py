@@ -161,9 +161,7 @@ class PayslipTest(BaseTestCase):
         )
         self.assertEqual(
             response.data,
-            {
-                "Error": "El archivo debe tener 29 columnas, el subido tiene 2",
-            },
+            {"Error": "El archivo no tiene la columna TITULO DESPRENDIBLE"},
         )
 
     def test_upload_without_permission(self):

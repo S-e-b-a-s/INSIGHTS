@@ -1,25 +1,27 @@
 """User views."""
 
-import os
 import base64
 import logging
-import pdfkit
+import os
+
 import mysql.connector
+import pdfkit
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.db import connections
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.formats import number_format
 from num2words import num2words
-from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from django.template.loader import render_to_string
-from django.conf import settings
-from django.db import connections
-from django.utils.formats import number_format
-from django.utils import timezone
+from rest_framework.response import Response
+
 from payslip.models import Payslip
-from django.core.mail import EmailMessage
 from users.models import User
+
 from .models import EmploymentCertification
 from .serializers import EmploymentCertificationSerializer
-
 
 logger = logging.getLogger("requests")
 
@@ -81,26 +83,29 @@ def create_employment_certification(request):
     bonus_amount = None
     if months:
         months = int(months)
+        payslips_amount = months * 2
         # Get the last X bonus in the payslips
-        payslips = Payslip.objects.filter(
-            identification=identification).order_by(
+        payslips = Payslip.objects.filter(identification=identification).order_by(
             "-created_at"
-        )[:months]
-        if months > payslips.count():
+        )[:payslips_amount]
+        if payslips_amount > payslips.count():
             return Response(
-                {"error": f"El usuario no tiene {months} desprendibles de nómina."},
+                {"error": f"El usuario no tiene suficientes desprendibles de nómina."},
                 status=404,
             )
         # Get the average of the last X bonus
-        bonus_amount = int(sum(
-            [
-                p.bonus_paycheck
-                + p.surcharge_holiday_allowance
-                + p.surcharge_night_shift_allowance
-                + p.surcharge_night_shift_holiday_allowance
-                for p in payslips
-            ]
-        ) / len(payslips))
+        bonus_amount = int(
+            sum(
+                [
+                    p.bonus_paycheck
+                    + p.surcharge_holiday_allowance
+                    + p.surcharge_night_shift_allowance
+                    + p.surcharge_night_shift_holiday_allowance
+                    for p in payslips
+                ]
+            )
+            / len(payslips)
+        )
     if identification:
         user = User.objects.filter(cedula=identification).first()
         if not user:
@@ -193,7 +198,7 @@ def create_employment_certification(request):
         None,
         [str(email)],
     )
-    email_content.attach(filename="Certificación laboral.pdf", content=pdf, mimetype="application/pdf") # type: ignore
+    email_content.attach(filename="Certificación laboral.pdf", content=pdf, mimetype="application/pdf")  # type: ignore
     email_content.send()
     return Response(
         {"message": "Certificación laboral enviada", "email": email}, status=200
@@ -230,7 +235,7 @@ def upload_old_certifications(request):
         "SELECT * FROM userscyc.despre_nom_his where fecha_envio > '2023-09' and fecha_envio < '2024-02-27'"
     )
     i = 0
-    for row in cursor.fetchall(): # type: ignore
+    for row in cursor.fetchall():  # type: ignore
         i += 1
         Payslip.objects.create(
             title=row[1],
