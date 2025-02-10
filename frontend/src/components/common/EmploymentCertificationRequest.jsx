@@ -14,6 +14,7 @@ import {
     Typography,
     Button,
     Alert,
+    Tooltip,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
@@ -114,16 +115,19 @@ const EmploymentCertificationRequest = ({
                     meses promediados de estas, si las hubiera.
                 </DialogContentText>
                 <FormGroup sx={{ mt: '.5rem' }}>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChangeCheck}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                        }
-                        label="Incluir bonificaciones"
-                    />
+                    <Tooltip title="Temporalmente deshabilitado">
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={checked}
+                                    disabled
+                                    onChange={handleChangeCheck}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                            }
+                            label="Incluir bonificaciones"
+                        />
+                    </Tooltip>
                 </FormGroup>
                 <Collapse sx={{ py: '1rem' }} in={openCollapseBonuses}>
                     <TextField
