@@ -1,13 +1,15 @@
 """Test the authentication."""
+
 import os
+
 import ldap  # type: ignore
-from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
+from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
+
 from users.models import User
 
 
@@ -70,6 +72,10 @@ class TokenCheckTest(APITestCase):
         self.assertEqual(response.data["cargo"], user.job_position.name)
         self.assertEqual(response.data["email"], user.email)
         self.assertEqual(response.data["rango"], user.job_position.rank)
+        self.assertEqual(
+            response.data["area"],
+            user.area.name,
+        )
 
     def test_token_obtain_fail(self):
         """Test that the token obtain endpoint works correctly."""

@@ -117,6 +117,7 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_vacation_create_same_month(self):
         """Test creating a vacation that spans two months."""
         super().setUp()
+        print("User area:", self.user.area)
         self.vacation_request["sat_is_working"] = False
         self.vacation_request["start_date"] = "2024-07-22"
         response = self.client.post(
@@ -201,8 +202,6 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_vacation_list_vacation_manager(self):
         """Test listing all vacations endpoint for a vacation manager."""
         self.test_user.area.vacation_managers.add(self.user)
-        print(self.test_user.area)
-        print(self.user.area)
         VacationRequest.objects.create(**self.vacation_request_user)
         VacationRequest.objects.create(**self.vacation_request_user)
         response = self.client.get(reverse("vacation-list"))
@@ -606,3 +605,20 @@ class VacationRequestModelTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+    @freeze_time("2024-07-10 10:00:00")
+    def test_bypass_month_limitation(self):
+        """Test bypassing the month limitation."""
+        super().setUp()
+        self.user.area = Area.objects.create(
+            name="FISCALIA GENERAL DE LA NACION", manager=self.test_user
+        )
+        self.user.save()
+        self.vacation_request["start_date"] = "2024-07-11"
+        self.vacation_request["end_date"] = "2024-07-18"
+        self.vacation_request["sat_is_working"] = True
+        response = self.client.post(
+            reverse("vacation-list"),
+            self.vacation_request,
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)

@@ -69,7 +69,7 @@ class User(AbstractUser):
             return " ".join(part.capitalize() for part in name.split())
 
         if self.last_name:
-            return (
+            return str(
                 f"{capitalize_name(self.first_name)} {capitalize_name(self.last_name)}"
             )
         return capitalize_name(self.first_name)

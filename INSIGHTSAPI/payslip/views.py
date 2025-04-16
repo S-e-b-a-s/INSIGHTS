@@ -91,7 +91,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
             )
         row_header = file_content.split("\n")[0]
         header_separated = row_header.split(";")
-        header = [column.strip() for column in header_separated]
+        header = [column.strip().replace('\ufeff', "") for column in header_separated]
         rows = file_content.split("\n")[1:]
         payslips = []
 
@@ -116,15 +116,15 @@ class PayslipViewSet(viewsets.ModelViewSet):
             "PRIMA",
             "CESANTIAS",
             "TOTALDEV DESPRENDIBLE",
-            "healthcare_contribution",
-            "pension_contribution",
-            "tax_withholding",
-            "additional_deductions",
-            "apsalpen",
-            "solidarity_fund_percentage",
-            "solidarity_fund",
-            "total_deductions",
-            "net_pay",
+            "APORTESALUD DESPRENDIBLE",
+            "APORTEPENSION DESPRENDIBLE",
+            "RETEFUENTE DESPRENDIBLE",
+            "OTROSDESCUENTOS DESPRENDIBLE",
+            "APSALPEN INCENTIVO",
+            "FONDO SOLIDARIDAD PORCENTAJE",
+            "FONDO SOLIDARIDAD",
+            "TOTALDEDUC DESPRENDIBLE",
+            "TOTALRECIB DESPRENDIBLE",
         ]
 
         for line in rows:
@@ -175,7 +175,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
                             )
                             user = User.objects.get(
                                 cedula=data_dict["CEDULA DESPRENDIBLE"]
-                            )
+                            )   
                             email = user.email
                             identification = user.cedula
                         except Exception as e:
@@ -205,7 +205,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     "salary": convert_numeric_value(data_dict["SUELDO DESPRENDIBLE"]),
                     "days": data_dict["DIASLAB DESPRENDIBLE"],
                     "biweekly_period": convert_numeric_value(
-                        data_dict[" QUINCENA DESPRENDIBLE "]
+                        data_dict["QUINCENA DESPRENDIBLE"]
                     ),
                     # Earnings
                     "transport_allowance": convert_numeric_value(

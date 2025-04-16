@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
+
 from services.tests import BaseTestCase
 from users.models import User
 
@@ -285,6 +286,10 @@ class GoalAPITestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 110)  # type: ignore
         self.assertIn("ENERO-2022", response.data[0].get("goal_date"))  # type: ignore
+        # Check that the history is not empty
+        history = Goals.history.all().first()
+        print(history)
+        self.assertTrue(Goals.history.all().exists(), "History is empty")
 
     def test_get_only_my_history(self):
         """Test the get-history view."""
@@ -606,3 +611,10 @@ class GoalAPITestCase(BaseTestCase):
         )
         response = self.client.post(reverse("goal-list"), {"file": excel_file})
         self.assertEqual(response.status_code, 400)
+
+    def test_list_all_goals(self):
+        """Test the list-all-goals view."""
+        self.test_claro_upload()
+        response = self.client.get("/goals/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 110)

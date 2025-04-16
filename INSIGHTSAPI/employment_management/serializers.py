@@ -10,6 +10,7 @@ class EmploymentCertificationSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation["cedula"] = instance.user.cedula
+        representation["name"] = instance.user.get_full_name
         return representation
 
     class Meta:

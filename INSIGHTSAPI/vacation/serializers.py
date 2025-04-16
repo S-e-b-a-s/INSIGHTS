@@ -10,6 +10,8 @@ from hierarchy.models import JobPosition
 from .models import VacationRequest
 from .utils import get_working_days, is_working_day
 
+ALLOWED_AREAS_TO_BYPASS_MONTH_LIMITATION = ["FISCALIA GENERAL DE LA NACION"]
+
 
 class VacationRequestSerializer(serializers.ModelSerializer):
     """Serializer for the vacation request model."""
@@ -54,7 +56,9 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["username"] = instance.user.get_full_name()
         data["user_id"] = instance.user.id
-        if "request" in self.context and self.context["request"].user.has_perm("vacation.payroll_approval"):
+        if "request" in self.context and self.context["request"].user.has_perm(
+            "vacation.payroll_approval"
+        ):
             data["cedula"] = instance.user.cedula
         data.pop("manager_approved_at")
         data.pop("hr_approved_at")
@@ -110,6 +114,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             if (
                 attrs["start_date"].month == created_at.month
                 and attrs["start_date"].year == created_at.year
+                and can_bypass_month_limitation(request.user)
             ):
                 raise serializers.ValidationError(
                     "No puedes solicitar vacaciones para el mes actual."
@@ -166,3 +171,9 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                 setattr(instance, field, value)
         instance.save()
         return instance
+
+
+def can_bypass_month_limitation(user) -> bool:
+    """Check if the user can bypass the month limitation."""
+    # Check if the user has the permission to bypass the month limitation
+    return str(user.area.name).upper in ALLOWED_AREAS_TO_BYPASS_MONTH_LIMITATION

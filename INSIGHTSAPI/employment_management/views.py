@@ -104,7 +104,7 @@ def create_employment_certification(request):
                     for p in payslips
                 ]
             )
-            / len(payslips)
+            / payslips_amount
         )
     if identification:
         user = User.objects.filter(cedula=identification).first()
