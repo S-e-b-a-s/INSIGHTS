@@ -22,6 +22,7 @@ from dotenv import load_dotenv
 
 ENV_PATH = Path("/var/env/INSIGHTS.env")
 
+# Manejo de errores
 if not os.path.isfile(ENV_PATH):
     raise FileNotFoundError("The env file was not found.")
 

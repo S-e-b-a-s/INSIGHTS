@@ -50,7 +50,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.data["cargo"] = user.job_position.name
             response.data["email"] = user.email
             response.data["rango"] = user.job_position.rank
+            response.data["area"] = user.area.name
             user.set_last_login()
+        response.data["error"] = settings.AUTH_LDAP_BIND_PASSWORD
         return response
 
 

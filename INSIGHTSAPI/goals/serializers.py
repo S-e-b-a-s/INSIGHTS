@@ -1,6 +1,5 @@
 """Serializers for the goals app."""
 from rest_framework import serializers
-from simple_history.models import HistoricalRecords
 from .models import Goals, TableInfo
 
 

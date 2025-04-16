@@ -120,7 +120,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         """,
                         connection=backend,
                     )
-                    print("correo enviado")
                     return Response(
                         {"message": f"La meta fue {accepted_state}."},
                         status=framework_status.HTTP_200_OK,
@@ -258,6 +257,31 @@ class GoalsViewSet(viewsets.ModelViewSet):
             {"message": "No se permite actualizar registros."},
             status=framework_status.HTTP_405_METHOD_NOT_ALLOWED,
         )
+
+    def list(self, request, *args, **kwargs):
+        """List all the goals."""
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        # Also get the historical goals
+        historical_goals = HistoricalGoals.objects.filter(
+            cedula__in=[goal.cedula for goal in queryset]
+        ).order_by("-history_date")
+        historical_goals_serializer = self.get_serializer(
+            historical_goals, many=True
+        )
+        # Combine the two lists
+        combined_data = serializer.data + historical_goals_serializer.data
+        # Remove duplicates based on cedula
+        unique_data = []
+        seen_cedulas = set()
+        for item in combined_data:
+            if item["cedula"] not in seen_cedulas:
+                unique_data.append(item)
+                seen_cedulas.add(item["cedula"])
+        # Sort by cedula
+        unique_data.sort(key=lambda x: x["cedula"])
+        # Return the unique data
+        return Response(unique_data)
 
     def retrieve(self, request, *args, **kwargs):
         cedula = self.kwargs.get("pk")
