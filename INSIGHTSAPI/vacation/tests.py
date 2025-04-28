@@ -55,6 +55,7 @@ class WorkingDayTestCase(TestCase):
 
 
 @override_settings(DEFAULT_FILE_STORAGE="django.core.files.storage.InMemoryStorage")
+@freeze_time("2024-05-01 10:00:00")
 class VacationRequestModelTestCase(BaseTestCase):
     """Test module for VacationRequest model."""
 
@@ -113,13 +114,12 @@ class VacationRequestModelTestCase(BaseTestCase):
             "Debes especificar si trabajas los sábados.",
         )
 
-    @freeze_time("2024-07-01 10:00:00")
+    @freeze_time("2024-01-01 10:00:00")
     def test_vacation_create_same_month(self):
         """Test creating a vacation that spans two months."""
         super().setUp()
-        print("User area:", self.user.area)
         self.vacation_request["sat_is_working"] = False
-        self.vacation_request["start_date"] = "2024-07-22"
+        self.vacation_request["start_date"] = "2024-01-02"
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
@@ -494,8 +494,8 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_validate_vacation_request_not_working_day_sat_working(self):
         """Test the validation of a vacation request on a Saturday with working Saturdays."""
         self.vacation_request["sat_is_working"] = True
-        self.vacation_request["start_date"] = "2024-05-04"
-        self.vacation_request["end_date"] = "2024-05-06"
+        self.vacation_request["start_date"] = "2025-04-05"
+        self.vacation_request["end_date"] = "2025-04-09"
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
@@ -505,7 +505,7 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_validate_vacation_request_not_working_day_end(self):
         """Test the validation of a vacation request on a non-working day."""
         self.vacation_request["sat_is_working"] = False
-        self.vacation_request["end_date"] = "2024-01-01"
+        self.vacation_request["end_date"] = "2025-04-05"
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
@@ -538,8 +538,8 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_validate_vacation_request_not_working_day_sat_working_end(self):
         """Test the validation of a vacation request on a Saturday with working Saturdays."""
         self.vacation_request["sat_is_working"] = True
-        self.vacation_request["start_date"] = "2024-05-03"
-        self.vacation_request["end_date"] = "2024-05-04"
+        self.vacation_request["start_date"] = "2025-04-03"
+        self.vacation_request["end_date"] = "2025-04-05"
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
@@ -606,16 +606,25 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
-    @freeze_time("2024-07-10 10:00:00")
-    def test_bypass_month_limitation(self):
+    @freeze_time("2024-05-21 10:00:00")
+    def test_bypass_month_limitations(self):
         """Test bypassing the month limitation."""
         super().setUp()
         self.user.area = Area.objects.create(
             name="FISCALIA GENERAL DE LA NACION", manager=self.test_user
         )
         self.user.save()
-        self.vacation_request["start_date"] = "2024-07-11"
-        self.vacation_request["end_date"] = "2024-07-18"
+        # Bypass get vacation on current month
+        self.vacation_request["start_date"] = "2024-05-24"
+        self.vacation_request["end_date"] = "2024-05-28"
+        self.vacation_request["sat_is_working"] = True
+        response = self.client.post(
+            reverse("vacation-list"),
+            self.vacation_request,
+        )
+        # Bypass get vacation next month, after 20
+        self.vacation_request["start_date"] = "2024-06-22"
+        self.vacation_request["end_date"] = "2024-06-25"
         self.vacation_request["sat_is_working"] = True
         response = self.client.post(
             reverse("vacation-list"),

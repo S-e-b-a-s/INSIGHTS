@@ -107,17 +107,10 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             if (
                 created_at.day > 20
                 and created_at.month + 1 == attrs["start_date"].month
+                and not can_bypass_month_limitation(request.user)
             ):
                 raise serializers.ValidationError(
                     "Después del día 20 no puedes solicitar vacaciones para el mes siguiente."
-                )
-            if (
-                attrs["start_date"].month == created_at.month
-                and attrs["start_date"].year == created_at.year
-                and can_bypass_month_limitation(request.user)
-            ):
-                raise serializers.ValidationError(
-                    "No puedes solicitar vacaciones para el mes actual."
                 )
             if attrs["start_date"] > attrs["end_date"]:
                 raise serializers.ValidationError(
@@ -126,6 +119,14 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             if attrs["end_date"].weekday() == 6:
                 raise serializers.ValidationError(
                     "No puedes terminar tus vacaciones un domingo."
+                )
+            if (
+                attrs["start_date"].month == created_at.month
+                and attrs["start_date"].year == created_at.year
+                and not can_bypass_month_limitation(request.user)
+            ):
+                raise serializers.ValidationError(
+                    "No puedes solicitar vacaciones para el mes actual."
                 )
         else:
             # Update
@@ -176,4 +177,8 @@ class VacationRequestSerializer(serializers.ModelSerializer):
 def can_bypass_month_limitation(user) -> bool:
     """Check if the user can bypass the month limitation."""
     # Check if the user has the permission to bypass the month limitation
-    return str(user.area.name).upper in ALLOWED_AREAS_TO_BYPASS_MONTH_LIMITATION
+    area = str(user.area.name).strip().upper()
+    allowed_areas = [
+        area.strip().upper() for area in ALLOWED_AREAS_TO_BYPASS_MONTH_LIMITATION
+    ]
+    return area in allowed_areas

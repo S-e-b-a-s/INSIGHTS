@@ -617,4 +617,6 @@ class GoalAPITestCase(BaseTestCase):
         self.test_claro_upload()
         response = self.client.get("/goals/")
         self.assertEqual(response.status_code, 200)
+        print(Goals.objects.all().count())
+        print(Goals.history.all().count())
         self.assertEqual(len(response.data), 110)
