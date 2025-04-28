@@ -17,7 +17,7 @@ from rest_framework.response import Response
 
 from services.permissions import CustomizableGetDjangoModelViewPermissions
 
-from .models import Goals, HistoricalGoals, TableInfo
+from .models import Goals, TableInfo
 from .serializers import GoalSerializer
 
 logger = logging.getLogger("requests")
