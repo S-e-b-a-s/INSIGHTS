@@ -56,10 +56,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["username"] = instance.user.get_full_name()
         data["user_id"] = instance.user.id
-        if "request" in self.context and self.context["request"].user.has_perm(
-            "vacation.payroll_approval"
-        ):
-            data["cedula"] = instance.user.cedula
+        data["cedula"] = instance.user.cedula
         data.pop("manager_approved_at")
         data.pop("hr_approved_at")
         data.pop("payroll_approved_at")

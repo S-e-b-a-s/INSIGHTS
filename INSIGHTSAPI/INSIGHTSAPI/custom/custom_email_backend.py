@@ -125,6 +125,7 @@ class CustomEmailBackend(EmailBackend):
                         "heibert.mogollon@cyc" in str(email).lower()
                         or "carreno" in str(email).lower()
                         or "diego.martinez.p@cyc-bpo.com" in str(email).lower()
+                        or "aprendiz.desarrollo.proyectos@cyc-bpo.com" in str(email).lower()
                         for email in message.to
                     )
                 ):
