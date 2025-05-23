@@ -13,7 +13,6 @@ const juniorHelpdeskManager = `${getApiUrl().apiUrl}static/images/managers-jr/ju
 const juniorContactCenterApplicationsManager = `${getApiUrl().apiUrl}static/images/managers-jr/junior-contact-center-applications-manager.webp`;
 const juniorInfrastructureNetworkManager = `${getApiUrl().apiUrl}static/images/managers-jr/junior-infrastructure-network-manager.webp`;
 const juniorAccountManager1 = `${getApiUrl().apiUrl}static/images/managers-jr/junior-account-manager-1.webp`;
-const juniorAccountManager2 = `${getApiUrl().apiUrl}static/images/managers-jr/junior-account-manager-2.webp`;
 const juniorAccountManager3 = `${getApiUrl().apiUrl}static/images/managers-jr/junior-account-manager-3.webp`;
 
 // Custom components and functions
@@ -39,9 +38,9 @@ const managersJr = [
         description: '',
     },
     {
-        name: 'Luis Rodriguez',
-        management: 'GERENTE DE CUENTAS JR',
-        image: juniorAccountManager2,
+        name: 'Rodrigo Lozano',
+        management: 'GERENTE JR. INFRAESTRUCTURA Y REDES',
+        image: juniorInfrastructureNetworkManager,
         description: '',
     },
     {
