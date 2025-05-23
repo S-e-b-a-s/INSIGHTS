@@ -21,7 +21,7 @@ jobs:
         with:
             node-version: "18.17.1" # Adjust this to your required Node version
 
-      - name: Install Pnpm
+        - name: Install Pnpm
         run: npm install -g pnpm
 
         - name: Install dependencies
