@@ -72,9 +72,10 @@ export const CalendarRange = forwardRef(function CalendarRange(
     const today = new Date();
     const currentYear = today.getFullYear();
     const currentMonth = today.getMonth();
+    const currentDay = today.getDate();
 
     let minDate;
-    if (today.getDate() > 20) {
+    if (currentDay > 20) {
         minDate = new Date(currentYear, currentMonth + 2, 1);
     } else {
         minDate = new Date(currentYear, currentMonth + 1, 1);
