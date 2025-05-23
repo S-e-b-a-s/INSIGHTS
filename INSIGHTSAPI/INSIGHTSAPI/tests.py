@@ -103,7 +103,7 @@ class CustomEmailBackendTestCase(TestCase):
             self.assertIn("not allowed in test mode", str(e))
 
     @override_settings(
-        ADMINS=[("Heibert Mogollon", settings.EMAIL_FOR_TEST)],
+        ADMINS=[("Sebastian Carreño", settings.EMAIL_FOR_TEST)],
         DEBUG=False,  # Ensure DEBUG is False to enable email sending on errors
     )
     def test_admin_email_on_server_error(self):

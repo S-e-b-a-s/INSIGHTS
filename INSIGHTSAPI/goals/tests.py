@@ -47,7 +47,7 @@ class GoalAPITestCase(BaseTestCase):
         # Create a goal object
         Goals.objects.create(
             cedula=self.user.cedula,
-            name="Heibert",
+            name="Juan",
             campaign_goal="Base Test Goal",
             result="50",
             evaluation="50",
@@ -333,7 +333,7 @@ class GoalAPITestCase(BaseTestCase):
         # Create a goal object
         Goals.objects.create(
             cedula=settings.TEST_CEDULA,
-            name="Heibert",
+            name="Juan",
             campaign_goal="Base Test Goal",
             result="50",
             evaluation="50",
@@ -489,7 +489,7 @@ class GoalAPITestCase(BaseTestCase):
             TableInfo.objects.create(**data)
         goal = Goals.objects.create(
             cedula=settings.TEST_CEDULA,
-            name="Heibert",
+            name="Juan",
             campaign_goal="Base Test Goal",
             result="50",
             evaluation="50",
@@ -524,7 +524,7 @@ class GoalAPITestCase(BaseTestCase):
         # Get the first goal from the database
         goal = Goals.objects.create(
             cedula=settings.TEST_CEDULA,
-            name="Heibert",
+            name="Juan",
             campaign_goal="Base Test Goal",
             result="50",
             evaluation="50",
@@ -558,7 +558,7 @@ class GoalAPITestCase(BaseTestCase):
         # Get the first goal from the database
         goal = Goals.objects.create(
             cedula=settings.TEST_CEDULA,
-            name="Heibert",
+            name="Juan",
             campaign_goal="Base Test Goal",
             result="50",
             evaluation="50",
