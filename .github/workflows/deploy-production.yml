@@ -5,6 +5,9 @@ on:
     branches:
       - Production-version # Adjust this to your main branch
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: production
