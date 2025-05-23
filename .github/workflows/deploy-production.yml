@@ -6,40 +6,42 @@ on:
       - Production-version # Adjust this to your main branch
 
 jobs:
-    deploy:
-        runs-on: production
+  deploy:
+    runs-on: production
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18.17.1" # Adjust this to your required Node version
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v2
-              with:
-                node-version: "18.17.1" # Adjust this to your required Node version
+      - name: Install Pnpm
+        run: npm install -g pnpm
 
-            - name: Install Pnpm
-              run: npm install -g pnpm
+      - name: Format code
+        run: pnpm format
 
-            - name: Format code
-              run: pnpm format
+      - name: Lint code
+        run: pnpm oxlint
 
-            - name: Lint code
-              run: pnpm oxlint
+      - name: Install dependencies
+        run: pnpm install
 
-            - name: Install dependencies
-              run: pnpm install
+      - name: Build project
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
 
-            - name: Build project
-              env:
-                SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-              run: NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
+      - name: Postbuild project
+        run: pnpm run postbuild
 
-            - name: Postbuild project
-              run: pnpm run postbuild
-
-            - name: Deploy to production server
-              run: |
-                rm -rf /var/www/INSIGHTS/dist/*
-                cp -r ./dist/* /var/www/INSIGHTS/dist
-                sudo systemctl restart apache2
+      - name: Deploy to production server
+        run: |
+          rm -rf /var/www/INSIGHTS/dist/*
+          cp -r ./dist/* /var/www/INSIGHTS/dist
+          sudo systemctl restart apache2
