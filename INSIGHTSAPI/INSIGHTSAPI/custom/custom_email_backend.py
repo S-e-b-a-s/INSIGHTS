@@ -100,7 +100,7 @@ class CustomEmailBackend(EmailBackend):
             self.connection = SMTP(self.host, self.port)
             context = ssl.create_default_context()
             context.check_hostname = False
-            context.verify_mode = ssl.CERT_NONE
+            context.verify_mode = ssl.CERT_NONE #! Quitar si es posible
             self.connection.starttls(context=context)
             self.connection.login(self.username, self.password)
             return True
