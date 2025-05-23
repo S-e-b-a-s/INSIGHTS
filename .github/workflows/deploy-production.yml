@@ -26,14 +26,17 @@ jobs:
       - name: Install Pnpm
         run: npm install -g pnpm
 
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Format code
         run: pnpm format
 
       - name: Lint code
         run: pnpm oxlint
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Run tests
+        run: pnpm run test
 
       - name: Build project
         env:
