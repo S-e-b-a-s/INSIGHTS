@@ -423,7 +423,7 @@ AUTH_LDAP_ALWAYS_UPDATE_USER = False
 
 # This works faster in ldap but i don't know how implement it with the sAMAcountName
 # AUTH_LDAP_USER_DN_TEMPLATE =
-#'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
+#'CN=Juan Sebastian Carreño Daza,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
 # AUTH_LDAP_USER_DN_TEMPLATE =
 #'(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'

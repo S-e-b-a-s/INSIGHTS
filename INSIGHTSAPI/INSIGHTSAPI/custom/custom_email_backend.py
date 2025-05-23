@@ -122,8 +122,7 @@ class CustomEmailBackend(EmailBackend):
             for message in email_messages:
                 if ("test" in sys.argv or settings.DEBUG) and not (
                     all(
-                        "heibert.mogollon@cyc" in str(email).lower()
-                        or "carreno" in str(email).lower()
+                        "carreno" in str(email).lower()
                         or "diego.martinez.p@cyc-bpo.com" in str(email).lower()
                         or "aprendiz.desarrollo.proyectos@cyc-bpo.com" in str(email).lower()
                         for email in message.to

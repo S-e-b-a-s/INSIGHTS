@@ -82,7 +82,7 @@ class TokenCheckTest(APITestCase):
         client = self.client
         url = reverse("obtain-token")
         response = client.post(
-            url, {"username": "heibert.mogollon", "password": "TEST"}, format="json"
+            url, {"username": "juan.carreno", "password": "TEST"}, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertNotIn("access-token", client.cookies)

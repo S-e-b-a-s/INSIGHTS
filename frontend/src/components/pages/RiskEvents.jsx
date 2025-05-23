@@ -493,6 +493,7 @@ export const RiskEvent = () => {
                     label: 'Ejecución y Administración de Procesos',
                 },
                 { value: 'AGENTES EXTERNOS', label: 'Agentes Externos' },
+                { value: 'DIRECTIVOS EXTERNOS', label: 'Directivos Externos' },
             ],
         },
         {

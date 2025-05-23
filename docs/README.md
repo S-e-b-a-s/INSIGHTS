@@ -82,7 +82,7 @@ Pre-requisites:
 3. Run the following command to build the frontend: `pnpm run build && pnpm run postbuild`
 4. The files will be built in the `/dist` directory
 5. Move the `/dist` directory to the server where the frontend will be hosted using the command `scp -r dist user@ip_adress/directory/`
-6. Access the server where the frontend will be hosted via SSH and restart the web server using the command `sudo systemctl restart apache2`
+6. Access the server where the frontend will be hosted via SSH and reload the web server using the command `sudo systemctl reload apache2`
 
 > Note: The login and other functionalities will not work if the backend is not running, also have in mind that the frontend will point to the development backend server by default unless the frontend URL where is hosted is exactly: `https://intranet.cyc-bpo.com`, this can be change in the `src/assets/getApi.js` file
 

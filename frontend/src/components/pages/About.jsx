@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 
 // Media
-const generalManager = `${getApiUrl().apiUrl}static/images/managers/general-manager.webp`;
 const bidManager = `${getApiUrl().apiUrl}static/images/managers/bid-manager.webp`;
 const rhManager = `${getApiUrl().apiUrl}static/images/managers/rh-manager.webp`;
 const planningManager = `${getApiUrl().apiUrl}static/images/managers/planning-manager.webp`;
@@ -21,7 +20,6 @@ const operationsManager = `${getApiUrl().apiUrl}static/images/managers/operation
 const legalManager = `${getApiUrl().apiUrl}static/images/managers/legal-manager.webp`;
 const internalControlManager = `${getApiUrl().apiUrl}static/images/managers/internal-control-manager.webp`;
 const administrativeManager = `${getApiUrl().apiUrl}static/images/managers/administrative-manager.webp`;
-const serviceOperationsManager = `${getApiUrl().apiUrl}static/images/managers/service-operations-manager.webp`;
 const president = `${getApiUrl().apiUrl}static/images/managers/president.webp`;
 const about = `${getApiUrl().apiUrl}static/images/about/about.webp`;
 const vision = `${getApiUrl().apiUrl}static/images/about/vision.webp`;
@@ -42,13 +40,6 @@ const managements = [
         image: president,
         description:
             'Soy el fundador de C&C, desde muy joven soñaba con crear una empresa que pudiera impulsar el crecimiento económico de nuestro país y al mismo tiempo crear empleos de calidad para la gente que compartiera esta visión. Mis amigos más cercanos me definen como una persona emprendedora y visionaria.',
-    },
-    {
-        name: 'César Garzón',
-        management: 'Gerente General',
-        image: generalManager,
-        description:
-            'Garantizar la sostenibilidad de la compañía a través de la planeación, liderazgo y control de las diferentes áreas que permitan alcanzar los objetivos establecidos con los clientes, el recurso humano y los accionistas.',
     },
     {
         name: 'Leidy Castillo',
@@ -84,13 +75,6 @@ const managements = [
         image: collectionsSalesOperationsManager,
         description:
             'Liderar, planificar y controlar las operaciones de las campañas de Cobranzas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.',
-    },
-    {
-        name: 'Héctor Gabriel Sotelo',
-        management: 'Gerente de Operaciones de Servicio al Cliente',
-        image: serviceOperationsManager,
-        description:
-            'Liderar, planificar y controlar las operaciones de las campañas de Servicios y Ventas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.',
     },
     {
         name: 'Jeanneth Pinzón ',
@@ -277,10 +261,7 @@ const About = () => {
                             variant="body2"
                             sx={{ fontSize: '16px', color: 'gray' }}
                         >
-                            Ofrecer un modelo de servicios que en el 2026
-                            trascienda fronteras hacia los países de América
-                            Latina y España, a partir de la transformación
-                            digital y el mejor talento humano.
+                            Consolidarnos como el mejor aliado estratégico, ofreciendo un modelo de servicios BPO que en el 2026 trascienda fronteras, a partir de la transformación digital y la calidad de nuestro talento humano.
                         </Typography>
                     </Box>
                     <img
