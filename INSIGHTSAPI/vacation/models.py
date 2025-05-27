@@ -47,6 +47,14 @@ class VacationRequest(models.Model):
         related_name="vacation_requests",
         on_delete=models.PROTECT,
     )
+    # this column is used to store the area of the user at the time of the request
+    user_area = models.ForeignKey(
+        "hierarchy.Area",
+        related_name="vacation_requests",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         """Meta class for the vacation request model."""

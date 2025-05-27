@@ -5,7 +5,7 @@ from distutils.util import strtobool
 
 from rest_framework import serializers
 
-from hierarchy.models import JobPosition
+from hierarchy.models import JobPosition, Area
 
 from .models import VacationRequest
 from .utils import get_working_days, is_working_day
@@ -40,6 +40,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "status",
             "comment",
             "user_job_position",
+            "user_area",
         ]
         read_only_fields = [
             "boss_approved_at",
@@ -49,6 +50,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "created_at",
             "user",
             "user_job_position",
+            "user_area",
         ]
 
     def to_representation(self, instance):
@@ -57,10 +59,12 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         data["username"] = instance.user.get_full_name()
         data["user_id"] = instance.user.id
         data["cedula"] = instance.user.cedula
+        data["area"] = instance.user_area.name if instance.user_area else None
         data.pop("manager_approved_at")
         data.pop("hr_approved_at")
         data.pop("payroll_approved_at")
         data.pop("user_job_position")
+        data.pop("user_area")
         return data
 
     def validate(self, attrs):
@@ -149,6 +153,11 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             id=validated_data["user"].job_position_id
         )
         validated_data["user_job_position"] = job_position
+        # Add the user area to the validated data
+        area = Area.objects.get(
+            id=validated_data["user"].area_id
+        )
+        validated_data["user_area"] = area
         # Create the vacation request
         vacation_request = super().create(validated_data)
         return vacation_request

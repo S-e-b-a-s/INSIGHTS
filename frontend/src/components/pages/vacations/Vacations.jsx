@@ -200,6 +200,11 @@ export const Vacations = () => {
             width: 250,
         },
         {
+            field: 'area',
+            headerName: 'Área',
+            width: 200,
+        },
+        {
             field: 'boss_is_approved',
             headerName: 'Aprobación Jefe',
             width: 160,
