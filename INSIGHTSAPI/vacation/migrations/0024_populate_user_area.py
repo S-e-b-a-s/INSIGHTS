@@ -10,12 +10,18 @@ def populate_user_area(apps, schema_editor):
     # Get all vacation requests
     vacation_requests = VacationRequest.objects.all()
     
-    # Update each vacation request with the current area of the user
+    # Retrieve all users in a single query and create a lookup dictionary
+    users = User.objects.filter(id__in=[request.user_id for request in vacation_requests])
+    user_dict = {user.id: user for user in users}
+    
+    # Update vacation requests in memory
     for request in vacation_requests:
-        user = User.objects.get(id=request.user_id)
-        if user.area_id:
+        user = user_dict.get(request.user_id)
+        if user and user.area_id:
             request.user_area_id = user.area_id
-            request.save()
+    
+    # Save all updates in a single query
+    VacationRequest.objects.bulk_update(vacation_requests, ['user_area_id'])
 
 
 def reverse_populate_user_area(apps, schema_editor):
