@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('hierarchy', '0009_area_vacation_managers'),
-        ('vacation', '0024_populate_user_area'),
+        ('vacation', '0023_set_user_job_position'),
     ]
 
     operations = [
