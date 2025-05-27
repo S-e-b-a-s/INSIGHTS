@@ -32,7 +32,7 @@ def reverse_populate_user_area(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vacation', '0023_set_user_job_position'),
+        ('vacation', '0024_vacationrequest_user_area'),
     ]
 
     operations = [
