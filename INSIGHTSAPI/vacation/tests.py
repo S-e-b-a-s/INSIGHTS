@@ -97,6 +97,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.assertEqual(response.data["end_date"], "2024-01-18")
         vacation = VacationRequest.objects.get(pk=response.data["id"])
         self.assertEqual(vacation.user_job_position, self.user.job_position)
+        self.assertEqual(vacation.user_area, self.user.area)
         self.assertEqual(vacation.sat_is_working, False)
         self.assertEqual(vacation.duration, 12)
 
@@ -631,3 +632,58 @@ class VacationRequestModelTestCase(BaseTestCase):
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+    def test_vacation_area_persistence(self):
+        """Test that the user's area is stored at creation time and doesn't change."""
+        # Create a vacation request
+        self.vacation_request["sat_is_working"] = False
+        response = self.client.post(
+            reverse("vacation-list"),
+            self.vacation_request,
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        vacation = VacationRequest.objects.get(pk=response.data["id"])
+        original_area = vacation.user_area
+
+        # Change the user's area
+        new_area = Area.objects.create(name="New Test Area")
+        self.user.area = new_area
+        self.user.save()
+
+        # Verify the vacation request still has the original area
+        vacation.refresh_from_db()
+        self.assertEqual(vacation.user_area, original_area)
+        self.assertNotEqual(vacation.user_area, new_area)
+
+    def test_vacation_area_in_response(self):
+        """Test that the area is included in the API response."""
+        # Create a vacation request
+        self.vacation_request["sat_is_working"] = False
+        response = self.client.post(
+            reverse("vacation-list"),
+            self.vacation_request,
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Get the vacation request
+        response = self.client.get(
+            reverse("vacation-detail", kwargs={"pk": response.data["id"]})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["area"], self.user.area.name)
+
+    def test_vacation_list_includes_area(self):
+        """Test that the area is included in the list response."""
+        # Create a vacation request
+        self.vacation_request["sat_is_working"] = False
+        response = self.client.post(
+            reverse("vacation-list"),
+            self.vacation_request,
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Get the list of vacation requests
+        response = self.client.get(reverse("vacation-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["area"], self.user.area.name)
