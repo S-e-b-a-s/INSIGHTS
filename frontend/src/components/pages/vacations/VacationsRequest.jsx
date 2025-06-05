@@ -95,7 +95,7 @@ export const CalendarRange = forwardRef(function CalendarRange(
     );
 });
 
-const Picker = ({ value, onChange, isMondayToFriday, holidays }) => { 
+const Picker = ({ value, onChange, isMondayToFriday, holidays }) => {
     const isDateDisallowed = (date) => {
         if (
             holidays

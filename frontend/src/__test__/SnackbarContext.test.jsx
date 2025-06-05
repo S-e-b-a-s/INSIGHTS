@@ -1,9 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import {
-    SnackbarProvider,
-    useSnackbar,
-} from '@contexts/SnackbarContext';
+import { SnackbarProvider, useSnackbar } from '@contexts/SnackbarContext';
 import '@testing-library/jest-dom';
 
 // Test component to use the Snackbar context
