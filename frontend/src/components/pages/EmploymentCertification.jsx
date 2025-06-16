@@ -70,6 +70,7 @@ export const EmploymentCertification = () => {
     }, []);
 
     const columns = [
+        { field: 'id', headerName: 'ID', width: 100, valueFormatter: (value) => "CTL-" + value},
         { field: 'cedula', headerName: 'Cedula', width: 100 },
         { field: 'position', headerName: 'Cargo', width: 360, editable: false },
         {

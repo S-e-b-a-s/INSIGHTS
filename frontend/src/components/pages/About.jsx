@@ -261,7 +261,10 @@ const About = () => {
                             variant="body2"
                             sx={{ fontSize: '16px', color: 'gray' }}
                         >
-                            Consolidarnos como el mejor aliado estratégico, ofreciendo un modelo de servicios BPO que en el 2026 trascienda fronteras, a partir de la transformación digital y la calidad de nuestro talento humano.
+                            Consolidarnos como el mejor aliado estratégico,
+                            ofreciendo un modelo de servicios BPO que en el 2026
+                            trascienda fronteras, a partir de la transformación
+                            digital y la calidad de nuestro talento humano.
                         </Typography>
                     </Box>
                     <img

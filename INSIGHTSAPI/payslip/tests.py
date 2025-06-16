@@ -64,7 +64,7 @@ class PayslipTest(BaseTestCase):
 
     def test_get_only_my_payslips(self):
         """Test get payslips without permission."""
-        self.user.cedula = "1001185389"
+        self.user.cedula = "1000065648"
         self.user.save()
         self.test_upload_payslip_file()
         response = self.client.get("/payslips/")
