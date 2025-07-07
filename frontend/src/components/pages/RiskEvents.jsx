@@ -431,7 +431,7 @@ export const RiskEvent = () => {
             editable: false,
             valueGetter: (value) => {
                 if (value) {
-                    return new Date(value);
+                    return new Date(value + 'T00:00:00'); // Forzar la fecha en hora local
                 } else {
                     return '';
                 }
@@ -621,7 +621,7 @@ export const RiskEvent = () => {
             editable: false,
             valueGetter: (value) => {
                 if (value) {
-                    return new Date(value);
+                    return new Date(value + 'T00:00:00'); // Forzar la fecha en hora local
                 } else {
                     return '';
                 }
