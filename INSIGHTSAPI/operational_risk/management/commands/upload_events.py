@@ -26,7 +26,7 @@ class Command(BaseCommand):
         """Method to handle the command"""
 
         # Load Excel file (update path as needed)
-        file_path = os.path.join(os.getcwd(), "Eventos 2023.xlsx")
+        file_path = os.path.join(os.getcwd(), "Eventos 2025.xlsx")
 
         # Read each sheet into a pandas DataFrame
         df = pd.read_excel(file_path, sheet_name=None)
