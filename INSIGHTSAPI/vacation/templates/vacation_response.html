@@ -115,6 +115,10 @@
 			a partir del día <strong>{{ vacation.start_date }}</strong>, retomando actividades laborales el día
 			<strong>{{ vacation.return_date }}</strong>.
 		</p>
+		{% if vacation.paid_days %}
+		<p><strong>Nota:</strong> De los días solicitados, <strong>{{ vacation.paid_days }}</strong> día(s) serán
+			pagados en vez de tomados como descanso.</p>
+		{% endif %}
 		<p>Espero disfrute con agrado sus merecidas vacaciones.</p>
 		{% else %}
 		<p>

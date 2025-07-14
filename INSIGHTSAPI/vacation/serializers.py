@@ -41,6 +41,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "comment",
             "user_job_position",
             "user_area",
+            "paid_days",
         ]
         read_only_fields = [
             "boss_approved_at",
@@ -172,6 +173,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             # Status can only be updated to CANCELADA
             "status",
             "comment",
+            "paid_days",
         ]
         for field, value in validated_data.items():
             if field in allowed_fields:
