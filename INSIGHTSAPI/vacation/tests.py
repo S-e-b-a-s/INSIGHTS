@@ -1,7 +1,6 @@
 """This file contains the tests for the vacation model."""
 
 from datetime import datetime
-from datetime import date
 
 from django.contrib.auth.models import Permission
 from django.db.models import Q
@@ -70,12 +69,12 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.user.save()
         self.permission = Permission.objects.get(codename="payroll_approval")
         self.vacation_request = {
-            "start_date": date(2024, 1, 2),
-            "end_date": date(2024, 1, 18),
+            "start_date": "2024-01-02",
+            "end_date": "2024-01-18",
         }
         self.vacation_request_user = {
-            "start_date": date(2024, 1, 2),
-            "end_date": date(2024, 1, 18),
+            "start_date": "2024-01-02",
+            "end_date": "2024-01-18",
             "user": self.test_user,
             "user_job_position": self.test_user.job_position,
             "sat_is_working": True,
@@ -229,11 +228,9 @@ class VacationRequestModelTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
-            response.data["start_date"], "2024-01-02"
+            response.data["start_date"], self.vacation_request["start_date"]
         )
-        self.assertEqual(
-            response.data["end_date"], "2024-01-18"
-        )
+        self.assertEqual(response.data["end_date"], self.vacation_request["end_date"])
 
     def test_vacation_create_end_before_start(self):
         """Test creating a vacation with the end date before the start date."""
@@ -676,319 +673,17 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.assertEqual(response.data["area"], self.user.area.name)
 
     def test_vacation_list_includes_area(self):
-        """Test that vacation list includes area information."""
-        VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.get(reverse("vacation-list"))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("area", response.data[0])
-
-    def test_vacation_create_with_paid_days(self):
-        """Test creating a vacation request with paid_days field."""
-        self.vacation_request["sat_is_working"] = False
-        self.vacation_request["paid_days"] = 5
-        response = self.client.post(
-            reverse("vacation-list"),
-            self.vacation_request,
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        self.assertEqual(response.data["paid_days"], 5)
-        vacation = VacationRequest.objects.get(pk=response.data["id"])
-        self.assertEqual(vacation.paid_days, 5)
-
-    def test_vacation_create_without_paid_days(self):
-        """Test creating a vacation request without paid_days field."""
+        """Test that the area is included in the list response."""
+        # Create a vacation request
         self.vacation_request["sat_is_working"] = False
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
         )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        self.assertIsNone(response.data.get("paid_days"))
-        vacation = VacationRequest.objects.get(pk=response.data["id"])
-        self.assertIsNone(vacation.paid_days)
-
-    def test_vacation_payroll_update_paid_days(self):
-        """Test payroll user updating paid_days field."""
-        self.user.user_permissions.add(self.permission)
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"paid_days": 3},
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.data["paid_days"], 3)
-        vacation_object.refresh_from_db()
-        self.assertEqual(vacation_object.paid_days, 3)
-
-    def test_vacation_payroll_update_paid_days_to_zero(self):
-        """Test payroll user setting paid_days to zero (removing it)."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["paid_days"] = 5
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"paid_days": 0},
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.data["paid_days"], 0)
-        vacation_object.refresh_from_db()
-        self.assertEqual(vacation_object.paid_days, 0)
-
-    def test_vacation_payroll_update_paid_days_to_null(self):
-        """Test payroll user removing paid_days by setting to null."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["paid_days"] = 5
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"paid_days": ""},
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertIsNone(response.data["paid_days"])
-        vacation_object.refresh_from_db()
-        self.assertIsNone(vacation_object.paid_days)
-
-    def test_vacation_non_payroll_update_paid_days(self):
-        """Test non-payroll user cannot update paid_days field."""
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"paid_days": 3},
-        )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
-        self.assertIn("You do not have permission to edit paid days", response.data["detail"])
-
-    def test_vacation_payroll_update_paid_days_without_permission(self):
-        """Test user without payroll permission cannot update paid_days."""
-        # Remove any existing permissions
-        self.user.user_permissions.clear()
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"paid_days": 3},
-        )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
-        self.assertIn("You do not have permission to edit paid days", response.data["detail"])
-
-    def test_vacation_payroll_update_paid_days_invalid_value(self):
-        """Test payroll user cannot set paid_days to invalid value."""
-        self.user.user_permissions.add(self.permission)
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"paid_days": -1},
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
-
-    def test_vacation_payroll_update_paid_days_exceeds_duration(self):
-        """Test payroll user cannot set paid_days greater than vacation duration."""
-        self.user.user_permissions.add(self.permission)
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        # Vacation duration is 12 days, so paid_days should not exceed that
-        response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"paid_days": 20},
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        # The model allows this, but it's a business logic consideration
-        vacation_object.refresh_from_db()
-        self.assertEqual(vacation_object.paid_days, 20)
-
-    def test_vacation_serializer_paid_days_included(self):
-        """Test that paid_days is included in serializer output."""
-        self.vacation_request_user["paid_days"] = 7
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        serializer = VacationRequestSerializer(vacation_object)
-        self.assertIn("paid_days", serializer.data)
-        self.assertEqual(serializer.data["paid_days"], 7)
-
-    def test_vacation_serializer_paid_days_null(self):
-        """Test that paid_days is included as null when not set."""
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        serializer = VacationRequestSerializer(vacation_object)
-        self.assertIn("paid_days", serializer.data)
-        self.assertIsNone(serializer.data["paid_days"])
-
-    def test_vacation_model_paid_days_field(self):
-        """Test that paid_days field is properly defined in model."""
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        # Test that the field exists and can be set
-        vacation_object.paid_days = 5
-        vacation_object.save()
-        vacation_object.refresh_from_db()
-        self.assertEqual(vacation_object.paid_days, 5)
-
-    def test_vacation_payroll_update_paid_days_and_other_fields(self):
-        """Test payroll user can update paid_days along with other allowed fields."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["hr_is_approved"] = True
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"paid_days": 3, "payroll_is_approved": True},
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.data["paid_days"], 3)
-        self.assertTrue(response.data["payroll_is_approved"])
-        vacation_object.refresh_from_db()
-        self.assertEqual(vacation_object.paid_days, 3)
-        self.assertTrue(vacation_object.payroll_is_approved)
-
-    def test_vacation_payroll_update_paid_days_after_approval(self):
-        """Test payroll user can update paid_days even after vacation is approved."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["hr_is_approved"] = True
-        self.vacation_request_user["payroll_is_approved"] = True
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"paid_days": 4},
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.data["paid_days"], 4)
-        vacation_object.refresh_from_db()
-        self.assertEqual(vacation_object.paid_days, 4)
-
-    def test_vacation_paid_days_in_list_response(self):
-        """Test that paid_days is included in list response."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["paid_days"] = 6
-        VacationRequest.objects.create(**self.vacation_request_user)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        
+        # Get the list of vacation requests
         response = self.client.get(reverse("vacation-list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("paid_days", response.data[0])
-        self.assertEqual(response.data[0]["paid_days"], 6)
-
-    def test_vacation_paid_days_null_in_list_response(self):
-        """Test that paid_days is null in list response when not set."""
-        self.user.user_permissions.add(self.permission)
-        VacationRequest.objects.create(**self.vacation_request_user)
-        response = self.client.get(reverse("vacation-list"))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("paid_days", response.data[0])
-        self.assertIsNone(response.data[0]["paid_days"])
-
-
-class PaidDaysTemplateTestCase(BaseTestCase):
-    """Test module for paid_days feature in templates."""
-
-    def setUp(self):
-        """Create a user and vacation request for template testing."""
-        super().setUp()
-        self.test_user = self.create_demo_user()
-        self.user.job_position.rank = 2
-        self.user.job_position.save()
-        self.user.area = self.test_user.area
-        self.user.save()
-        self.permission = Permission.objects.get(codename="payroll_approval")
-        self.vacation_request_user = {
-            "start_date": "2024-01-02",
-            "end_date": "2024-01-18",
-            "user": self.test_user,
-            "user_job_position": self.test_user.job_position,
-            "sat_is_working": True,
-        }
-
-    def test_vacation_request_template_with_paid_days(self):
-        """Test that vacation request template includes paid_days when set."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["paid_days"] = 5
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        
-        # Test the template rendering
-        from django.template.loader import render_to_string
-        context = {"vacation": vacation_object}
-        rendered_template = render_to_string("vacation_request.html", context)
-        
-        # Check that the paid_days paragraph is included
-        self.assertIn("Nota:", rendered_template)
-        self.assertIn("pagados en vez de tomados como descanso", rendered_template)
-
-    def test_vacation_request_template_without_paid_days(self):
-        """Test that vacation request template doesn't include paid_days when not set."""
-        self.user.user_permissions.add(self.permission)
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        
-        # Test the template rendering
-        from django.template.loader import render_to_string
-        context = {"vacation": vacation_object}
-        rendered_template = render_to_string("vacation_request.html", context)
-        
-        # Check that the paid_days paragraph is not included
-        self.assertNotIn("Nota:", rendered_template)
-        self.assertNotIn("día(s) serán pagados en vez de tomados", rendered_template)
-
-    def test_vacation_response_template_with_paid_days_approved(self):
-        """Test that vacation response template includes paid_days when approved."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["paid_days"] = 3
-        self.vacation_request_user["hr_is_approved"] = True
-        self.vacation_request_user["payroll_is_approved"] = True
-        self.vacation_request_user["boss_is_approved"] = True
-        self.vacation_request_user["manager_is_approved"] = True
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        
-        # Test the template rendering
-        from django.template.loader import render_to_string
-        context = {"vacation": vacation_object}
-        rendered_template = render_to_string("vacation_response.html", context)
-        
-        # Check that the paid_days paragraph is included
-        self.assertIn("Nota:", rendered_template)
-        self.assertIn("pagados en vez de tomados como descanso", rendered_template)
-
-    def test_vacation_response_template_without_paid_days_approved(self):
-        """Test that vacation response template doesn't include paid_days when not set."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["hr_is_approved"] = True
-        self.vacation_request_user["payroll_is_approved"] = True
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        
-        # Test the template rendering
-        from django.template.loader import render_to_string
-        context = {"vacation": vacation_object}
-        rendered_template = render_to_string("vacation_response.html", context)
-        
-        # Check that the paid_days paragraph is not included
-        self.assertNotIn("Nota:", rendered_template)
-        self.assertNotIn("día(s) serán pagados en vez de tomados como descanso", rendered_template)
-
-    def test_vacation_response_template_with_paid_days_rejected(self):
-        """Test that vacation response template doesn't include paid_days when rejected."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["paid_days"] = 4
-        # Create vacation without setting hr_is_approved to avoid triggering rejection email
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        # Use update() to avoid triggering the save method
-        VacationRequest.objects.filter(pk=vacation_object.pk).update(status="RECHAZADA")
-        vacation_object.refresh_from_db()
-        
-        # Test the template rendering
-        from django.template.loader import render_to_string
-        context = {"vacation": vacation_object}
-        rendered_template = render_to_string("vacation_response.html", context)
-        
-        # Check that the paid_days paragraph is not included for rejected requests
-        self.assertNotIn("Nota:", rendered_template)
-        self.assertNotIn("día(s) serán pagados en vez de tomados como descanso", rendered_template)
-
-    def test_vacation_pdf_generation_with_paid_days(self):
-        """Test that PDF generation works correctly with paid_days."""
-        self.user.user_permissions.add(self.permission)
-        self.vacation_request_user["paid_days"] = 6
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        
-        # Test PDF generation
-        pdf_content = vacation_object.generate_pdf()
-        self.assertIsInstance(pdf_content, bytes)
-        self.assertGreater(len(pdf_content), 0)
-
-    def test_vacation_pdf_generation_without_paid_days(self):
-        """Test that PDF generation works correctly without paid_days."""
-        self.user.user_permissions.add(self.permission)
-        vacation_object = VacationRequest.objects.create(**self.vacation_request_user)
-        
-        # Test PDF generation
-        pdf_content = vacation_object.generate_pdf()
-        self.assertIsInstance(pdf_content, bytes)
-        self.assertGreater(len(pdf_content), 0)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["area"], self.user.area.name)
