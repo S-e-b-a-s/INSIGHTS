@@ -334,6 +334,9 @@ def sync_staffnet_employee(request):
     campana = request.data.get("campana_general")
     gerencia = request.data.get("gerencia")
     correo = request.data.get("correo")
+    company_email = request.data.get("company_email")
+    first_name = request.data.get("first_name")
+    last_name = request.data.get("last_name")
     try:
         user = User.objects.get(cedula=cedula)
     except User.DoesNotExist:
@@ -344,6 +347,12 @@ def sync_staffnet_employee(request):
     user.area = area
     if correo:
         user.email = correo
+    if company_email:
+        user.company_email = company_email
+    if first_name:
+        user.first_name = first_name
+    if last_name:
+        user.last_name = last_name
     user.save()
     return Response({"status": "success"})
 
