@@ -8,6 +8,7 @@ from .views import (
     get_subordinates,
     get_points,
     upload_points,
+    sync_staffnet_employee,
 )
 
 urlpatterns = [
@@ -16,4 +17,6 @@ urlpatterns = [
     path("get-subordinates/", get_subordinates, name="get_subordinates"),
     path("get-points/", get_points, name="get_points"),
     path("upload-points/", upload_points, name="upload_points"),
+    path('sync_staffnet_employee/', sync_staffnet_employee, name='sync_staffnet_employee'),
+
 ]
