@@ -357,6 +357,15 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 return super().partial_update(request, *args, **kwargs)
+        elif "paid_days" in request.data:
+            # Only payroll users can update paid_days
+            if request.user.has_perm("vacation.payroll_approval"):
+                return super().partial_update(request, *args, **kwargs)
+            else:
+                return Response(
+                    {"detail": "You do not have permission to edit paid days."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
         if (
             "status" in request.data
             and request.user == self.get_object().user
