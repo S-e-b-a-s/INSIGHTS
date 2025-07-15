@@ -346,9 +346,9 @@ def sync_staffnet_employee(request):
     user.job_position = job_position
     user.area = area
     if correo:
-        user.email = correo
+        user.email = correo.upper()
     if company_email:
-        user.company_email = company_email
+        user.company_email = company_email.upper()
     if first_name:
         user.first_name = first_name
     if last_name:
