@@ -117,9 +117,11 @@
 		<p>
 			Me permito informarle que en respuesta a su comunicación recibida el día <strong>{{ vacation.created_at|date }}</strong>, usted podrá disfrutar de sus vacaciones en tiempo a partir del día <strong>{{ vacation.start_date }}</strong>, y hasta el día <strong>{{ vacation.end_date }}</strong>, retomando actividades laborales el día <strong>{{ vacation.return_date }}</strong>.
 		</p>
+
 		{% if vacation.paid_days %}
 		<p>Se informa que los <strong>{{ vacation.paid_days }}</strong> días de vacaciones solicitados en dinero han sido autorizados, conforme a políticas internas de la empresa.</p>
 		{% endif %}
+
 		<p>Espero disfrute con agrado sus merecidas vacaciones.</p>
 		{% else %}
 		<p>
