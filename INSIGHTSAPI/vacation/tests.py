@@ -991,7 +991,7 @@ class PaidDaysTemplateTestCase(BaseTestCase):
         pdf_content = vacation_object.generate_pdf()
         self.assertIsInstance(pdf_content, bytes)
         self.assertGreater(len(pdf_content), 0)
-=======
+
 """This file contains the tests for the vacation model."""
 
 from datetime import datetime
