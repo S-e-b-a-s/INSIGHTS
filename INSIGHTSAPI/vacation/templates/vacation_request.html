@@ -18,6 +18,7 @@
 			font-size: 18px;
 			position: relative;
 			/* Make the body a containing block */
+			text-align: justify;
 		}
 
 		.header {
@@ -44,6 +45,7 @@
 
 		.content p {
 			font-size: 20px;
+			text-align: justify;
 		}
 	</style>
 </head>
@@ -55,24 +57,19 @@
 
 	<div class="content">
 		<p>
-			Por la presente yo, <strong>{{ vacation.user }}</strong>, identificado(a) con la cédula de ciudadanía
-			<strong>{{ vacation.user.cedula }}</strong>, y desempeñando
-			el cargo de <strong>{{ vacation.user_job_position }}</strong> en la empresa, me permito solicitar <strong>{{ vacation.duration }}</strong> días de vacaciones.
+			Yo, <strong>{{ vacation.user }}</strong>, identificado con cédula de ciudadanía No. <strong>{{ vacation.user.cedula }}</strong>, quien actualmente desempeño el cargo de <strong>{{ vacation.user_job_position }}</strong> en la empresa, me permito solicitar <strong>{{ vacation.duration }}</strong> días habiles de vacaciones en tiempo.
 		</p>
 
 		<p>
-			Los días solicitados serán a partir del <strong>{{ vacation.start_date }}</strong> hasta el <strong>{{ vacation.end_date }}</strong>, y retomaré mis labores el
-			<strong>{{ vacation.return_date }}</strong>.
+			Los días solicitados serán a partir del <strong>{{ vacation.start_date }}</strong> y hasta el <strong>{{ vacation.end_date }}</strong>, retomando labores el día <strong>{{ vacation.return_date }}</strong>.
 		</p>
 		{% if vacation.paid_days %}
-		<p><strong>Nota:</strong> De los días solicitados, <strong>{{ vacation.paid_days }}</strong> día(s) serán
-			pagados en vez de tomados como descanso.</p>
+		<p>Adicionalmente, solicito el pago en dinero de <strong>{{ vacation.paid_days }}</strong> días habiles de vacaciones.</p>
 		{% endif %}
 
-		<p>Notifico con antelación mi solicitud para que se realicen los ajustes o acuerdos necesarios para el normal
-			funcionamiento de las actividades en mi ausencia.</p>
+		<p>Notifico con antelación mi solicitud para que se realicen los ajustes o acuerdos necesarios para el normal funcionamiento de las actividades en mi ausencia.</p>
 
-		<p>Agradezco de antemano su pronta respuesta.</p>
+		<p>Agradezco de antemano su respuesta a la presente solicitud de vacaciones.</p>
 		<div class="signature">
 			<p>Atentamente,</p>
 			<p><strong>{{ vacation.user|upper }}</strong></p>

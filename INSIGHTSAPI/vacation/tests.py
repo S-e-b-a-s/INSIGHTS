@@ -881,9 +881,10 @@ class PaidDaysTemplateTestCase(BaseTestCase):
         self.user.area = self.test_user.area
         self.user.save()
         self.permission = Permission.objects.get(codename="payroll_approval")
+        from datetime import date
         self.vacation_request_user = {
-            "start_date": "2024-01-02",
-            "end_date": "2024-01-18",
+            "start_date": date(2024, 1, 2),
+            "end_date": date(2024, 1, 18),
             "user": self.test_user,
             "user_job_position": self.test_user.job_position,
             "sat_is_working": True,
@@ -901,8 +902,7 @@ class PaidDaysTemplateTestCase(BaseTestCase):
         rendered_template = render_to_string("vacation_request.html", context)
         
         # Check that the paid_days paragraph is included
-        self.assertIn("Nota:", rendered_template)
-        self.assertIn("pagados en vez de tomados como descanso", rendered_template)
+        self.assertIn("Adicionalmente, solicito el pago en dinero de <strong>5</strong> días habiles de vacaciones.", rendered_template)
 
     def test_vacation_request_template_without_paid_days(self):
         """Test that vacation request template doesn't include paid_days when not set."""
@@ -915,8 +915,8 @@ class PaidDaysTemplateTestCase(BaseTestCase):
         rendered_template = render_to_string("vacation_request.html", context)
         
         # Check that the paid_days paragraph is not included
-        self.assertNotIn("Nota:", rendered_template)
-        self.assertNotIn("día(s) serán pagados en vez de tomados", rendered_template)
+        self.assertNotIn("<strong>Nota:</strong>", rendered_template)
+        self.assertNotIn("d\u00eda(s) ser\u00e1n pagados en vez de tomados como descanso", rendered_template)
 
     def test_vacation_response_template_with_paid_days_approved(self):
         """Test that vacation response template includes paid_days when approved."""
@@ -934,8 +934,7 @@ class PaidDaysTemplateTestCase(BaseTestCase):
         rendered_template = render_to_string("vacation_response.html", context)
         
         # Check that the paid_days paragraph is included
-        self.assertIn("Nota:", rendered_template)
-        self.assertIn("pagados en vez de tomados como descanso", rendered_template)
+        self.assertIn("Se informa que los <strong>3</strong> días de vacaciones solicitados en dinero han sido autorizados, conforme a políticas internas de la empresa.", rendered_template)
 
     def test_vacation_response_template_without_paid_days_approved(self):
         """Test that vacation response template doesn't include paid_days when not set."""
@@ -950,8 +949,8 @@ class PaidDaysTemplateTestCase(BaseTestCase):
         rendered_template = render_to_string("vacation_response.html", context)
         
         # Check that the paid_days paragraph is not included
-        self.assertNotIn("Nota:", rendered_template)
-        self.assertNotIn("día(s) serán pagados en vez de tomados como descanso", rendered_template)
+        self.assertNotIn("<strong>Nota:</strong>", rendered_template)
+        self.assertNotIn("d\u00eda(s) ser\u00e1n pagados en vez de tomados como descanso", rendered_template)
 
     def test_vacation_response_template_with_paid_days_rejected(self):
         """Test that vacation response template doesn't include paid_days when rejected."""
@@ -969,8 +968,8 @@ class PaidDaysTemplateTestCase(BaseTestCase):
         rendered_template = render_to_string("vacation_response.html", context)
         
         # Check that the paid_days paragraph is not included for rejected requests
-        self.assertNotIn("Nota:", rendered_template)
-        self.assertNotIn("día(s) serán pagados en vez de tomados como descanso", rendered_template)
+        self.assertNotIn("<strong>Nota:</strong>", rendered_template)
+        self.assertNotIn("d\u00eda(s) ser\u00e1n pagados en vez de tomados como descanso", rendered_template)
 
     def test_vacation_pdf_generation_with_paid_days(self):
         """Test that PDF generation works correctly with paid_days."""
