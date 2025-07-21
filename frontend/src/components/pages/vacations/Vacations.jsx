@@ -144,6 +144,49 @@ export const Vacations = () => {
         }
     };
 
+    // Define the paid_days column separately
+    const paidDaysColumn = {
+        field: 'paid_days',
+        headerName: 'Días a pagar',
+        width: 120,
+        type: 'number',
+        renderCell: (params) => {
+            if (params.value) {
+                return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography>{params.value}</Typography>
+                        {payrollApprovalPermission && (
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() => handleOpenEditPaidDays(params.id, params.value)}
+                                sx={{ minWidth: 'auto', p: 0.5 }}
+                            >
+                                Editar
+                            </Button>
+                        )}
+                    </Box>
+                );
+            } else {
+                return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography color="text.secondary">-</Typography>
+                        {payrollApprovalPermission && (
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() => handleOpenEditPaidDays(params.id, null)}
+                                sx={{ minWidth: 'auto', p: 0.5 }}
+                            >
+                                Agregar
+                            </Button>
+                        )}
+                    </Box>
+                );
+            }
+        },
+    };
+
     const columns = [
         {
             field: 'cedula',
@@ -490,6 +533,13 @@ export const Vacations = () => {
             headerName: 'Observaciones',
             width: 150,
         },
+        // Conditionally include the paid_days column
+        ...(
+            payrollApprovalPermission
+                ? [paidDaysColumn]
+                : []
+        ),
+          
         {
             field: 'status',
             headerName: 'Estado de solicitud',
@@ -719,6 +769,62 @@ export const Vacations = () => {
                     </Box>
                 </DialogContent>
             </Dialog>
+
+            <Dialog
+                open={openEditPaidDays}
+                onClose={handleCloseEditPaidDays}
+                aria-labelledby="edit-paid-days-dialog-title"
+                aria-describedby="edit-paid-days-dialog-description"
+            >
+                <DialogTitle id="edit-paid-days-dialog-title">
+                    {'Editar días a pagar'}
+                </DialogTitle>
+                <DialogContent>
+                    <Typography color="text.secondary" sx={{ mb: 2 }}>
+                        Especifique la cantidad de días que se remunerarán en lugar de tomarse como tiempo de descanso.
+                    </Typography>
+                    <Box component="form" onSubmit={handleEditPaidDays}>
+                        <TextField
+                            type="number"
+                            label="Días a pagar"
+                            value={paidDaysValue}
+                            onChange={(e) => setPaidDaysValue(e.target.value)}
+                            disabled={isProgressVisible}
+                            variant="filled"
+                            fullWidth
+                            inputProps={{ min: 0, max: 15 }}
+                            helperText="Ingrese 0 para eliminar los días pagados"
+                        />
+
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                mt: '1rem',
+                            }}
+                        >
+                            <Button
+                                disabled={isProgressVisible}
+                                variant="contained"
+                                onClick={handleCloseEditPaidDays}
+                                color="primary"
+                            >
+                                Cancelar
+                            </Button>
+                            <LoadingButton
+                                type="submit"
+                                loading={isProgressVisible}
+                                variant="contained"
+                                color="primary"
+                            >
+                                Guardar
+                            </LoadingButton>
+                        </Box>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+
             <Container
                 sx={{
                     marginTop: '2rem',

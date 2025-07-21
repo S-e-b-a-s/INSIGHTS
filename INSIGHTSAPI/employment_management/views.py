@@ -125,7 +125,7 @@ def create_employment_certification(request):
         os.path.join(settings.STATIC_ROOT, "images", "vertical_logo.png")
     )
     payroll_signature = read_and_encode_image(
-        os.path.join(settings.BASE_DIR, "secure", "images", "payroll_signature.png")
+        os.path.join(settings.BASE_DIR, "secure", "images", "payroll_director_signature.png")
     )
     if not logo or not logo_bpo or not payroll_signature or not logo_vertical:
         # print the variables

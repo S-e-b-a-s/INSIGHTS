@@ -420,6 +420,12 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     str(settings.STATIC_ROOT) + "/images/vertical_logo.png", "rb"
                 ).read()
             ).decode("utf-8"),
+            "rrhh_manager_signature": base64.b64encode(
+                open(
+                    str(settings.BASE_DIR) + "/secure/images/rrhh_manager_signature.png",
+                    "rb",
+                ).read()
+            ).decode("utf-8"),
         }
         # Import the html template
         rendered_template = render_to_string(
