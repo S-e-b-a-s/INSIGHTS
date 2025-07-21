@@ -62,9 +62,6 @@ export const Vacations = () => {
     const [vacationId, setVacationId] = useState();
     const [openObservationsInput, setOpenObservationsInput] = useState(false);
     const observationsRef = useRef();
-    const [openEditPaidDays, setOpenEditPaidDays] = useState(false);
-    const [paidDaysValue, setPaidDaysValue] = useState('');
-    const [editingVacationId, setEditingVacationId] = useState(null);
     const cargo = localStorage.getItem('cargo');
     const rank = JSON.parse(localStorage.getItem('rango'));
     const cedula = JSON.parse(localStorage.getItem('cedula'));
@@ -542,6 +539,7 @@ export const Vacations = () => {
                 ? [paidDaysColumn]
                 : []
         ),
+          
         {
             field: 'status',
             headerName: 'Estado de solicitud',
@@ -685,51 +683,6 @@ export const Vacations = () => {
         setApprovalType(approvalType);
     };
 
-    const handleEditPaidDays = async (event) => {
-        event.preventDefault();
-        showProgressbar();
-
-        const formData = new FormData();
-        formData.append('paid_days', paidDaysValue);
-
-        try {
-            const response = await fetch(
-                `${getApiUrl().apiUrl}vacation/${editingVacationId}/`,
-                {
-                    method: 'PATCH',
-                    credentials: 'include',
-                    body: formData,
-                }
-            );
-
-            await handleError(response, showSnack);
-
-            if (response.status === 200) {
-                getVacations();
-                showSnack('success', 'Días pagados actualizados correctamente');
-                handleCloseEditPaidDays();
-            }
-        } catch (error) {
-            if (getApiUrl().environment === 'development') {
-                console.error(error);
-            }
-        } finally {
-            hideProgressbar();
-        }
-    };
-
-    const handleOpenEditPaidDays = (id, currentPaidDays) => {
-        setEditingVacationId(id);
-        setPaidDaysValue(currentPaidDays || '');
-        setOpenEditPaidDays(true);
-    };
-
-    const handleCloseEditPaidDays = () => {
-        setOpenEditPaidDays(false);
-        setEditingVacationId(null);
-        setPaidDaysValue('');
-    };
-
     return (
         <>
             <VacationsRequest
@@ -816,6 +769,7 @@ export const Vacations = () => {
                     </Box>
                 </DialogContent>
             </Dialog>
+
             <Dialog
                 open={openEditPaidDays}
                 onClose={handleCloseEditPaidDays}
@@ -870,6 +824,7 @@ export const Vacations = () => {
                     </Box>
                 </DialogContent>
             </Dialog>
+
             <Container
                 sx={{
                     marginTop: '2rem',

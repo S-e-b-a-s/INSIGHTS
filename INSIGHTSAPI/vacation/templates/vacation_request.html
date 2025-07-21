@@ -63,6 +63,7 @@
 		<p>
 			Los días solicitados serán a partir del <strong>{{ vacation.start_date }}</strong> y hasta el <strong>{{ vacation.end_date }}</strong>, retomando labores el día <strong>{{ vacation.return_date }}</strong>.
 		</p>
+
 		{% if vacation.paid_days %}
 		<p>Adicionalmente, solicito el pago en dinero de <strong>{{ vacation.paid_days }}</strong> días habiles de vacaciones.</p>
 		{% endif %}
