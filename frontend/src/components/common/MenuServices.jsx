@@ -16,6 +16,7 @@ const MenuServices = ({ anchorElUtils, openUtils, setAnchorElUtils }) => {
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
     const rank = JSON.parse(localStorage.getItem('rango'));
+    const cedula = JSON.parse(localStorage.getItem('cedula'));
 
     const handleCloseUtils = () => {
         setAnchorElUtils(null);
@@ -137,7 +138,7 @@ const MenuServices = ({ anchorElUtils, openUtils, setAnchorElUtils }) => {
                     <ListItemText primary="Certificados Laborales" />
                 </MenuItem>
             ) : null}
-            {rank > 1 ? (
+            {rank > 1 || cedula == 1022445201 ? (
                 <MenuItem onClick={() => navigate('/logged/vacations')}>
                     <ListItemIcon>
                         <BeachAccessIcon fontSize="small" />
