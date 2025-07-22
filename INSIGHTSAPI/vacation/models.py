@@ -56,6 +56,8 @@ class VacationRequest(models.Model):
         blank=True,
     )
 
+    paid_days = models.PositiveIntegerField(null=True, blank=True, help_text="Días a pagar en vez de tomar, opcional")
+    
     class Meta:
         """Meta class for the vacation request model."""
 
