@@ -68,7 +68,7 @@ class Events(models.Model):
     event_title = models.CharField(max_length=250)
     process = models.ForeignKey(Process, on_delete=models.DO_NOTHING)
     lost_type = models.ForeignKey(LostType, on_delete=models.DO_NOTHING)
-    description = models.CharField(max_length=3000)
+    description = models.TextField()
     product = models.ForeignKey(ProductLine, on_delete=models.DO_NOTHING)
     status = models.BooleanField()
     close_date = models.DateField()
