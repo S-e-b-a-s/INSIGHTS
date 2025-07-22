@@ -77,7 +77,7 @@ class Events(models.Model):
     critical = models.BooleanField()
     level = models.ForeignKey(Level, on_delete=models.DO_NOTHING, null=True)
     public_accounts_affected = models.CharField(max_length=250)
-    plan = models.CharField(max_length=1500)
+    plan = models.TextField()
     learning = models.CharField(max_length=1500)
 
     def __str__(self):
