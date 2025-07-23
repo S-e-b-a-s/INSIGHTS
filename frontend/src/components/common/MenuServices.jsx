@@ -60,14 +60,15 @@ const MenuServices = ({ anchorElUtils, openUtils, setAnchorElUtils }) => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
-            {permissions && permissions.includes('goals.view_goals') ? (
+            {/* Commented out because it's not used */}
+            {/* {permissions && permissions.includes('goals.view_goals') ? (
                 <MenuItem onClick={() => navigate('/logged/goals-stats')}>
                     <ListItemIcon>
                         <FlagIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Análisis de Metas" />
                 </MenuItem>
-            ) : null}
+            ) : null} */}
             {permissions &&
             (permissions.includes('users.upload_robinson_list') ||
                 permissions.includes('goals.add_goals') ||
