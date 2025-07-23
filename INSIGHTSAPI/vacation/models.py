@@ -63,6 +63,7 @@ class VacationRequest(models.Model):
 
         permissions = [
             ("payroll_approval", "Can approve payroll"),
+            ("view_all_vacations", "Can view all vacation requests"),
         ]
 
     @property

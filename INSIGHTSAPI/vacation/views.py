@@ -51,6 +51,10 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 )  # The user is a vacation manager of the area
             )
 
+        # If the user has permission to view all vacation requests
+        elif user.has_perm("vacation.view_all_vacations"):
+            return self.queryset.all()
+
         # If the user has a management position with rank >= 2
         elif user.job_position.rank >= 2:
             children = user.area.get_children()
