@@ -106,14 +106,15 @@ const MenuAccount = ({
                     <ListItemText primary="Mi Cuenta" />
                     <Divider />
                 </MenuItem>
-                {isAdvisor ? (
+                {/* Commented out because it's not used */}
+                {/* {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText primary="Mis Metas" />
                     </MenuItem>
-                ) : null}
+                ) : null} */}
                 <MenuItem onClick={() => navigate('/logged/my-payslips')}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="small" />

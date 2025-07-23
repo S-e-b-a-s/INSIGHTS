@@ -55,13 +55,15 @@ class VacationRequest(models.Model):
         null=True,
         blank=True,
     )
-    paid_days = models.PositiveIntegerField(null=True, blank=True, help_text="Días a pagar en vez de tomar, opcional.")
 
+    paid_days = models.PositiveIntegerField(null=True, blank=True, help_text="Días a pagar en vez de tomar, opcional")
+    
     class Meta:
         """Meta class for the vacation request model."""
 
         permissions = [
             ("payroll_approval", "Can approve payroll"),
+            ("view_all_vacations", "Can view all vacation requests"),
         ]
 
     @property

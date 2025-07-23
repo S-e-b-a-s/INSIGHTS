@@ -25,9 +25,12 @@
 			margin-bottom: 20px;
 		}
 
-		.signature {
+		.signature-text {
 			display: flex;
 			justify-content: space-between;
+		}
+
+		.signature-container {
 			margin-top: 60px;
 		}
 
@@ -43,6 +46,7 @@
 		.content p {
 			margin-bottom: 35px;
 			font-size: 20px;
+			text-align: justify;
 		}
 
 		.approval {
@@ -111,14 +115,13 @@
 
 		{% if vacation.status == 'APROBADA' %}
 		<p>
-			Me permito informarle que en respuesta a su comunicación recibida el día <strong>{{ vacation.created_at|date }}</strong>, usted podrá disfrutar de sus vacaciones
-			a partir del día <strong>{{ vacation.start_date }}</strong>, retomando actividades laborales el día
-			<strong>{{ vacation.return_date }}</strong>.
+			Me permito informarle que en respuesta a su comunicación recibida el día <strong>{{ vacation.created_at|date }}</strong>, usted podrá disfrutar de sus vacaciones en tiempo a partir del día <strong>{{ vacation.start_date }}</strong>, y hasta el día <strong>{{ vacation.end_date }}</strong>, retomando actividades laborales el día <strong>{{ vacation.return_date }}</strong>.
 		</p>
+
 		{% if vacation.paid_days %}
-		<p><strong>Nota:</strong> De los días solicitados, <strong>{{ vacation.paid_days }}</strong> día(s) serán
-			pagados en vez de tomados como descanso.</p>
+		<p>Se informa que los <strong>{{ vacation.paid_days }}</strong> días de vacaciones solicitados en dinero han sido autorizados, conforme a políticas internas de la empresa.</p>
 		{% endif %}
+
 		<p>Espero disfrute con agrado sus merecidas vacaciones.</p>
 		{% else %}
 		<p>
@@ -126,18 +129,20 @@
 		</p>
 		<p><strong>{{ vacation.comment }}</strong>.</p>
 		{% endif %}
-
-		<div class="signature">
-			<p>
-				<strong>JEANNETH PINZON MARTINEZ</strong><br />
-				Gerente Gestión Humana<br />
-				C&C SERVICES S.A.S.<br />
-			</p>
-			<p>
-				<strong>{{ vacation.user|upper }}</strong><br />
-				{{ vacation.user_job_position }}<br />
-				C&C SERVICES S.A.S.<br />
-			</p>
+		<div class="signature-container">
+			<img src="data:image/png;base64,{{ rrhh_manager_signature }}" alt="Signature" width="35%" height="35%" />
+			<div class="signature-text">
+				<p style="margin-top: 0">
+					<strong>JEANNETH PINZON MARTINEZ</strong><br />
+					Gerente Gestión Humana<br />
+					C&C SERVICES S.A.S.<br />
+				</p>
+				<p style="margin-top: 0">
+					<strong>{{ vacation.user|upper }}</strong><br />
+					{{ vacation.user_job_position }}<br />
+					C&C SERVICES S.A.S.<br />
+				</p>
+			</div>
 		</div>
 	</div>
 </body>

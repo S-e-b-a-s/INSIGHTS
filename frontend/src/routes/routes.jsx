@@ -71,10 +71,11 @@ const routes = [
                 path: 'about',
                 element: wrapWithSuspense(About),
             },
-            {
-                path: 'goals-stats',
-                element: wrapWithSuspense(GoalsStats),
-            },
+            // Commented out because it's not used
+            // {
+            //     path: 'goals-stats',
+            //     element: wrapWithSuspense(GoalsStats),
+            // },
             {
                 path: 'sgc',
                 element: wrapWithSuspense(Sgc),

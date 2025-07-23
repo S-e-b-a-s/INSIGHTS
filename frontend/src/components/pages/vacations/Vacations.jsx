@@ -147,6 +147,49 @@ export const Vacations = () => {
         }
     };
 
+    // Define the paid_days column separately
+    const paidDaysColumn = {
+        field: 'paid_days',
+        headerName: 'Días a pagar',
+        width: 120,
+        type: 'number',
+        renderCell: (params) => {
+            if (params.value) {
+                return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography>{params.value}</Typography>
+                        {payrollApprovalPermission && (
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() => handleOpenEditPaidDays(params.id, params.value)}
+                                sx={{ minWidth: 'auto', p: 0.5 }}
+                            >
+                                Editar
+                            </Button>
+                        )}
+                    </Box>
+                );
+            } else {
+                return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography color="text.secondary">-</Typography>
+                        {payrollApprovalPermission && (
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() => handleOpenEditPaidDays(params.id, null)}
+                                sx={{ minWidth: 'auto', p: 0.5 }}
+                            >
+                                Agregar
+                            </Button>
+                        )}
+                    </Box>
+                );
+            }
+        },
+    };
+
     const columns = [
         {
             field: 'cedula',
@@ -493,47 +536,13 @@ export const Vacations = () => {
             headerName: 'Observaciones',
             width: 150,
         },
-        {
-            field: 'paid_days',
-            headerName: 'Días a pagar',
-            width: 120,
-            type: 'number',
-            renderCell: (params) => {
-                if (params.value) {
-                    return (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography>{params.value}</Typography>
-                            {payrollApprovalPermission && (
-                                <Button
-                                    size="small"
-                                    variant="outlined"
-                                    onClick={() => handleOpenEditPaidDays(params.id, params.value)}
-                                    sx={{ minWidth: 'auto', p: 0.5 }}
-                                >
-                                    Editar
-                                </Button>
-                            )}
-                        </Box>
-                    );
-                } else {
-                    return (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Typography color="text.secondary">-</Typography>
-                            {payrollApprovalPermission && (
-                                <Button
-                                    size="small"
-                                    variant="outlined"
-                                    onClick={() => handleOpenEditPaidDays(params.id, null)}
-                                    sx={{ minWidth: 'auto', p: 0.5 }}
-                                >
-                                    Agregar
-                                </Button>
-                            )}
-                        </Box>
-                    );
-                }
-            },
-        },
+        // Conditionally include the paid_days column
+        ...(
+            payrollApprovalPermission
+                ? [paidDaysColumn]
+                : []
+        ),
+          
         {
             field: 'status',
             headerName: 'Estado de solicitud',
@@ -808,6 +817,7 @@ export const Vacations = () => {
                     </Box>
                 </DialogContent>
             </Dialog>
+
             <Dialog
                 open={openEditPaidDays}
                 onClose={handleCloseEditPaidDays}
@@ -819,7 +829,7 @@ export const Vacations = () => {
                 </DialogTitle>
                 <DialogContent>
                     <Typography color="text.secondary" sx={{ mb: 2 }}>
-                        Especifique el número de días que serán pagados en vez de tomados como descanso.
+                        Especifique la cantidad de días que se remunerarán en lugar de tomarse como tiempo de descanso.
                     </Typography>
                     <Box component="form" onSubmit={handleEditPaidDays}>
                         <TextField
@@ -862,6 +872,7 @@ export const Vacations = () => {
                     </Box>
                 </DialogContent>
             </Dialog>
+
             <Container
                 sx={{
                     marginTop: '2rem',

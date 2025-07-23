@@ -18,7 +18,6 @@ from users.models import User
 from hierarchy.models import JobPosition, Area
 
 logger = logging.getLogger("requests")
-logger = logging.getLogger("django")
 
 def login_staffnet():
     """Do a request to the StaffNet API to login the user."""
