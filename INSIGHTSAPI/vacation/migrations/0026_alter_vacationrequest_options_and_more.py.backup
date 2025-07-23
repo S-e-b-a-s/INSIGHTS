@@ -6,12 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('vacation', '0026_vacationrequest_paid_days'),
+        ('vacation', '0025_populate_user_area'),
     ]
 
     operations = [
         migrations.AlterModelOptions(
             name='vacationrequest',
             options={'permissions': [('payroll_approval', 'Can approve payroll'), ('view_all_vacations', 'Can view all vacation requests')]},
+        ),
+        migrations.AddField(
+            model_name='vacationrequest',
+            name='paid_days',
+            field=models.PositiveIntegerField(blank=True, help_text='Días a pagar en vez de tomar, opcional', null=True),
         ),
     ]
