@@ -372,3 +372,41 @@ class UserTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(User.objects.get(cedula=1001185386).points, 133)
         self.assertEqual(User.objects.get(cedula=1001185390).points, 20)
+
+    def test_sync_staffnet_employee_success(self):
+        """Tests that sync_staffnet_employee updates user fields correctly."""
+        # Crear usuario existente
+        user = self.create_demo_user(cedula=12345678)
+        data = {
+            "cedula": str(user.cedula),
+            "cargo": "Nuevo Cargo",
+            "campana_general": "Nueva Campaña",
+            "gerencia": "Nueva Gerencia",
+            "correo": "nuevo_correo@cyc-bpo.com",
+            "company_email": "nuevo_company@cyc-bpo.com",
+            "first_name": "NuevoNombre",
+            "last_name": "NuevoApellido",
+        }
+        response = self.client.post(reverse("sync_staffnet_employee"), data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["status"], "success")
+        user.refresh_from_db()
+        self.assertEqual(user.job_position.name, data["cargo"])
+        self.assertEqual(user.area.name, data["campana_general"])
+        self.assertEqual(user.email, data["correo"].upper())
+        self.assertEqual(user.company_email, data["company_email"].upper())
+        self.assertEqual(user.first_name, data["first_name"].upper())
+        self.assertEqual(user.last_name, data["last_name"].upper())
+
+    def test_sync_staffnet_employee_user_not_found(self):
+        """Tests that sync_staffnet_employee returns 404 if user does not exist."""
+        data = {
+            "cedula": "99999999",
+            "cargo": "Cargo",
+            "campana_general": "Campaña",
+        }
+        response = self.client.post(reverse("sync_staffnet_employee"), data, format="json")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.data["status"], "error")
+        self.assertIn("no encontrado", response.data["message"].lower())
+        
