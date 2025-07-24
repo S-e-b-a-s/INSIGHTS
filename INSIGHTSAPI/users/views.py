@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import permission_required
 from django.core.mail import mail_admins
 from django.core.validators import validate_email
-from django.db import connections
+from django.db import connections, IntegrityError, transaction
 from django.db.models import Q
 from notifications.utils import create_notification
 from rest_framework.decorators import api_view, permission_classes
@@ -340,7 +340,11 @@ def sync_staffnet_employee(request):
         user = User.objects.get(cedula=cedula)
     except User.DoesNotExist:
         return Response({"status": "error", "message": f"Usuario con cédula {cedula} no encontrado."}, status=404)
-    job_position, _ = JobPosition.objects.get_or_create(name=cargo, rank=1)
+    try:
+        with transaction.atomic():
+            job_position, _ = JobPosition.objects.get_or_create(name=cargo, defaults={"rank": 1})
+    except IntegrityError:
+        job_position = JobPosition.objects.get(name=cargo)
     area, _ = Area.objects.get_or_create(name=campana)
     user.job_position = job_position
     user.area = area
