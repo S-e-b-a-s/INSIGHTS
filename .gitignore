@@ -14,7 +14,7 @@ dist-bu
 dist-bu-test
 dist_bu
 dist-ssr
-*.local
+media/*.local
 __pycache__
 
 # Editor directories and files
