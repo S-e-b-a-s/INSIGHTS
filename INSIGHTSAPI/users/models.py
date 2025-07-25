@@ -11,7 +11,7 @@ from django.core.mail import mail_admins
 from django.db import connections, models
 
 from hierarchy.models import Area, JobPosition
-
+    
 logger = logging.getLogger("exceptions")
 
 
@@ -41,7 +41,7 @@ class User(AbstractUser):
     )
     job_position = models.ForeignKey(
         "hierarchy.JobPosition",
-        on_delete=models.CASCADE,
+        on_delete=models.CASCADE,   
         null=False,
         blank=False,
         related_name="users",

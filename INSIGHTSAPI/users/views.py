@@ -8,15 +8,16 @@ from django.conf import settings
 from django.contrib.auth.decorators import permission_required
 from django.core.mail import mail_admins
 from django.core.validators import validate_email
-from django.db import connections
+from django.db import connections, IntegrityError, transaction
 from django.db.models import Q
 from notifications.utils import create_notification
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from users.models import User
+from hierarchy.models import JobPosition, Area
 
 logger = logging.getLogger("requests")
-
 
 def login_staffnet():
     """Do a request to the StaffNet API to login the user."""
@@ -321,3 +322,41 @@ def get_points(request):
         for user in users
     ]
     return Response(data)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def sync_staffnet_employee(request):
+    logger.info(f"Datos recibidos en sync_staffnet_employee: {request.data}")
+    cedula = request.data.get("cedula")
+    cargo = request.data.get("cargo")
+    campana = request.data.get("campana_general")
+    gerencia = request.data.get("gerencia")
+    correo = request.data.get("correo")
+    company_email = request.data.get("company_email")
+    first_name = request.data.get("first_name")
+    last_name = request.data.get("last_name")
+    try:
+        user = User.objects.get(cedula=cedula)
+    except User.DoesNotExist:
+        return Response({"status": "error", "message": f"Usuario con cédula {cedula} no encontrado."}, status=404)
+    try:
+        with transaction.atomic():
+            job_position, _ = JobPosition.objects.get_or_create(name=cargo, defaults={"rank": 1})
+    except IntegrityError:
+        job_position = JobPosition.objects.get(name=cargo)
+    area, _ = Area.objects.get_or_create(name=campana)
+    user.job_position = job_position
+    user.area = area
+    if correo:
+        user.email = correo.upper()
+    if company_email:
+        user.company_email = company_email.upper()
+    if first_name:
+        user.first_name = first_name
+    if last_name:
+        user.last_name = last_name
+    user.save()
+    return Response({"status": "success"})
+
+
