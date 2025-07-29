@@ -58,7 +58,7 @@ const columns = [
             }
             return 0; // Default value for unsupported types
         },
-        valueFormatter: (value) => value + ' DÍAS',
+        valueFormatter: (value) => (value || 0) + ' DÍAS',
     },
     {
         field: 'disability_value',
