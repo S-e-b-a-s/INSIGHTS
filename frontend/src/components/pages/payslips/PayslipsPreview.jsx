@@ -53,8 +53,10 @@ const columns = [
         valueGetter: (value) => {
             if (typeof value === 'string') {
                 return parseFloat(value.replace(',', '.'));
+            } else if (typeof value === 'number') {
+                return value;
             }
-            return NaN;
+            return 0; // Default value for unsupported types
         },
         valueFormatter: (value) => value + ' DÍAS',
     },
