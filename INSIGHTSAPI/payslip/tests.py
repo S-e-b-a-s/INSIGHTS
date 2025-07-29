@@ -27,6 +27,8 @@ class PayslipTest(BaseTestCase):
             "salary": 1000000,
             "days": 15,
             "biweekly_period": 15,
+            "disability_days": 0,
+            "disability_value": 0,
             "transport_allowance": 150000,
             "bearing": 300000,
             "surcharge_night_shift_hours": 15,

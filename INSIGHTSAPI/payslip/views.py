@@ -5,10 +5,14 @@ import logging
 
 from django.conf import settings
 from django.db import connections
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 from rest_framework import viewsets
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.response import Response
+import pdfkit
+from decimal import Decimal
 
 from users.models import User
 
@@ -104,6 +108,8 @@ class PayslipViewSet(viewsets.ModelViewSet):
             "SUELDO DESPRENDIBLE",
             "DIASLAB DESPRENDIBLE",
             "QUINCENA DESPRENDIBLE",
+            "DIAS INCAPACIDAD DESPRENDIBLE",
+            "VALOR INCAPACIDAD DESPRENDIBLE",
             "SUBSIDIOTRANS DESPRENDIBLE",
             "RODAMIENTO",
             "HORAS LABORADAS RECARGO NOCTURNO 35%",
@@ -207,6 +213,10 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     "biweekly_period": convert_numeric_value(
                         data_dict["QUINCENA DESPRENDIBLE"]
                     ),
+                    "disability_days": data_dict["DIAS INCAPACIDAD DESPRENDIBLE"],
+                    "disability_value": convert_numeric_value(
+                        data_dict["VALOR INCAPACIDAD DESPRENDIBLE"]
+                    ),
                     # Earnings
                     "transport_allowance": convert_numeric_value(
                         data_dict["SUBSIDIOTRANS DESPRENDIBLE"]
@@ -299,6 +309,80 @@ class PayslipViewSet(viewsets.ModelViewSet):
         return Response(
             {"error": "No tienes permisos para ver esta información"}, status=403
         )
+
+    @action(detail=False, methods=['get'], url_path='test-template')
+    def test_template(self, request):
+        """Test the payslip template with sample data."""
+        if not request.user.has_perm("payslip.add_payslip"):
+            return Response(
+                {"error": "No tienes permisos para ver esta información"}, status=403
+            )
+        
+        # Create a sample payslip object with proper formatting
+        sample_payslip = Payslip(
+            title="SEGUNDA QUINCENA MES DE ENERO 2024",
+            name="JUAN CARRENO",
+            identification="1001185389",
+            days=16,
+            salary=Decimal("28227321.00"),
+            area="Ejecutivo",
+            job_title="Cargo #3",
+            biweekly_period=Decimal("14113661.00"),
+            disability_days=2,
+            disability_value=Decimal("500000.00"),
+            transport_allowance=Decimal("22000.00"),
+            bearing=Decimal("44000.00"),
+            bonus_paycheck=Decimal("0.00"),
+            biannual_bonus=Decimal("100800.00"),
+            severance=Decimal("85325.00"),
+            surcharge_night_shift_hours=Decimal("15.0"),
+            surcharge_night_shift_allowance=Decimal("140000.00"),
+            surcharge_night_shift_holiday_hours=Decimal("17.4"),
+            surcharge_night_shift_holiday_allowance=Decimal("180000.00"),
+            surcharge_holiday_hours=Decimal("20.0"),
+            surcharge_holiday_allowance=Decimal("250000.00"),
+            gross_earnings=Decimal("14113661.00"),
+            healthcare_contribution=Decimal("395182.00"),
+            pension_contribution=Decimal("493978.00"),
+            tax_withholding=Decimal("1946500.00"),
+            additional_deductions=Decimal("2225000.00"),
+            apsalpen=Decimal("0.00"),
+            solidarity_fund_percentage=Decimal("0.015"),
+            solidarity_fund=Decimal("69000.00"),
+            total_deductions=Decimal("5060661.00"),
+            net_pay=Decimal("9053000.00"),
+            email="test@example.com"
+        )
+        
+        # Format the solidarity_fund_percentage like in the actual payslip generation
+        sample_payslip.solidarity_fund_percentage = "{:.1f}%".format(
+            sample_payslip.solidarity_fund_percentage * 100
+        )
+        
+        # Get the logo
+        try:
+            with open(str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb") as logo:
+                logo_data = logo.read()
+                logo_base64 = base64.b64encode(logo_data).decode("utf-8")
+        except FileNotFoundError:
+            logo_base64 = ""
+        
+        # Render the template using the payslip object
+        rendered_template = render_to_string(
+            "payslip.html",
+            {"payslip": sample_payslip, "logo": logo_base64},
+        )
+        
+        # Generate PDF from HTML
+        pdf_file = pdfkit.from_string(
+            rendered_template,
+            False,
+            options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
+        )
+        
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="payslip.pdf"'
+        return response
 
     # def list(self, request):
     #     """List payslips."""

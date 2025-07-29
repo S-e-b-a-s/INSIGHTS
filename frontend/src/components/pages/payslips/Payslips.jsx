@@ -182,6 +182,26 @@ export const Payslips = () => {
                 }).format(value),
         },
         {
+            field: 'disability_days',
+            type: 'number',
+            headerName: 'Dias de incapacidad',
+            width: 150,
+            editable: false,
+            valueFormatter: (value) => value + ' DÍAS',
+        },
+        {
+            field: 'disability_value',
+            type: 'number',
+            headerName: 'Valor de la incapacidad',
+            width: 150,
+            editable: false,
+            valueFormatter: (value) =>
+                new Intl.NumberFormat('es-CO', {
+                    style: 'currency',
+                    currency: 'COP',
+                }).format(value),
+        },
+        {
             field: 'created_at',
             type: 'date',
             headerName: 'Fecha de envió',
@@ -259,6 +279,8 @@ export const Payslips = () => {
             'salary',
             'days',
             'biweekly_period',
+            'disability_days',
+            'disability_value',
             'transport_allowance',
             'bearing',
             'surcharge_night_shift_hours',
