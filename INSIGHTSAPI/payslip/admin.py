@@ -14,6 +14,8 @@ class PayslipAdmin(admin.ModelAdmin):
         "area",
         "job_title",
         "salary",
+        "disability_days",
+        "disability_value",
         "bonus_paycheck",
     )
 

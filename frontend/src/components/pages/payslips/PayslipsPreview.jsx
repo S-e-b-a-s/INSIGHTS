@@ -46,6 +46,32 @@ const columns = [
             }).format(value),
     },
     {
+        field: 'disability_days',
+        headerName: 'Dias de incapacidad',
+        width: 130,
+        type: 'number',
+        valueGetter: (value) => {
+            if (typeof value === 'string') {
+                return parseFloat(value.replace(',', '.'));
+            } else if (typeof value === 'number') {
+                return value;
+            }
+            return 0; // Default value for unsupported types
+        },
+        valueFormatter: (value) => (value || 0) + ' DÍAS',
+    },
+    {
+        field: 'disability_value',
+        headerName: 'Valor de la incapacidad',
+        width: 130,
+        type: 'number',
+        valueFormatter: (value) =>
+            new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+            }).format(value),
+    },
+    {
         field: 'transport_allowance',
         headerName: 'Auxilio de Transporte',
         width: 130,
