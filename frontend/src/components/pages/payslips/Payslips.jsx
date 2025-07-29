@@ -187,7 +187,7 @@ export const Payslips = () => {
             headerName: 'Dias de incapacidad',
             width: 150,
             editable: false,
-            valueFormatter: (value) => value + ' DÍAS',
+            valueFormatter: (value) => (value || 0) + ' DÍAS',
         },
         {
             field: 'disability_value',
