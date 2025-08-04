@@ -31,6 +31,8 @@ class EmploymentCertificationTest(BaseTestCase):
             "biweekly_period": 15,
             "transport_allowance": 150000,
             "bearing": 300000,
+            "extra_hours": 5,
+            "extra_hours_allowance": 75000,
             "surcharge_night_shift_hours": 10,
             "surcharge_night_shift_allowance": 150000,
             "surcharge_night_shift_holiday_hours": 10,

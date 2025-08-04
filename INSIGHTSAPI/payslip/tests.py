@@ -31,6 +31,8 @@ class PayslipTest(BaseTestCase):
             "disability_value": 0,
             "transport_allowance": 150000,
             "bearing": 300000,
+            "extra_hours": 8,
+            "extra_hours_allowance": 120000,
             "surcharge_night_shift_hours": 15,
             "surcharge_night_shift_allowance": 150000,
             "surcharge_night_shift_holiday_hours": 15,
@@ -101,6 +103,8 @@ class PayslipTest(BaseTestCase):
         self.assertEqual(response.data["biweekly_period"], "14113661.00")
         self.assertEqual(response.data["transport_allowance"], "22000.00")
         self.assertEqual(response.data["bearing"], "44000.00")
+        self.assertEqual(response.data["extra_hours"], "8.0")
+        self.assertEqual(response.data["extra_hours_allowance"], "120000.00")
         self.assertEqual(response.data["surcharge_night_shift_hours"], "15.0")
         self.assertEqual(response.data["surcharge_night_shift_allowance"], "140000.00")
         self.assertEqual(response.data["surcharge_night_shift_holiday_hours"], "17.4")

@@ -43,6 +43,8 @@ class CeleryTestCase(TestCase):
             "biweekly_period": 15,
             "transport_allowance": 150000,
             "bearing": 300000,
+            "extra_hours": 6,
+            "extra_hours_allowance": 90000,
             "surcharge_night_shift_hours": 15,
             "surcharge_night_shift_allowance": 150000,
             "surcharge_night_shift_holiday_hours": 15,

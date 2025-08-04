@@ -1,6 +1,7 @@
 """Model for the payslip."""
 
 from django.db import models
+from decimal import Decimal
 
 
 # Create your models here.
@@ -20,6 +21,8 @@ class Payslip(models.Model):
     disability_value = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     transport_allowance = models.DecimalField(max_digits=12, decimal_places=2)
     bearing = models.DecimalField(max_digits=12, decimal_places=2)
+    extra_hours = models.DecimalField(max_digits=12, decimal_places=1, default=Decimal('0'))
+    extra_hours_allowance = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0'))
     surcharge_night_shift_hours = models.DecimalField(max_digits=12, decimal_places=1)
     surcharge_night_shift_allowance = models.DecimalField(
         max_digits=12, decimal_places=2

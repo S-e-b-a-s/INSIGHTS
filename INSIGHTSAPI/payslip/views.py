@@ -112,6 +112,8 @@ class PayslipViewSet(viewsets.ModelViewSet):
             "VALOR INCAPACIDAD DESPRENDIBLE",
             "SUBSIDIOTRANS DESPRENDIBLE",
             "RODAMIENTO",
+            "HORAS EXTRA",
+            "VALOR HORAS EXTRA",
             "HORAS LABORADAS RECARGO NOCTURNO 35%",
             "RECARGO NOCTURNO 35%",
             "HORAS LABORADAS RECARGO NOCTURNO FESTIVO 75%",
@@ -222,6 +224,12 @@ class PayslipViewSet(viewsets.ModelViewSet):
                         data_dict["SUBSIDIOTRANS DESPRENDIBLE"]
                     ),
                     "bearing": convert_numeric_value(data_dict["RODAMIENTO"]),
+                    "extra_hours": convert_numeric_value(
+                        data_dict["HORAS EXTRA"]
+                    ),
+                    "extra_hours_allowance": convert_numeric_value(
+                        data_dict["VALOR HORAS EXTRA"]
+                    ),
                     "surcharge_night_shift_hours": convert_numeric_value(
                         data_dict["HORAS LABORADAS RECARGO NOCTURNO 35%"]
                     ),

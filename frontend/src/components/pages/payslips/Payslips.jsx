@@ -283,6 +283,8 @@ export const Payslips = () => {
             'disability_value',
             'transport_allowance',
             'bearing',
+            'extra_hours',
+            'extra_hours_allowance',
             'surcharge_night_shift_hours',
             'surcharge_night_shift_allowance',
             'surcharge_night_shift_holiday_hours',

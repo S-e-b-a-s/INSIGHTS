@@ -94,6 +94,30 @@ const columns = [
             }).format(value),
     },
     {
+        field: 'extra_hours',
+        headerName: 'Horas Extra',
+        width: 130,
+        type: 'number',
+        valueGetter: (value) => {
+            if (typeof value === 'string') {
+                return parseFloat(value.replace(',', '.'));
+            }
+            return NaN; // or any other default value you'd like to return
+        },
+        valueFormatter: (value) => value + ' HORAS',
+    },
+    {
+        field: 'extra_hours_allowance',
+        headerName: 'Valor Horas Extra',
+        width: 130,
+        type: 'number',
+        valueFormatter: (value) =>
+            new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+            }).format(value),
+    },
+    {
         field: 'surcharge_night_shift_hours',
         headerName: 'Horas Laboradas Recargo Nocturno',
         width: 130,
