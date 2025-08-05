@@ -18,7 +18,7 @@ const benefit = `${getApiUrl().apiUrl}static/images/benefits/benefit-1.webp`;
 const cake = `${getApiUrl().apiUrl}static/images/birthdays/cake.webp`;
 const AvatarImage = `${getApiUrl().apiUrl}static/images/birthdays/avatar.webp`;
 const fultbolVideo = `${getApiUrl().apiUrl}static/videos/futbol.mp4`;
-const pointsVideo = `${getApiUrl().apiUrl}static/videos/points.mp4`;
+const awarenessTrashCans = `${getApiUrl().apiUrl}static/videos/awareness-trash-cans.mp4`;
 
 // Libraries
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -182,7 +182,7 @@ const Home = () => {
                         }}
                         controls
                     >
-                        <source src={pointsVideo} type="video/mp4" />
+                        <source src={awarenessTrashCans} type="video/mp4" />
                     </video>
                 </Box>
             </Container>
